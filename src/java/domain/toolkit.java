@@ -12,7 +12,7 @@ package domain;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class toolkit {
+public class Toolkit {
 
 
      // Hash password using SHA-256
@@ -37,7 +37,8 @@ public class toolkit {
             throw new RuntimeException("Error hashing password", e);
         }
      }
-
      
+     public static void main(String[] args) {
+        System.out.println("Pass is " + hashPsw("123456"));
+     }
 }
-
