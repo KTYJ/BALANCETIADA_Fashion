@@ -10,14 +10,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-// import your toolkit
-import domain.toolkit.*;
+// import your Toolkit
+import domain.Toolkit.*;
 
 /**
  *
  * @author KTYJ
  */
-@WebServlet("/AddStaff")
+@WebServlet("/Add-Staff")
 
 public class AddStaff extends HttpServlet {
     @Override
@@ -39,7 +39,7 @@ public class AddStaff extends HttpServlet {
         
         try {
             // Hash the password (using BCrypt as recommended)
-            String hashedPassword = toolkit.hashPsw(password);
+            String hashedPassword = Toolkit.hashPsw(password);
             
             // Save to database (pseudo-code)
             //Staff staff = new Staff(name, email, hashedPassword);
