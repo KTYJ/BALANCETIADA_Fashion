@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <!-- basic -->
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!-- mobile metas -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+      <!-- site metas -->
+      <title>Edit Profile</title>
+      <meta name="keywords" content="">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <!-- bootstrap css -->
+      <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+      <!-- style css -->
+      <link rel="stylesheet" type="text/css" href="/web/css/editprofile.css">
+      <!-- Responsive-->
+      <link rel="stylesheet" href="css/responsive.css">
+      <!-- fevicon -->
+      <link rel="icon" href="images/fevicon.png" type="image/gif" />
+      <!-- Scrollbar Custom CSS -->
+      <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+      <!-- Tweaks for older IEs-->
+      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+      <!-- fonts -->
+      <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Open+Sans:400,700&display=swap&subset=latin-ext" rel="stylesheet">
+      <!-- owl stylesheets --> 
+      <link rel="stylesheet" href="css/owl.carousel.min.css">
+      <link rel="stylesheet" href="css/owl.theme.default.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+      <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+      <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+</head>
+<body>
+          <!-- ** Header Area Start ** -->
+   <header class="header-area header-sticky">
+    <div class="container">
+       <div class="row">
+          <div class="col-12">
+                <nav class="main-nav">
+                   <!-- ** Logo Start ** -->
+                   <a href="home.html" class="logo">
+                   <img src="/media/logo.png">
+                   </a>
+                   <!-- ** Logo End ** -->
+                   <!-- ** Menu Start ** -->
+                   <ul class="nav">
+                      <li class="scroll-to-section"><a href="home.html">Home</a></li>
+                              <li><a href="editprofile.html" class="active">My Profile</a></li>
+                              <li><a href="checkOrder.html">Check Order</a></li>
+                      </li>
+                      <div class="cart_btn">
+                       <li><a href="#explore"><ion-icon name="bag-handle-outline" style="font-size: 20px; vertical-align: text-top;"></ion-icon>My Cart</a></li>
+                      </div>
+                      <div class="login_btn">
+                          <li><a href="#explore">Voucher</a></li>
+                      </div>
+                      <div class="login_btn">
+                        <li><a href="#explore">Log Out</a></li>
+                    </div>
+                  </ul>
+                   <!-- ** Menu End ** -->
+                </nav>
+          </div>
+       </div>
+    </div>
+</header>
+<!-- ** Header Area End ** -->
+<div class="border1">
+<h2>EDIT PROFILE</h2>
+  <form>
+    <div class="form-container">
+      <!-- Left Side -->
+      <div class="left">
+        <div class="form-group">
+          <label for="id">ID</label>
+          <input type="text" id="id" name="id">
+        </div>
+        <div class="form-group">
+          <label for="first-name">First Name</label>
+          <input type="text" id="first-name" name="first-name">
+        </div>
+        <div class="form-group">
+          <label for="last-name">Last Name</label>
+          <input type="text" id="last-name" name="last-name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password">
+        </div>
+      </div>
+
+      <!-- Right Side -->
+      <div class="right">
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" id="address" name="address">
+        </div>
+        <div class="form-group">
+          <label for="postcode">Postcode</label>
+          <input type="text" id="postcode" name="postcode">
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city">
+        </div>
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" id="state" name="state">
+        </div>
+      </div>
+    </div>
+</div>
+<div class="pass-btn">
+    <button type="submit">Submit</button>
+  </div>
+  </form>
+</body>
+</html>
