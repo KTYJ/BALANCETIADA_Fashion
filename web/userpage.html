@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Homepage</title>
+    <link rel="stylesheet" href="/web/css/userpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poetsen One">
+    <script src="../JAVAs/jquery-1.9.1.js"></script>
+    <script>
+        // Placeholder logout functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("logout").addEventListener("click", function () {
+                if (confirm("Are you sure you want to logout?")) {
+                    alert("Redirecting to logout...");
+                    // Replace with actual logout URL
+                    window.location.href = "logout.php";
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="image">
+            <img src="/media/logo.jpg">
+        </div>
+
+        <div class="container2">
+            <div class="htext">
+                <h2>Welcome,<br/> <span>[ USER ]</span></h2>
+            </div>
+
+            <div class="container3">
+                <ul>
+                    <li>
+                        <a href="home.jsp">
+                            <i class="fa-solid fa-circle-right" aria-hidden="true"></i>
+                            <span>Continue</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+
+</body>
+</html>
