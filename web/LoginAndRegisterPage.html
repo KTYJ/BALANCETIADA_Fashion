@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <title>Login And Signup</title>
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/Products.css">
+    <link rel="stylesheet" href="css/owl-carousel.css">
+    <link rel="stylesheet" href="css/lightbox.css">
+
+    <link rel="stylesheet" href="css/LoginAndRegisterPage.css">
+    <!-- End Additional CSS Files -->
+
+</head>
+<div class="login-and-register">
+    <body>
+    <!-- ***** Preloader Start ***** -->
+    <div id="preloader">
+        <div class="jumper">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>  
+    <!-- ***** Preloader End ***** -->
+    
+    <!-- ** Header Area Start ** -->
+    <header class="header-area header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- ** Logo Start ** -->
+                        <a href="home.html" class="logo">
+                        <img src="/media/logo.png">
+                        </a>
+                        <!-- ** Logo End ** -->
+                        <!-- ** Menu Start ** -->
+                        <ul class="nav">
+                            <li class="scroll-to-section"><a href="home.html">Home</a></li>
+                                    <li><a href="products.html">Products</a></li>
+                                    <li><a href="about.html">About Us</a></li>
+                            </li>
+                            <div class="cart_btn">
+                             <li><a href="#explore" class="active"><ion-icon name="bag-handle-outline" style="font-size: 20px; vertical-align: text-top;"></ion-icon> CART (0)</a></li>
+                            </div>
+                            <div class="login_btn">
+                                <li><a href="#explore">Login</a></li>
+                            </div>
+                        </ul>
+                        <!-- ** Menu End ** -->
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ** Header Area End ** -->
+
+    <!-- Main Content Area Start -->
+	<div class="section background-img-set">
+		<div class="container">
+			<div class="row full-height justify-content-center">
+				<div class="col-12 text-center align-self-center py-5">
+					<div class="section pb-5 pt-5 pt-sm-2 text-center">
+						<h6 class="mb-0 pb-3"><span class="word-login both-word">Click the bottom button to Switch Login & Signup</span></h6>
+                        <input class="toggle-checkbox checkbox" type="checkbox" id="reg-log" name="reg-log" />
+                        <label for="reg-log"></label>
+						<div class="card-3d-wrap mx-auto">
+							<div class="card-3d-wrapper">
+
+
+
+
+								<div class="card-front">
+									<div class="center-wrap">
+										<div class="section text-center">
+											<h4 class="mb-4 pb-3">Log In</h4>
+											<div class="form-group">
+												<input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail" autocomplete="off">
+												<i class="input-icon uil uil-at"></i>
+											</div>	
+											<div class="form-group mt-2">
+												<input type="password" name="logpass" class="form-style" placeholder="Your Password" id="logpass" autocomplete="off">
+												<i class="input-icon uil uil-lock-alt"></i>
+											</div>
+											<a href="#" class="btn mt-4">submit</a>
+                            				<p class="mb-0 mt-4 text-center"><a href="#0" class="link">Forgot your password?</a></p>
+				      					</div>
+			      					</div>
+			      				</div>
+
+
+
+								<div class="card-back">
+									<div class="center-wrap">
+                                        <div class="section text-center">
+                                          <h4 class="mb-4 pb-3">Sign Up</h4>
+                                          <div class="form-container login-and-register">
+                                      
+                                            <!-- Left Panel -->
+                                            <div class="form-column">
+                                              <div class="form-group">
+                                                <input type="text" name="firstname" class="form-style" placeholder="First Name" id="firstname" autocomplete="off">
+                                                <i class="input-icon uil uil-user"></i>
+                                              </div>
+                                              <div class="form-group mt-2">
+                                                <input type="text" name="lastname" class="form-style" placeholder="Last Name" id="lastname" autocomplete="off">
+                                                <i class="input-icon uil uil-user"></i>
+                                              </div>
+                                              <div class="form-group mt-2">
+                                                <input type="email" name="email" class="form-style" placeholder="Email" id="email" autocomplete="off">
+                                                <i class="input-icon uil uil-at"></i>
+                                              </div>
+                                            </div>
+                                      
+                                            <!-- Right Panel -->
+                                            <div class="form-column">
+                                              <div class="form-group">
+                                                <input type="password" name="password" class="form-style" placeholder="Password" id="password" autocomplete="off">
+                                                <i class="input-icon uil uil-lock-alt"></i>
+                                              </div>
+                                              <div class="form-group mt-2">
+                                                <input type="password" name="confirmpassword" class="form-style" placeholder="Confirm Password" id="confirmpassword" autocomplete="off">
+                                                <i class="input-icon uil uil-lock-alt"></i>
+                                              </div>
+                                              <div class="form-group mt-3 text-start">
+                                                <label style="font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                                                  <input type="checkbox" class="terms-and-conditions" /> <span class="terms-and-conditions">Accept Terms and Conditions</span>
+                                                </label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <a href="#" class="btn mt-4">Submit</a>
+
+                                        </div>
+                                      </div>                                      
+			      				</div>
+
+
+
+
+			      			</div>
+			      		</div>
+			      	</div>
+		      	</div>
+	      	</div>
+	    </div>
+	</div>
+    <!-- Main Content Area End -->
+
+    <!-- footer section start -->
+    <div class="footer_section layout_padding">
+        <div class="container">
+           <div class="contact_section_2">
+              <div class="row">
+                 <div class="col-sm-4">
+                    <h3 class="address_text">Contact Us</h3>
+                    <div class="address_bt">
+                       <ul>
+                          <li>
+                             <a href="#">
+                             <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left10">Call : +6012-3379156</span>
+                             </a>
+                          </li>
+                          <li>
+                             <a href="#">
+                             <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left10">Email : sjh@gmail.com</span>
+                             </a>
+                          </li>
+                       </ul>
+                    </div>
+                 </div>
+                 <div class="col-sm-4">
+                    <div class="footer_1"><p>BALANCETIADA</p></div>
+                    <p class="dummy_text">Balancetiada blends modern design with timeless values. Every piece is crafted to reflect balance, quality, and contemporary elegance.</p>
+                 </div>
+                 <div class="col-sm-4">
+                    <div class="main">
+                       <h3 class="address_text">Visit Us</h3>
+                       <p class="ipsum_text">Tanjung Malim</p>
+                       <p class="ipsum_text">Rawang</p>
+                       <p class="ipsum_text">Sungai Buloh</p>
+                       <p class="ipsum_text">Cheras</p>
+                       <p class="ipsum_text">Puncak Alam</p>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           <div class="social_icon">
+              <ul>
+                 <li>
+                    <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                 </li>
+                 <li>
+                    <a href="https://www.twitter.com/"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                 </li>
+                 <li>
+                    <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                 </li>
+              </ul>
+           </div>
+        </div>
+     </div>
+     <!-- footer section end -->
+
+     <!-- copyright section start -->
+     <div class="copyright_section">
+        <div class="container">
+           <p class="copyright_text">&copy; 2025 All Rights Reserved.</p>
+        </div>
+     </div>
+     <!-- copyright section end -->
+
+    <!-- jQuery -->
+    <script src="js/jquery-2.1.0.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugins -->
+    <script src="js/owl-carousel.js"></script>
+    <script src="js/accordions.js"></script>
+    <script src="js/datepicker.js"></script>
+    <script src="js/scrollreveal.min.js"></script>
+    <script src="js/waypoints.min.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>
+    <script src="js/imgfix.min.js"></script> 
+    <script src="js/slick.js"></script> 
+    <script src="js/lightbox.js"></script> 
+    <script src="js/isotope.js"></script>
+    
+    <script src="js/viewcartmodal.js"></script>
+    
+    <!-- Global Init -->
+    <script src="js/custom.js"></script>
+
+    <script>
+
+        $(function() {
+            var selectedClass = "";
+            $("p").click(function(){
+            selectedClass = $(this).attr("data-rel");
+            $("#portfolio").fadeTo(50, 0.1);
+                $("#portfolio div").not("."+selectedClass).fadeOut();
+            setTimeout(function() {
+              $("."+selectedClass).fadeIn();
+              $("#portfolio").fadeTo(50, 1);
+            }, 500);
+                
+            });
+        });
+
+    </script>
+
+    </body>
+</div>
+</html>

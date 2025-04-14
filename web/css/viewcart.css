@@ -1,0 +1,330 @@
+body{
+    background: #ddd;
+    vertical-align: middle;
+}
+.title{
+    margin-bottom: 5vh;
+}
+.card{
+    margin: auto;
+    max-width: 1050px;
+    width: 100%;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 1rem;
+    border: transparent;
+
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+@media(max-width:767px){
+    .card{
+        margin: 3vh auto;
+    }
+}
+.card .cart{
+    background-color: #fff;
+    padding: 4vh 5vh;
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+}
+@media(max-width:767px){
+    .card .cart{
+        padding: 4vh;
+        border-bottom-left-radius: unset;
+        border-top-right-radius: 1rem;
+    }
+}
+.card .summary{
+    background-color: #958e7e37;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    border: 3px solid rgb(160, 160, 160);
+    border-left: none;
+    padding: 4vh;
+    color: rgb(65, 65, 65);
+}
+@media(max-width:767px){
+    .summary{
+    border-top-right-radius: unset;
+    border-bottom-left-radius: 1rem;
+    }
+}
+.card .summary .col-2{
+    padding: 0;
+}
+.card .summary .col-10
+{
+    padding: 0;
+}
+
+.card .row{
+    margin: 0;
+}
+.card .title b{
+    font-size: 1.5rem;
+}
+.card .main{
+    margin: 0;
+    padding: 2vh 0;
+    width: 100%;
+}
+.card .col-2, .card .col{
+    padding: 0 1vh;
+}
+.card a{
+    padding: 0 1vh;
+}
+.card .close{
+    margin-left: auto;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+.card img{
+    width: 3.5rem;
+}
+.card .back-to-shop{
+    margin-top: 4.5rem;
+}
+.card h5{
+    margin-top: 4vh;
+}
+.card hr{
+    margin-top: 1.25rem;
+}
+.card form{
+    padding: 2vh 0;
+}
+.card select{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1.5vh 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+
+.card input{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+
+.card input:focus::-webkit-input-placeholder
+{
+      color:transparent;
+}
+
+.card .btn{
+    background-color: #000;
+    border-color: #000;
+    color: white;
+    width: 100%;
+    font-size: 0.7rem;
+    margin-top: 4vh;
+    padding: 1vh;
+    border-radius: 0;
+}
+
+.card .btn:focus{
+    box-shadow: none;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    -webkit-box-shadow: none;
+    -webkit-user-select: none;
+    transition: none; 
+}
+
+.card .btn:hover{
+    color: white;
+}
+
+.card a{
+    color: black; 
+}
+
+.card a:hover{
+    color: black;
+    text-decoration: none;
+}
+ 
+.card #code{
+    background-image: linear-gradient(to left, rgba(255, 255, 255, 0.253) , rgba(255, 255, 255, 0.185)), url("https://img.icons8.com/small/16/000000/long-arrow-right.png");
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: center;
+}
+
+.pusher {
+    padding-top: 20vh;
+    padding-bottom: 10vh;
+}
+
+.highlight {
+    color: #060505; /* Tailwind amber-400 */
+    text-align: center;
+  }
+
+.text-right {
+    font-size: 20px;
+    color: #060505;
+}
+
+.clothing-size {
+    color: black;
+    text-align: center;
+}
+
+.edit-button {
+    border: 2px solid black;
+    background-color: rgb(210, 210, 210);
+    color: black;
+    font-weight: bold;
+    padding: 5px 10px 5px 10px;
+    cursor: pointer;
+}
+/* ===== Modal Overlay ===== */
+
+#editModal {
+    display: none;
+  }
+  
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* ===== Modal Container ===== */
+  .modal-content {
+    background-color: #fff;
+    width: 60%;
+    max-width: 600px;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* ===== Close Button ===== */
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 50;
+  }
+  
+  /* ===== Modal Body Layout ===== */
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  /* ===== Top Panel: Image + Info ===== */
+  .modal-top-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .modal-img img {
+    max-width: 120px;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .modal-info {
+    flex-grow: 1;
+    text-align: left;
+  }
+  
+  .modal-info h5 {
+    margin: 0 0 5px;
+    font-size: 20px;
+  }
+  
+  .modal-info p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  /* ===== Bottom Panel: Size + Quantity ===== */
+  .modal-bottom-panel {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+  
+  #modal-size,
+  #modal-quantity {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+  
+  /* ===== Save Button ===== */
+  .modal-content button {
+    padding: 10px 20px;
+    background-color: #292b29;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .modal-content button:hover {
+    background-color: #218838;
+  }
+  
+  .quantity{
+    padding: 0 1vh;
+    pointer-events: none;
+  }
+
+  #visa-fields input {
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 0.5vh 1vh 0.5vh 1vh;
+    margin-bottom: 3vh;
+    outline: none;
+    width: 100%;
+    height: auto;
+    background-color: rgb(247, 247, 247);
+}
