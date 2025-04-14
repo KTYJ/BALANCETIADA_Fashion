@@ -45,7 +45,7 @@
     display: block;
 }
 .login-and-register .full-height{
-  min-height: 100vh;
+  min-height: 116vh;
 }
 
 .login-and-register .toggle-checkbox:checked,

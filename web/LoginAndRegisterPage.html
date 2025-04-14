@@ -39,35 +39,8 @@
     <!-- ***** Preloader End ***** -->
     
     <!-- ** Header Area Start ** -->
-    <header class="header-area header-sticky">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <nav class="main-nav">
-                        <!-- ** Logo Start ** -->
-                        <a href="home.html" class="logo">
-                        <img src="/media/logo.png">
-                        </a>
-                        <!-- ** Logo End ** -->
-                        <!-- ** Menu Start ** -->
-                        <ul class="nav">
-                            <li class="scroll-to-section"><a href="home.html">Home</a></li>
-                                    <li><a href="products.html">Products</a></li>
-                                    <li><a href="about.html">About Us</a></li>
-                            </li>
-                            <div class="cart_btn">
-                             <li><a href="#explore" class="active"><ion-icon name="bag-handle-outline" style="font-size: 20px; vertical-align: text-top;"></ion-icon> CART (0)</a></li>
-                            </div>
-                            <div class="login_btn">
-                                <li><a href="#explore">Login</a></li>
-                            </div>
-                        </ul>
-                        <!-- ** Menu End ** -->
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div id="header-placeholder"></div>
+
     <!-- ** Header Area End ** -->
 
     <!-- Main Content Area Start -->
@@ -163,67 +136,9 @@
     <!-- Main Content Area End -->
 
     <!-- footer section start -->
-    <div class="footer_section layout_padding">
-        <div class="container">
-           <div class="contact_section_2">
-              <div class="row">
-                 <div class="col-sm-4">
-                    <h3 class="address_text">Contact Us</h3>
-                    <div class="address_bt">
-                       <ul>
-                          <li>
-                             <a href="#">
-                             <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left10">Call : +6012-3379156</span>
-                             </a>
-                          </li>
-                          <li>
-                             <a href="#">
-                             <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left10">Email : sjh@gmail.com</span>
-                             </a>
-                          </li>
-                       </ul>
-                    </div>
-                 </div>
-                 <div class="col-sm-4">
-                    <div class="footer_1"><p>BALANCETIADA</p></div>
-                    <p class="dummy_text">Balancetiada blends modern design with timeless values. Every piece is crafted to reflect balance, quality, and contemporary elegance.</p>
-                 </div>
-                 <div class="col-sm-4">
-                    <div class="main">
-                       <h3 class="address_text">Visit Us</h3>
-                       <p class="ipsum_text">Tanjung Malim</p>
-                       <p class="ipsum_text">Rawang</p>
-                       <p class="ipsum_text">Sungai Buloh</p>
-                       <p class="ipsum_text">Cheras</p>
-                       <p class="ipsum_text">Puncak Alam</p>
-                    </div>
-                 </div>
-              </div>
-           </div>
-           <div class="social_icon">
-              <ul>
-                 <li>
-                    <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                 </li>
-                 <li>
-                    <a href="https://www.twitter.com/"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-                 </li>
-                 <li>
-                    <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-                 </li>
-              </ul>
-           </div>
-        </div>
-     </div>
-     <!-- footer section end -->
+    <div id="footer-placeholder"></div>
 
-     <!-- copyright section start -->
-     <div class="copyright_section">
-        <div class="container">
-           <p class="copyright_text">&copy; 2025 All Rights Reserved.</p>
-        </div>
-     </div>
-     <!-- copyright section end -->
+     <!-- footer section end -->
 
     <!-- jQuery -->
     <script src="js/jquery-2.1.0.min.js"></script>
@@ -265,6 +180,13 @@
             });
         });
 
+      fetch('header.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('header-placeholder').innerHTML = data);
+
+      fetch('footer.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('footer-placeholder').innerHTML = data);
     </script>
 
     </body>
