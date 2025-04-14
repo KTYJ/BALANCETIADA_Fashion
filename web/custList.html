@@ -7,6 +7,7 @@
     <title>BT Staff</title>
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
         td.button a {
             color: transparent;
@@ -81,77 +82,48 @@
         <div class="wrapper">
             <strong>Customer List</strong>
         </div>
+        
         <div class="main-content">
-
-            <table class="content-table" border="1" cellpadding="5" cellspacing="0">
-                <tr>
-                    <th><a href="#">Event ID</a></th>
-                    <th><a href="#">Event Name</a></th>
-                    <th><a href="#">Time</a></th>
-                    <th>Image</th>
-                    <th>Action</th>
-                </tr>
+            <div class="search-bar">
+                <input type="text" placeholder="Search.." name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </div>
+            <table>
+                <thead>
+                  <tr>
+                    <th>CUST ID</th>
+                    <th>FullName</th>
+                    <th>LastName</th>
+                    <th>EMAIL</th>
+                    <th>PASSWORD</th>
+                    <th></th>
+                  </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <td>EV001</td>
-                        <td>Annual Conference</td>
-                        <td>10:00 AM - 5:00 PM</td>
-                        <td class="img">
-                            <a href="../Media/NA52bdfd8.jpg" target="_blank">
-                                <div class="noimg"><ion-icon name="image"></ion-icon></div>
-                            </a>
-                        </td>
-                        <td class="button">
-                            <a href="edit.php?id=EV001">
-                                <button type="button" class="iconbuttonedit">
-                                    <span class="button_textedit">Edit</span>
-                                    <span class="button_iconedit"><ion-icon name="create-outline"></ion-icon></span>
-                                </button>
-                            </a>
-                            <a href="delete.php?id=EV001">
-                                <button type="button" class="iconbuttondelete">
-                                    <span class="button_textdelete">Delete</span>
-                                    <span class="button_icondelete"><ion-icon name="trash-outline"></ion-icon></span>
-                                </button>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>EV002</td>
-                        <td>Product Launch</td>
-                        <td>2:00 PM - 4:00 PM</td>
-                        <td class="img">
-                            <a href="../Media/NA52bdfd8.jpg" target="_blank">
-                                <div class="noimg"><ion-icon name="image"></ion-icon></div>
-                            </a>
-                        </td>
-                        <td class="button">
-                            <a href="edit.php?id=EV002">
-                                <button type="button" class="iconbuttonedit">
-                                    <span class="button_textedit">Edit</span>
-                                    <span class="button_iconedit"><ion-icon name="create-outline"></ion-icon></span>
-                                </button>
-                            </a>
-                            <a href="delete.php?id=EV002">
-                                <button type="button" class="iconbuttondelete">
-                                    <span class="button_textdelete">Delete</span>
-                                    <span class="button_icondelete"><ion-icon name="trash-outline"></ion-icon></span>
-                                </button>
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-                <tr>
-                    <td colspan="5">
-                        2 Records Has Been Returned.&nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="create.php">
-                            <button type="button" class="iconbuttoncreate">
-                                <span class="button_textcreate">Add New Event</span>
-                                <span class="button_iconcreate"><ion-icon name="add-circle-outline"></ion-icon></span>
-                            </button></a>
+                  <tr>
+                    <td class="always-highlight">1392</td>
+                    <td class="always-highlight">James Yates</td>
+                    <td>
+                      Web Designer
+                      <span class="subtext">Far far away, behind the word mountains</span>
                     </td>
-                </tr>
-            </table>
+                    <td>+63 983 0962 971</td>
+                    <td>NY University</td>
+                    <td class="details-link">Details</td>
+                  </tr>
+                  <tr>
+                    <td class="always-highlight">4616</td>
+                    <td class="always-highlight">Matthew Wasil</td>
+                    <td>
+                      Graphic Designer
+                      <span class="subtext">Far far away, behind the word mountains</span>
+                    </td>
+                    <td>+02 020 3994 929</td>
+                    <td>London College</td>
+                    <td class="details-link">Details</td>
+                  </tr>
+                </tbody>
+              </table>
         </div>
     </div>
     </div>

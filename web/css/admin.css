@@ -90,7 +90,7 @@ body{
     padding: 1rem;
 }
 
-.main-content{
+.main-content {
     padding-top: 50px;
 }
 .wrapper{
@@ -110,30 +110,6 @@ td a{
 
 td a:hover{
     color: rgb(169, 109, 203);
-}
-
-.content table, th, td{
-    border: solid 2px;
-    border-collapse:collapse;
-    padding: 10px;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
-}
-
-.content th a{
-    text-decoration: none;
-}
-
-.content table{
-    width:80%;
-    background-color: white;
-    font-size: 15px;
-}
-
-.content tbody{
-    font-family: monospace;
 }
 
 .pattern a{
@@ -239,3 +215,108 @@ td a:hover{
     font-size: 1.5em;
     background-color: #333333;
 }
+
+.content table, th, td{
+    border: solid 7px;
+    border-collapse:collapse;
+    padding: 10px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+
+.content th a{
+    text-decoration: none;
+}
+
+.content table{
+    width:80%;
+    background-color: black;
+    font-size: 15px;
+}
+
+.content tbody{
+    font-family: monospace;
+}
+
+  thead {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    background-color: #9c9a9e;
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    color: black;
+  }
+
+  th, td {
+    padding: 16px;
+    text-align: left;
+    border-collapse: collapse;
+    border-color: transparent;
+  }
+
+  tbody tr {
+    transition: background-color 0.3s ease;
+    background-color: #252525;
+  }
+
+  tbody tr:hover {
+    background-color: #545454;
+    color: white;
+    padding: 0;
+  }
+
+  .subtext {
+    display: block;
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 5px;
+  }
+
+  .highlight {
+    color: #facc15; /* Tailwind amber-400 */
+  }
+
+  .always-highlight {
+    color: wheat;
+  }
+
+  .details-link {
+    color: #facc15;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .search-bar {
+    float: right;
+    padding-right: 500px;
+    margin-bottom: 50px;
+}
+
+  .search-bar input[type=text] {
+    padding: 6px;
+  margin-top: 8px;
+  font-size: 17px;
+  border: 1px solid black;
+  border-right: none;
+  }
+
+  .search-bar button {
+    float: right;
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background: #ddd;
+  font-size: 17px;
+  border: 1px solid black;
+  border-left: none;
+  cursor: pointer;
+  }
+
+  .search-bar button:hover {
+    background-color: #facc15;
+  }
