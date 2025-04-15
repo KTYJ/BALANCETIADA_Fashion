@@ -24,14 +24,6 @@
     // Get the staff ID to edit from the request parameter
     String editStaffId = request.getParameter("staffId");
 
-    //kick unauthorised user
-    if (!staff.isManager()) {
-            request.setAttribute("error", "403 Access Denied");
-            request.getRequestDispatcher("err403.jsp").forward(request, response);
-            //response.sendRedirect("prodList.jsp");
-
-    }
-    
     if (editStaffId != null) {
 
         // Check if the staff object is set in the request
@@ -41,6 +33,11 @@
             // Redirect to home.html if no user is logged in
             response.sendRedirect("home.jsp");
             return; // Stop further processing
+        } else if (!staff.isManager()) {
+            request.setAttribute("error", "403 Access Denied");
+            request.getRequestDispatcher("err403.jsp").forward(request, response);
+            //response.sendRedirect("prodList.jsp");
+
         }
 
         //Debugging
