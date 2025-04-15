@@ -7,6 +7,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 
+<jsp:useBean id="staff" class="model.Staff" scope="session" />
+
+<%
+    if (staff.getName() != null) {
+        response.sendRedirect("custList.jsp"); // Redirect to login if logged in
+        return; // Exit the page processing
+    }
+
+%>
 
 <!DOCTYPE html>
 <html lang="en">

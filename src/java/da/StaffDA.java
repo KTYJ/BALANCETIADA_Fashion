@@ -4,73 +4,196 @@
  */
 package da;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import model.Staff;
+
 /**
  *
  * @author KTYJ
  */
-import model.Staff;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.*;
-import java.util.List;
-
 public class StaffDA {
-    @PersistenceContext EntityManager em;
 
-    private EntityManagerFactory emf;
+    private Connection connection;
+    private PreparedStatement stmt;
 
-    public StaffDA() {
+    // Database connection details
+    private String host = "jdbc:derby://localhost:1527/btdb";
+    private String user = "nbuser";
+    private String password = "nbuser";
+
+    public StaffDA() throws SQLException {
+        createConnection();
     }
 
-    public void createStaff(Staff staff) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        em.persist(staff);
-        em.getTransaction().commit();
-        em.close();
+    private void createConnection() throws SQLException {
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            connection = DriverManager.getConnection(host, user, password);
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException("Database driver not found: " + ex.getMessage());
+        } catch (SQLException ex) {
+            throw new SQLException("Failed to connect to database: " + ex.getMessage());
+        }
     }
 
-    public Staff findStaffById(String staffId) {
-        EntityManager em = emf.createEntityManager();
-        Staff staff = em.find(Staff.class, staffId);
-        em.close();
+    public Staff findById(String staffId) throws SQLException {
+        String queryStr = "SELECT * FROM STAFF WHERE staffid = ?";
+        Staff staff = null;
+        stmt = connection.prepareStatement(queryStr);
+        stmt.setString(1, staffId);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            staff = new Staff();
+            staff.setStaffid(rs.getString("staffid"));
+            staff.setName(rs.getString("name"));
+            staff.setEmail(rs.getString("email"));
+            staff.setType(rs.getString("type"));
+        }
+
+        return staff;
+    }
+    public Staff findByEmail(String email) throws SQLException {
+        String queryStr = "SELECT * FROM STAFF WHERE email = ?";
+        Staff staff = null;
+        stmt = connection.prepareStatement(queryStr);
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            staff = new Staff();
+            staff.setStaffid(rs.getString("staffid"));
+            staff.setName(rs.getString("name"));
+            staff.setEmail(rs.getString("email"));
+            staff.setType(rs.getString("type"));
+        }
+
         return staff;
     }
 
-    public List<Staff> findAllStaff() {
-        EntityManager em = emf.createEntityManager();
-        TypedQuery<Staff> query = em.createQuery("SELECT s FROM Staff s", Staff.class);
-        List<Staff> staffList = query.getResultList();
-        em.close();
+    public Staff findbyEmailAndPassword(String email, String password) throws SQLException {
+        String queryStr = "SELECT * FROM STAFF WHERE email = ? AND psw = ?";
+        Staff staff = null;
+
+        stmt = connection.prepareStatement(queryStr);
+        stmt.setString(1, email);
+        stmt.setString(2, password);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            staff = new Staff();
+            staff.setStaffid(rs.getString("staffid"));
+            staff.setName(rs.getString("name"));
+            staff.setEmail(rs.getString("email"));
+            staff.setType(rs.getString("type"));
+        }
+
+        return staff;
+    }
+
+    public Staff findbyIdAndPassword(String id, String password) throws SQLException {
+        String queryStr = "SELECT * FROM STAFF WHERE staffid = ? AND psw = ?";
+        Staff staff = null;
+
+        stmt = connection.prepareStatement(queryStr);
+        stmt.setString(1, id);
+        stmt.setString(2, password);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            staff = new Staff();
+            staff.setStaffid(rs.getString("staffid"));
+            staff.setName(rs.getString("name"));
+            staff.setEmail(rs.getString("email"));
+            staff.setType(rs.getString("type"));
+        }
+
+        return staff;
+    }
+
+    public List<Staff> findAllStaff() throws SQLException {
+        String queryStr = "SELECT * FROM STAFF";
+        List<Staff> staffList = new ArrayList<>();
+
+        stmt = connection.prepareStatement(queryStr);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            Staff staff = new Staff();
+            staff.setStaffid(rs.getString("staffid"));
+            staff.setName(rs.getString("name"));
+            staff.setEmail(rs.getString("email"));
+            staff.setType(rs.getString("type"));
+            staffList.add(staff);
+        }
+
         return staffList;
     }
 
-    public void updateStaff(Staff staff) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        em.merge(staff);
-        em.getTransaction().commit();
-        em.close();
-    }
+    public List<Staff> findAllStaff(String type) throws SQLException {
+        String queryStr = "SELECT * FROM STAFF WHERE type = ?";
+        List<Staff> staffList = new ArrayList<>();
+        stmt = connection.prepareStatement(queryStr);
+        stmt.setString(1, type);
+        ResultSet rs = stmt.executeQuery();
 
-    public void deleteStaff(String staffId) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        Staff staff = em.find(Staff.class, staffId);
-        if (staff != null) {
-            em.remove(staff);
+        while (rs.next()) {
+            Staff staff = new Staff();
+            staff.setStaffid(rs.getString("staffid"));
+            staff.setName(rs.getString("name"));
+            staff.setEmail(rs.getString("email"));
+            staff.setType(rs.getString("type"));
+            staffList.add(staff);
         }
-        em.getTransaction().commit();
-        em.close();
+
+        return staffList;
     }
 
-    public void close() {
-        if (emf != null) {
-            emf.close();
+    public void addStaff(Staff staff) throws SQLException {
+        String insertStr = "INSERT INTO STAFF (staffid, name, email, psw, type) VALUES (?, ?, ?, ?, ?)";
+        stmt = connection.prepareStatement(insertStr);
+        stmt.setString(1, staff.getStaffid());
+        stmt.setString(2, staff.getName());
+        stmt.setString(3, staff.getEmail());
+        stmt.setString(4, staff.getPsw());
+        stmt.setString(5, staff.getType());
+        stmt.executeUpdate();
+    }
+
+    public void updateStaff(Staff staff) throws SQLException {
+        String updateStr = "UPDATE STAFF SET name = ?, email = ?, type = ? WHERE staffid = ?";
+
+        stmt = connection.prepareStatement(updateStr);
+        stmt.setString(1, staff.getName());
+        stmt.setString(2, staff.getEmail());
+        stmt.setString(3, staff.getType());
+        stmt.setString(4, staff.getStaffid());
+        stmt.executeUpdate();
+    }
+
+    public void deleteStaff(String staffId) throws SQLException {
+        String deleteStr = "DELETE FROM STAFF WHERE staffid = ?";
+        try {
+            stmt = connection.prepareStatement(deleteStr);
+            stmt.setString(1, staffId);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 }

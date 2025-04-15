@@ -14,11 +14,16 @@
 
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
+<jsp:useBean id="newStaff" class="model.Staff" scope="request" />
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
+        return; // Stop further processing
+    }
+    if (newStaff == null || newStaff.getName() == null) {
+        response.sendRedirect("addStaff.jsp");
         return; // Stop further processing
     }
 %>
@@ -88,6 +93,26 @@
                 margin: 0;
                 padding: 0;
             }
+
+            .table{
+                width: 80vh;
+                font-size: 1.2em;
+                border-collapse: collapse;
+                margin: 20px 0;
+                border: 1px solid #ddd;
+            }
+
+            .table th{
+                text-align: right;
+                padding: 8px;
+                margin: 20px 0;
+            }
+
+            .table td{
+                text-align: left;
+                padding: 8px;
+                margin: 20px 0;
+            }
         </style>
     </head>
     <body>
@@ -147,87 +172,29 @@
         <div class="content">
 
             <div class="wrapper">
-                <strong>Add New Staff Member</strong>
+                <strong>Are these details correct?</strong>
             </div>
             <div class="main-content">
                 <div class="container">
-                    <%
-                        if (request.getMethod().equals("POST")) {
-                            String name = request.getParameter("name");
-                            String email = request.getParameter("email");
-                            String psw = null;
-                            String staffId = null;
+                    <table class="table">
+                        <tr>
+                            <th>Staff ID:</th>
+                            <td><%= newStaff.getStaffid() + "  "%><span style="font-size: 0.8em; color: #666;">(This cannot be changed!)</span></td>
+                        </tr>
+                        <tr>
+                            <th>Name:</th>
+                            <td><%= newStaff.getName()%></td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td><%= newStaff.getEmail()%></td>
+                        </tr>
+                    </table>
 
-                            ArrayList<String> errors = new ArrayList<>();
-
-                            // Validate name
-                            if (name == null || name.trim().isEmpty()) {
-                                errors.add("Name is required.");
-                            } else if (!name.matches("^[a-zA-Z0-9\\s]+$")) {
-                                errors.add("Name can only contain letters, numbers, and spaces.");
-                            }
-
-                            // Validate email
-                            if (email == null || email.trim().isEmpty()) {
-                                errors.add("Email is required.");
-                            } else {
-                                try {
-                                    // Check if email already exists
-                                    StaffDA staffDA = new StaffDA();
-                                    Staff existingStaff = staffDA.findByEmail(email);
-                                    if (existingStaff != null) {
-                                        errors.add("Email already exists.");
-                                    }
-                                } catch (SQLException e) {
-                                    errors.add("Error checking email: " + e.getMessage());
-                                }
-                            }
-                            try {
-                                staffId = Toolkit.generateUniqueStaffId();
-                                psw = Toolkit.hashPsw(staffId);
-                                
-                            } catch (SQLException e) {
-                                errors.add("Error generating staff ID: " + e.getMessage());
-                            }
-
-                    %>
-                    <% if (!errors.isEmpty()) { %>
-                    <div class="error" >
-                        <h3>Validation Errors:</h3>
-                        <ul>
-                            <% for (String error : errors) {%>
-                            <li><%= error%></li>
-                                <% } %>
-                        </ul>
-                    </div>
-
-                    <% } else { %>
-                    <div class="success">
-                        <h3>Staff member ok.</h3>
-                    </div>
-                    <%
-                                Staff newStaff = new Staff(staffId, name, email, psw, "staff");
-                                request.setAttribute("newStaff", newStaff);
-                                request.getRequestDispatcher("conStaff.jsp").forward(request, response);
-
-                            }
-
-                        }%>
-                    <form id="addStaffForm"  method="POST">
-                        <div class="form-group">
-                            <label for="name">Full Name:</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label style="font-size: 12px; color: grey; font-weight: normal;">Password will be generated automatically.</label>
-                        </div>
-
+                    <form method="POST" action="AddStaff" id="uploadForm">
+                        <input type="hidden" name="staffid" value="<%= newStaff.getStaffid()%>">
+                        <input type="hidden" name="name" value="<%= newStaff.getName()%>">
+                        <input type="hidden" name="email" value="<%= newStaff.getEmail()%>">
                         <button type="submit" class="btn">Add Staff Member</button>
                     </form>
                 </div>
@@ -235,7 +202,7 @@
         </div>
 
         <script>
-            // Form 
+           
 
             // Logout function
             function logOut() {

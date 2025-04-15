@@ -1,0 +1,432 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Special+Gothic+Condensed+One&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  display: flex;
+  background-image: url('../media/adminbg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+
+#aName {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.wrapper strong {
+  font-size: 3vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  height: 100vh;
+  padding: 0 1.7em;
+  overflow: hidden;
+  transition: all 0.5 linear;
+  background: rgb(255, 255, 255);
+}
+
+.logo {
+  text-align: center;
+  padding: 10px;
+  font-family: 'Special Gothic Condensed One', sans-serif;
+  font-size: 3vh;
+}
+
+.menu {
+  height: 80%;
+  position: relative;
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  padding: 1rem;
+  margin: 8px 0;
+  border-radius: 8px;
+  transition: all 0.5s ease-in-out;
+}
+
+.menu li:hover,
+.active {
+  background-color: #e0e0e058;
+}
+
+.menu a {
+  color: #000000;
+  font-size: 14px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 1.5em;
+}
+
+.menu a span {
+  overflow: hidden;
+}
+
+.menu a i {
+  font-size: 1.2rem;
+}
+
+.content {
+  position: relative;
+  background-image: url("/images/adminbg.jpg");
+  width: 100%;
+  padding: 1rem;
+}
+
+.main-content {
+  padding-top: 50px;
+}
+
+.wrapper {
+  text-align: center;
+  background-color: rgb(236, 236, 236);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: rgb(0, 0, 0);
+  padding: 20px;
+  box-shadow: 20px 20px 20px rgb(209, 209, 209);
+}
+
+td a {
+  margin-top: 10px;
+  transition: all 0.3s;
+}
+
+.pattern a {
+  color: white;
+  text-decoration: none;
+}
+
+.iconbuttonedit {
+  display: inline-flex;
+  height: 35px;
+  padding: 0;
+  background-color: #009578;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  overflow: hidden;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.iconbuttonedit:hover {
+  background-color: #008168;
+}
+
+.iconbuttonedit:active {
+  background-color: #006e58;
+}
+
+.button_textedit,
+.button_iconedit {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  color: white;
+  height: 100%;
+}
+
+.button_iconedit {
+  font-size: 1.5em;
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.iconbuttondelete {
+  display: inline-flex;
+  height: 35px;
+  padding: 0;
+  background-color: #ff0000;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  overflow: hidden;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.iconbuttondelete:hover,
+.iconbuttoncreate:active {
+  background-color: #e60000;
+}
+
+.button_textdelete,
+.button_icondelete {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  color: white;
+  height: 100%;
+}
+
+.button_icondelete {
+  font-size: 1.5em;
+  background-color: rgb(215, 15, 15);
+}
+
+.iconbuttoncreate {
+  display: inline-flex;
+  height: 35px;
+  padding: 0;
+  background-color: #000000;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  overflow: hidden;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.iconbuttoncreate:hover {
+  background-color: #666666;
+}
+
+.iconbuttoncreate:active {
+  background-color: #404040;
+}
+
+.button_textcreate,
+.button_iconcreate {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  color: white;
+  height: 100%;
+}
+
+.button_iconcreate {
+  font-size: 1.5em;
+  background-color: #333333;
+}
+
+.content table,
+th,
+td {
+  border: solid 7px;
+  border-collapse: collapse;
+  padding: 10px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
+.content th a {
+  text-decoration: none;
+}
+
+.content table {
+  width: 80%;
+  background-color: black;
+  font-size: 15px;
+}
+
+.content tbody {
+  font-family: monospace;
+}
+
+thead {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+  background-color: #9c9a9e;
+  font-family: Arial, sans-serif;
+  margin: 10px;
+  color: black;
+}
+
+th,
+td {
+  padding: 16px;
+  text-align: left;
+  border-collapse: collapse;
+  border-color: transparent;
+}
+
+tbody tr {
+  transition: background-color 0.3s ease;
+  background-color: #252525;
+}
+
+tbody tr:hover {
+  background-color: #545454;
+  color: white;
+  padding: 0;
+}
+
+.subtext {
+  display: block;
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 5px;
+}
+
+.highlight {
+  color: #facc15;
+  /* Tailwind amber-400 */
+}
+
+.always-highlight {
+  color: wheat;
+}
+
+.details-link {
+  color: #facc15;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.search-bar {
+  float: right;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.search-bar input[type=text] {
+  padding: 6px;
+  margin-top: 8px;
+  font-size: 17px;
+  border: 1px solid black;
+}
+
+.search-bar button {
+  padding: 6px 10px;
+  margin-top: 8px;
+  background: #ddd;
+  font-size: 17px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  background-color: #facc15;
+}
+
+/* Product Form Styles */
+.product-form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.product-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.product-form input[type="text"],
+.product-form input[type="number"],
+.product-form textarea,
+.product-form select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.product-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.product-form button[type="submit"] {
+  background-color: #000;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+.product-form button[type="submit"]:hover {
+  background-color: #333;
+}
+
+/* Size and Stock Input Styles */
+#sizeContainer {
+  margin: 15px 0;
+}
+
+.size-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px;
+  background: #f8f8f8;
+  border-radius: 4px;
+}
+
+.size-row label {
+  margin: 0 10px;
+  min-width: 30px;
+}
+
+.size-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.size-row input[type="number"] {
+  width: 100px;
+  padding: 5px;
+  margin-left: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Error Message Styles */
+.error {
+  background-color: #ffe6e6;
+  border: 1px solid #ff9999;
+  color: #cc0000;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.error h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.error ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.error li {
+  margin-bottom: 5px;
+}

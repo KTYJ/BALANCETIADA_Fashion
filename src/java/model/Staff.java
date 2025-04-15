@@ -91,9 +91,9 @@ public class Staff implements Serializable {
         return psw;
     }
 
-    public void setPsw(String psw) {
-        this.psw = psw;
-    }
+    //public void setPsw(String psw) {
+    //    this.psw = psw;
+    //}
 
     public String getType() {
         return type;

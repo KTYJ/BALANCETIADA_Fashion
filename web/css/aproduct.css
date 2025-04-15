@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Special+Gothic+Condensed+One&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    font-family: "Open Sans",sans-serif;
+}
+
+body{
+    display:flex;
+    background-image: url('../media/adminbg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+
+#aName{
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.wrapper strong{
+    font-size: 3vh;
+}
+
+.sidebar{
+    position: sticky;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    height: 100vh;
+    padding: 0 1.7em;
+    overflow: hidden;
+    transition: all 0.5 linear;
+    background: rgb(255, 255, 255);
+}
+
+.logo{
+    text-align: center;
+    padding: 10px;
+    font-family: 'Special Gothic Condensed One', sans-serif;
+    font-size: 3vh;
+}
+
+.menu{
+    height: 80%;
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+
+.menu li{
+    padding: 1rem;
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+}
+
+.menu li:hover,
+.active{
+    background-color: #e0e0e058;
+}
+
+.menu a{
+    color:#000000;
+    font-size: 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5em;
+}
+
+.menu a span{
+    overflow: hidden;
+}
+
+.menu a i{
+    font-size: 1.2rem;
+}
+
+.content{
+    position:relative;
+    width: 100%;
+    padding: 1rem;
+}
+
+.main-content{
+    padding-top: 50px;
+}
+.wrapper{
+    text-align: center;
+    background-color: rgb(236, 236, 236);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgb(0, 0, 0);
+    padding: 20px;
+    box-shadow: 20px 20px 20px rgb(209, 209, 209);
+}
+
+
+
+ /* Form Styling */
+ .product-form {
+    background: white;
+    padding: 50px 80px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.product-form label {
+    display: inline-block;
+    width: 120px;
+    margin-bottom: 10px;    
+}
+#name,#description{
+    display: inline-block;
+    width: 100%;
+}
+.product-form input[type="text"],
+.product-form input[type="number"],
+
+.product-form textarea,
+.product-form select {
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+
+
+.product-form button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+}
+
+.product-form button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Style for the checkbox container */
+.product-form div {
+    margin-bottom: 10px; /* Space between checkbox options */
+}
+
+/* Style for the checkbox input */
+.product-form input[type="checkbox"] {
+    margin-right: 5px; /* Space between checkbox and label */
+    transform: scale(1.2); /* Increase size of the checkbox */
+}
+
+/* Style for the label */
+.product-form label {
+    font-size: 16px; /* Increase font size for better readability */
+    color: #333; /* Darker color for better contrast */
+}
+
+.size-row input[type="number"] {
+    margin-left: 10px;
+    width: 100px;
+}
+
+.size-row {
+    margin-bottom: 10px;
+}
+
+
+
+

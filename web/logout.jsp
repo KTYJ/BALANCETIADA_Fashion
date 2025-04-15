@@ -55,7 +55,7 @@
     </style>
 </head>
 <body>
-    <a href="home.html"><img src="media/logout.jpg" alt="Logout Icon"></a>
+    <a href="home.jsp.html"><img src="media/logout.jpg" alt="Logout Icon"></a>
     <div class="message">
         <h1>All done! Enjoy your day!</h1>
         <p>A bit more to do?</p>

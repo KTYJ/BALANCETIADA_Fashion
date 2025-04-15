@@ -6,12 +6,16 @@ package domain;
 
 import model.Staff;
 import java.io.IOException;
+import java.util.ArrayList;
+import da.StaffDA;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.RequestDispatcher;
-
+import jakarta.servlet.annotation.WebServlet;
+import java.sql.SQLException;
 
 //may need to delete ltr
 import java.sql.*;
@@ -20,71 +24,93 @@ import java.sql.*;
  *
  * @author KTYJ
  */
+
+@WebServlet("/ALogin")
+
 public class ALogin extends HttpServlet {
-
-    private Connection con;
-    private String query;
-    private PreparedStatement stmt;
-    private ResultSet rs;
-
-    private void createCon() {
-        try {
-            con = DriverManager.getConnection("jdbc:derby://localhost:1527/btdb", "nbuser", "nbuser");
-        } catch (SQLException ex) {
-            System.out.print(ex.getMessage());
-        }
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        StaffDA staffDA = null;
 
-        createCon();
-
-        String staffid = request.getParameter("id");
-        String psw = request.getParameter("psw");
-        String hashedPsw = Toolkit.hashPsw(psw);
-
-        Staff staff = new Staff(staffid, hashedPsw);
         try {
-            stmt = con.prepareStatement("SELECT * FROM NBUSER.STAFF WHERE staffid = ? AND psw = ?"); 
+            // Debug logging
+            System.out.println("Login attempt started");
             
+            // Get form parameters
+            String staffid = request.getParameter("id");
+            String psw = request.getParameter("psw");
             
-            stmt.setString(1, staff.getStaffid());
-            stmt.setString(2, staff.getPsw());
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-
-                String name = rs.getString("name");
-                String type = rs.getString("type");
-                String email = rs.getString("email");
-
-                staff.setName(name);
-                staff.setType(type);
-                staff.setEmail(email);
-                    
-                request.setAttribute("staff", staff);
-
-                //redirect to custList.jsp, but it's not working yet!
-                RequestDispatcher dispatcher = request.getRequestDispatcher("custList.html");
-                dispatcher.forward(request, response);
-                
-                
-                
-
-                
-            } else {                // Credentials invalid, show error message
-                request.setAttribute("errorMessage", "LOGIN FAILED, CHECK YOUR INFO.");
-                request.getRequestDispatcher("alogin.jsp").forward(request, response); // Forward back to login page
+            System.out.println("Staff ID received: " + (staffid != null ? staffid : "null"));
+            System.out.println("Password received: " + (psw != null ? "not null" : "null"));
+            
+            // Validate parameters
+            if (staffid == null || staffid.trim().isEmpty() || psw == null || psw.trim().isEmpty()) {
+                request.setAttribute("errorMessage", "Please enter both ID and password");
+                request.getRequestDispatcher("alogin.jsp").forward(request, response);
+                return;
             }
 
-        } catch (SQLException ex) {
-            request.setAttribute("errorMessage", "INTERNAL ERROR: " + ex.getMessage());
-            request.getRequestDispatcher("alogin.jsp").forward(request, response); // Forward back to login page
-        }
+            // Hash password
+            String hashedPsw = null;
+            try {
+                hashedPsw = Toolkit.hashPsw(psw);
+                System.out.println("Password hashed successfully");
+            } catch (Exception e) {
+                System.out.println("Error hashing password: " + e.getMessage());
+                throw e;
+            }
 
+            // Create database connection
+            try {
+                staffDA = new StaffDA();
+                System.out.println("Database connection established");
+            } catch (SQLException e) {
+                System.out.println("Database connection error: " + e.getMessage());
+                throw e;
+            }
+
+            // Find staff
+            Staff staff = null;
+            try {
+                staff = staffDA.findbyIdAndPassword(staffid, hashedPsw);
+                System.out.println("Staff search completed. Result: " + (staff != null ? "found" : "not found"));
+            } catch (SQLException e) {
+                System.out.println("Error searching for staff: " + e.getMessage());
+                throw e;
+            }
+
+            if (staff != null) {
+                // Staff found, set session attributes
+                HttpSession session = request.getSession();
+                session.setAttribute("staff", staff);
+                
+                // Close connection before redirect
+                if (staffDA != null) {
+                    staffDA.closeConnection();
+                }
+                
+                response.sendRedirect("prodList.jsp");
+            } else {
+                request.setAttribute("errorMessage", "Invalid ID or password.");
+                request.getRequestDispatcher("alogin.jsp").forward(request, response);
+            }
+        } catch (Exception ex) {
+            // Log the full exception details
+            System.out.println("Error in login process:");
+            ex.printStackTrace();
+            
+            // Send a user-friendly error message
+            request.setAttribute("errorMessage", "System error occurred. Please try again later. Error: " + ex.getMessage());
+            request.getRequestDispatcher("alogin.jsp").forward(request, response);
+        } finally {
+            // Always close the connection in finally block
+            if (staffDA != null) {
+                staffDA.closeConnection();
+            }
+        }
     }
 
     /**
