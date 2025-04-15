@@ -34,7 +34,7 @@ function saveChanges() {
         const uid = document.getElementById('modal-uid').value;
         const size = document.getElementById('modal-size').value;
         const qty = document.getElementById('modal-quantity').value;
-        const custId = '<%= request.getParameter("custid") %>';
+        const custId = document.getElementById('customer-id').value;
 
         const form = document.createElement('form');
         form.method = 'POST';
