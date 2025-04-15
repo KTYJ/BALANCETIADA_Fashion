@@ -13,61 +13,62 @@
 <%@ page import="java.sql.SQLException" %>
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
-<%  
+<%
 
     // Initialize variables
     Staff staffToEdit = null;
     String errorMessage = "";
     String pageTitle = "Error";
     String headerText = "Error";
-    
+
     // Get the staff ID to edit from the request parameter
     String editStaffId = request.getParameter("staffId");
 
-    if(editStaffId != null){
-    
-    // Check if the staff object is set in the request
-    if (staff == null || staff.getName() == null) {
-        response.sendRedirect("home.jsp");
-        return;
+    //kick unauthorised user
+    if (!staff.isManager()) {
+            request.setAttribute("error", "403 Access Denied");
+            request.getRequestDispatcher("err403.jsp").forward(request, response);
+            //response.sendRedirect("prodList.jsp");
+
     }
-
-    // Check if user is manager
-    if (!"manager".equalsIgnoreCase(staff.getType())) {
-        response.sendRedirect("home.jsp");
-        return;
-    }
-
-
     
-    //Debugging
-    System.out.println("editStaffId: " + editStaffId);
-    System.out.println("staff: " + staff);
+    if (editStaffId != null) {
 
-    if (editStaffId == null || editStaffId.trim().isEmpty()) {
-        errorMessage = "No staff ID provided.";
-    } else {
-        try {
-            StaffDA staffDA = new StaffDA();
-            staffToEdit = staffDA.findById(editStaffId);
-            
-                      
-            if (staffToEdit == null) {
-                //Debugging  
-                System.out.println("Staff member not found.");
-                response.sendRedirect("staffList.jsp");
-                
+        // Check if the staff object is set in the request
+        if (staff == null || staff.getName() == null) {
+            //kick staff to 403 if unathorised
 
-                errorMessage = "Staff member not found.";
-            } else {
-                pageTitle = "Edit Staff Member";
-                headerText = "Editing Staff - ID: " + staffToEdit.getStaffid();
-            }
-        } catch (SQLException e) {
-            errorMessage = "Error retrieving staff details: " + e.getMessage();
-            e.printStackTrace();
+            // Redirect to home.html if no user is logged in
+            response.sendRedirect("home.jsp");
+            return; // Stop further processing
         }
-    }
+
+        //Debugging
+        System.out.println("editStaffId: " + editStaffId);
+        System.out.println("staff: " + staff);
+
+        if (editStaffId == null || editStaffId.trim().isEmpty()) {
+            errorMessage = "No staff ID provided.";
+        } else {
+            try {
+                StaffDA staffDA = new StaffDA();
+                staffToEdit = staffDA.findById(editStaffId);
+
+                if (staffToEdit == null) {
+                    //Debugging  
+                    System.out.println("Staff member not found.");
+                    response.sendRedirect("staffList.jsp");
+
+                    errorMessage = "Staff member not found.";
+                } else {
+                    pageTitle = "Edit Staff Member";
+                    headerText = "Editing Staff - ID: " + staffToEdit.getStaffid();
+                }
+            } catch (SQLException e) {
+                errorMessage = "Error retrieving staff details: " + e.getMessage();
+                e.printStackTrace();
+            }
+        }
 %>
 
 <!DOCTYPE html>
@@ -75,7 +76,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><%= pageTitle %></title>
+        <title><%= pageTitle%></title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
@@ -195,8 +196,11 @@
                         <span>Customer List</span>
                     </a>
                 </li>
+                <%
+                    if (staff.getType().equalsIgnoreCase("manager")) {
+                %>
                 <li>
-                    <a href="#">
+                    <a href="reports.jsp">
                         <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Reports</span>
                     </a>
@@ -207,10 +211,19 @@
                         <span>Staff</span>
                     </a>
                 </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Edit My Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="staffOrders.jsp">    
+                        <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Customer Orders</span>
                     </a>
                 </li>
             </ul>
@@ -218,7 +231,7 @@
 
         <div class="content">
             <div class="wrapper">
-                <strong><%= headerText %></strong>
+                <strong><%= headerText%></strong>
             </div>
             <div class="main-content">
                 <div class="container">
@@ -226,13 +239,13 @@
                         <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
                     </div>
 
-                    <% 
-                    if (!errorMessage.isEmpty()) { %>
+                    <%
+                        if (!errorMessage.isEmpty()) {%>
                     <div class="error">
                         <p>Error</p>
-                        <p><%= errorMessage %></p>
+                        <p><%= errorMessage%></p>
                     </div>
-                    <% }else if (staffToEdit != null) { %>
+                    <% } else if (staffToEdit != null) { %>
 
                     <%
                         if (request.getMethod().equals("POST")) {
@@ -257,10 +270,9 @@
                             // Validate email
                             if (email == null || email.trim().isEmpty()) {
                                 errors.add("Email is required.");
-                            }else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                            } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
                                 errors.add("Invalid email format.");
-                            }
-                            else {
+                            } else {
                                 try {
                                     // Check if email already exists for other staff members
                                     StaffDA staffDA = new StaffDA();
@@ -293,7 +305,7 @@
                         <ul>
                             <% for (String error : errors) {%>
                             <li><%= error%></li>
-                            <% } %>
+                                <% } %>
                         </ul>
                     </div>
                     <% } else {
@@ -302,28 +314,28 @@
                             Staff updatedStaff = new Staff(staffId, name, email, finalPassword, "staff");
                             StaffDA staffDA = new StaffDA();
                             staffDA.updateStaff(updatedStaff);
-                            
+
                             request.setAttribute("updateSuccess", true);
                     %>
                     <div class="success">
                         <h3>Staff Information updated successfully!</h3>
                     </div>
                     <%
-                        } catch (SQLException e) {
+                    } catch (SQLException e) {
                     %>
                     <div class="error">
                         <h3>Error updating staff member:</h3>
-                        <p><%= e.getMessage() %></p>
+                        <p><%= e.getMessage()%></p>
                     </div>
-                    
-                    <%      }
-                        }
-                    }
-                }
 
-                // Only show the form if update was not successful
-                if (request.getAttribute("updateSuccess") == null) {
-                %>
+                    <%      }
+                                }
+                            }
+                        }
+
+                        // Only show the form if update was not successful
+                        if (request.getAttribute("updateSuccess") == null) {
+                    %>
                     <form id="editStaffForm" method="POST" onsubmit="return confirm('Are you sure you want to update THIS INFORMATION?')">
                         <input type="hidden" name="staffId" value="<%= staffToEdit.getStaffid()%>">
 
@@ -414,6 +426,6 @@
     </body>
 </html>
 <% } else {
-    // No staff ID provided
-    response.sendRedirect("staffList.jsp");
-} %> 
+        // No staff ID provided
+        response.sendRedirect("staffList.jsp");
+    }%> 

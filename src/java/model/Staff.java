@@ -122,6 +122,14 @@ public class Staff implements Serializable {
         // Compare the staffid and psw
         return this.staffid.equals(otherStaff.staffid) && this.psw.equals(otherStaff.psw);
     }
+    
+    public Boolean isStaff(){
+        return this.getType().equalsIgnoreCase("staff");
+    }
+    
+    public Boolean isManager(){
+        return this.getType().equalsIgnoreCase("manager");
+    }
 
     public String toString() {
         return "Staff [staffid=" + staffid + ", name=" + name + ", email=" + email + ", psw=" + psw + ", type=" + type + "]";

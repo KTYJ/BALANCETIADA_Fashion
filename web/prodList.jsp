@@ -62,6 +62,7 @@
                 display: inline-block;
                 background-color:rgb(0, 0, 0);
                 color: white;
+                font-size: 12px;
                 padding: 10px 20px;
                 border-radius: 5px;
             }
@@ -295,7 +296,15 @@
                             <td><%= product.getSold()%></td>
                             <td class="details-link">
                                 <a class="edit-btn" href="editProduct.jsp?sku=<%= product.getSku()%>">Edit Details</a>
-                                <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>">Delete</a>
+                                
+                                <%
+                                    //only manager can delete
+                                    if(staff.getType().equalsIgnoreCase("manager")){
+                                    
+                                    %>
+                                        <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>">Delete</a>
+                                    <%}
+                                %>
                                 <a class="restock-btn" href="restock.jsp?sku=<%= product.getSku()%>">Restock</a>
                             </td>
                         </tr>

@@ -3,6 +3,8 @@
     Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
+
+<%-- MANAGER ONLY PAGE V--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
@@ -14,10 +16,18 @@
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
+        
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
         return; // Stop further processing
+    } else if (!staff.isManager()) {
+        request.setAttribute("error", "403 Access Denied");
+        request.getRequestDispatcher("err403.jsp").forward(request, response);
+        //response.sendRedirect("prodList.jsp");
+
     }
+
+    System.out.print(staff.isManager());
 
     // Initialize StaffDA and get all staff members
     StaffDA staffDA = new StaffDA();
@@ -160,6 +170,9 @@
                         <span>Customer List</span>
                     </a>
                 </li>
+                <%
+                    if (staff.getType().equalsIgnoreCase("manager")) {
+                %>
                 <li>
                     <a href="reports.jsp">
                         <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -172,10 +185,19 @@
                         <span>Staff</span>
                     </a>
                 </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Edit My Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="staffOrders.jsp">    
+                        <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Customer Orders</span>
                     </a>
                 </li>
             </ul>
@@ -209,11 +231,10 @@
                     } else {
                         if (search != null && !search.isEmpty()) {
                             out.println("<p style='text-align: center;'>Showing " + visibleCount + " results for \"" + search + "\". <br><a href='addStaff.jsp'>+ Add Staff</a></p>");
-                        }
-                        else{
+                        } else {
                             out.println("<p style='text-align: center;'>Showing " + visibleCount + " results. <br><a href='addStaff.jsp'>+ Add Staff</a></p>");
                         }
-                    
+
                 %>
                 <table>
                     <thead>
@@ -228,10 +249,10 @@
                     <tbody>
                         <% for (Staff s : staffList) {%>
 
-                            <!-- Display staff members except the current staff member -->
-                            <% if (!s.getStaffid().equals(staff.getStaffid())) { 
+                        <!-- Display staff members except the current staff member -->
+                        <% if (!s.getStaffid().equals(staff.getStaffid())) {
                                 visibleCount++;
-                            %>
+                        %>
                         <tr>
                             <td class="always-highlight"><%= s.getStaffid()%></td>
                             <td class="always-highlight"><%= s.getName()%></td>

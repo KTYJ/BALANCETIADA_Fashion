@@ -14,9 +14,18 @@
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
+        //kick staff to 403 if unathorised
+
+        // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
-        return;
+        return; // Stop further processing
     }
+    else if(!staff.isManager()){
+            request.setAttribute("error", "403 Access Denied");
+            request.getRequestDispatcher("err403.jsp").forward(request, response);
+            //response.sendRedirect("prodList.jsp");
+    
+   }
 
     // Get the product SKU to delete from the request parameter
     String deleteProductSku = request.getParameter("sku");
@@ -155,22 +164,34 @@
                         <span>Customer List</span>
                     </a>
                 </li>
+                <%
+                        if(staff.getType().equalsIgnoreCase("manager")){
+                %>
                 <li>
                     <a href="reports.jsp">
                         <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Reports</span>
                     </a>
                 </li>
-                <li>
+                     <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                </li>
+                    </li>
+                    <%
+                        }
+                    %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Edit My Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="staffOrders.jsp">    
+                        <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Customer Orders</span>
                     </a>
                 </li>
             </ul>

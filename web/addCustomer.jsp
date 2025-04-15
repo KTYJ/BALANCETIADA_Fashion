@@ -17,10 +17,18 @@
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
+        //kick staff to 403 if unathorised
+
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
         return; // Stop further processing
     }
+    else if(!staff.isManager()){
+            request.setAttribute("error", "403 Access Denied");
+            request.getRequestDispatcher("err403.jsp").forward(request, response);
+            //response.sendRedirect("prodList.jsp");
+    
+   }
 %>
 
 <!DOCTYPE html>
@@ -159,6 +167,12 @@
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Edit My Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="staffOrders.jsp">    
+                        <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Customer Orders</span>
                     </a>
                 </li>
             </ul>

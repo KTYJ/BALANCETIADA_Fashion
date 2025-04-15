@@ -162,22 +162,34 @@
                         <span>Customer List</span>
                     </a>
                 </li>
+                <%
+                        if(staff.getType().equalsIgnoreCase("manager")){
+                %>
                 <li>
                     <a href="reports.jsp">
                         <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Reports</span>
                     </a>
                 </li>
-                <li>
+                     <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                </li>
+                    </li>
+                    <%
+                        }
+                    %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Edit My Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="staffOrders.jsp">    
+                        <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Customer Orders</span>
                     </a>
                 </li>
             </ul>
