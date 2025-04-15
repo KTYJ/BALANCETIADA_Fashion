@@ -152,6 +152,7 @@
                 <span class="modal-close" onclick="closeModal()">&times;</span>
                 <div class="modal-body">
                     <input type="hidden" id="modal-uid" />
+                    <input type="hidden" id="customer-id" value="<%= request.getParameter("custid") %>" />
                     <!-- Top Panel -->
                     <div class="modal-top-panel">
                         <div class="modal-img">
@@ -237,6 +238,35 @@
                             document.getElementById("shippingFee").innerText = (shippingFee === 0 ? "FREE" : "RM " + shippingFee.toFixed(2));
                             let finalTotal = totalItemPrice + shippingFee;
                             document.getElementById("finalTotal").innerHTML = "<b>RM " + finalTotal.toFixed(2) + "</b>";
+                        }
+
+                        function saveChanges() {
+                            const uid = document.getElementById('modal-uid').value;
+                            const size = document.getElementById('modal-size').value;
+                            const qty = document.getElementById('modal-quantity').value;
+                            const custId = document.getElementById('customer-id').value;
+
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = 'updateCartItem';
+
+                            const inputs = [
+                                { name: 'uid', value: uid },
+                                { name: 'size', value: size },
+                                { name: 'qty', value: qty },
+                                { name: 'custid', value: custId }
+                            ];
+
+                            inputs.forEach(i => {
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = i.name;
+                                input.value = i.value;
+                                form.appendChild(input);
+                            });
+
+                            document.body.appendChild(form);
+                            form.submit();
                         }
         </script>
 

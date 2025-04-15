@@ -8,13 +8,14 @@ const modalQuantity = document.getElementById('modal-quantity');
 document.querySelectorAll('.edit-button').forEach(btn => {
     btn.addEventListener('click', () => {
         const item = btn.closest('.main');
-
+        const uid = item.querySelector('input[type="checkbox"]').value;
         const img = item.getAttribute('data-img');
         const name = item.getAttribute('data-name');
         const size = item.getAttribute('data-size');
         const qty = item.getAttribute('data-qty');
         const price = item.getAttribute('data-price');
 
+        document.getElementById('modal-uid').value = uid;
         modalImg.src = img;
         modalTitle.innerText = name;
         modalPrice.innerText = "RM " + parseFloat(price).toFixed(2);
