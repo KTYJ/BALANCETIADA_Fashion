@@ -80,7 +80,27 @@
                 background-color: rgb(126, 0, 0);
                 color: rgb(0, 0, 0);
             }
+            .restock-btn{
+                display: inline-block;
+                background-color:rgb(0, 102, 255);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+            }
+            .restock-btn:hover{
+                background-color: rgb(0, 4, 255);
+                color: rgb(255, 255, 255);
+            }
 
+            th{
+                font-family: 'Open Sans', sans-serif;
+                font-weight: 600;
+            }
+
+            td.img{
+                text-align: center;
+            }
+            
             td a{
                 text-align: center;
                 width: 100%;
@@ -103,6 +123,14 @@
             }
 
         </style>
+        <script>
+            // Logout function
+            function logOut() {
+                if (confirm("Are you sure want to logout?")) {
+                    window.location.href = "logout.jsp";
+                }
+            }
+        </script>
     </head>
 
     <body>
@@ -127,20 +155,10 @@
                     <br />
 
                     Welcome,
-
-                    <!--Name-->
                     <span id="aName"><%= staff.getName()%></span>
                     <br /><br />
 
-
                     <i class="fa fa-sign-out" aria-hidden="true" onclick="logOut()" style="cursor: pointer;"></i>
-                    <script>
-                        function logOut() {
-                            if (confirm("Are you sure want to logout?")) {
-                                window.location.href = "logout.jsp";
-                            }
-                        }
-                    </script>
                 </div>
                 <li>
                     <a href="prodList.jsp">
@@ -154,16 +172,34 @@
                         <span>Customer List</span>
                     </a>
                 </li>
+                <%
+                        if(staff.getType().equalsIgnoreCase("manager")){
+                %>
                 <li>
-                    <a href="report.jsp">
+                    <a href="reports.jsp">
                         <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Reports</span>
                     </a>
                 </li>
-                <li>
+                     <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
+                    </a>
+                    </li>
+                    <%
+                        }
+                    %>
+                <li>
+                    <a href="editStaffOwn.jsp">    
+                        <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Edit My Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="staffOrders.jsp">    
+                        <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Customer Orders</span>
                     </a>
                 </li>
             </ul>
@@ -199,8 +235,7 @@
 
                         if (search != null && !search.isEmpty()) {
                             out.println("<p style='text-align: center;'>Showing " + rsCount + " results for \"" + search + "\". <br><a href='addProduct.jsp'>+ Add Product</a></p>");
-                        }
-                        else{
+                        } else {
                             out.println("<p style='text-align: center;'>Showing " + rsCount + " results. <br><a href='addProduct.jsp'>+ Add Product</a></p>");
                         }
                     %>
@@ -215,7 +250,7 @@
                         <tr>
                             <th>SKU</th>
                             <th>Name</th>
-                            <th>File</th>
+                            <th>Image</th>
                             <th>Stock per Size</th>
                             <th>Description</th>
                             <th>Category</th>
@@ -227,10 +262,11 @@
                     <tbody>
                         <% for (Product product : products) {%>
                         <tr>
-                            <td class="always-highlight"><%= product.getSku()%></td>
+                            <td class="always-highlight"><%= product.getSku().toUpperCase()%></td>
                             <td class="always-highlight"><%= product.getName()%></td>
-                            <td>
+                            <td class="img">
                                 <img src="upload/<%= product.getFile()%>" alt="Product Image" style="width: 100px; height: 100px;">
+                                <a class="edit-btn" href="editProdImg.jsp?sku=<%= product.getSku()%>">Swap Photo</a>
                             </td>
                             <td>
                                 <%
@@ -244,7 +280,13 @@
                                 %>
                                 <%= stockDisplay.toString()%></td>
                             <td>
-                                <%= product.getDescription()%>
+                                <%
+                                    String description = product.getDescription();
+                                    if (description.length() > 20) {
+                                        description = description.substring(0, 20) + "...";
+                                    }
+                                %>
+                                <%= description %>
                             </td>
                             <td><%= product.getCatName()%></td>
 
@@ -252,8 +294,9 @@
 
                             <td><%= product.getSold()%></td>
                             <td class="details-link">
-                                <a class="edit-btn" href="editProduct.jsp?sku=<%= product.getSku()%>">Edit</a>
-                                <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                                <a class="edit-btn" href="editProduct.jsp?sku=<%= product.getSku()%>">Edit Details</a>
+                                <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>">Delete</a>
+                                <a class="restock-btn" href="restock.jsp?sku=<%= product.getSku()%>">Restock</a>
                             </td>
                         </tr>
                         <% }%>

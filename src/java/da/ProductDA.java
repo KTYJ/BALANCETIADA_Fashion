@@ -45,10 +45,12 @@ public class ProductDA {
     }
 
     public ArrayList<Product> srcProduct(String search) throws SQLException {
-        String sql = "SELECT * FROM NBUSER.PRODUCT WHERE lower(name) LIKE ? OR lower(description) LIKE ?";
+        String sql = "SELECT * FROM NBUSER.PRODUCT WHERE lower(name) LIKE ? OR lower(description) LIKE ? OR lower(sku) LIKE ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, "%" + search + "%");
             stmt.setString(2, "%" + search + "%");
+            stmt.setString(3, "%" + search + "%");
+            
             ResultSet rs = stmt.executeQuery();
             ArrayList<Product> productList = new ArrayList<>();
             while (rs.next()) {
@@ -127,6 +129,24 @@ public class ProductDA {
 
             //SKU is fixed, cannot be changed
             stmt.setString(9, product.getSku());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void updateProductStock(String sku, int stock) throws SQLException {
+        String sql = "UPDATE product SET stock = ? WHERE sku = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, stock);
+            stmt.setString(2, sku);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void updateFile(String prodSku   , String file) throws SQLException {
+        String sql = "UPDATE product SET file = ? WHERE sku = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, file);
+            stmt.setString(2, prodSku);
             stmt.executeUpdate();
         }
     }

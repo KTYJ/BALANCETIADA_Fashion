@@ -31,6 +31,14 @@
             color: transparent;
         }
     </style>
+    <script>
+            // Logout function
+            function logOut() {
+                if (confirm("Are you sure want to logout?")) {
+                    window.location.href = "logout.jsp";
+                }
+            }
+        </script>
 </head>
 
 <body>
@@ -38,64 +46,60 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     <div class="sidebar">
-        <ul class="menu">
-            <div class="logo">
-                BALANCETIADA<br />
-                <span id="admintitle"><%= staff.getType().toUpperCase()%></span>
-            </div>
-            <div align="center">
-                <br />
-                <div class="date">
-                    <span id="clock" class="time">10:30:45</span>
-                    <br />
-                    <span id="date1" class="time">Monday, 15 January</span>
+            <ul class="menu">
+                <div class="logo">
+                    BALANCETIADA<br />
+                    <span id="admintitle"><%= staff.getType().toUpperCase()%></span>
                 </div>
-                <br />
-                <img src="media/staff.png" width="50vh" height="50vh">
-                <br />
+                <div align="center">
+                    <br />
+                    <div class="date">
+                        <span id="clock" class="time">10:30:45</span>
+                        <br />
+                        <span id="date1" class="time">Monday, 15 January</span>
+                    </div>
+                    <br />
+                    <img src="media/staff.png" width="50vh" height="50vh">
+                    <br />
 
-                Welcome,
+                    Welcome,
+                    <span id="aName"><%= staff.getName()%></span>
+                    <br /><br />
 
-                <!--Name-->
-                <span id="aName"><%= staff.getName() %></span>
-                <br /><br />
-
-
-                <i class="fa fa-sign-out" aria-hidden="true" onclick="logOut()" style="cursor: pointer;"></i>
-                <script>
-                    function logOut() {
-                        if (confirm("Are you sure want to logout?")) {
-                            window.location.href = "logout.jsp";
-                        }
-                    }
-                </script>
-            </div>
-            <li>
-                <a href="prodList.jsp">
-                    <ion-icon name="shirt-outline" style="font-size: 1.2rem;"></ion-icon>
-                    <span>Products</span>
-                </a>
-            </li>
-            <li>
-                <a href="custList.jsp">
-                    <ion-icon name="people-outline" style="font-size: 1.5rem;"></ion-icon>
-                    <span>Customer List</span>
-                </a>
-            </li>
-            <li>
-                <a href="report.jsp">
-                    <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
-                    <span>Reports</span>
-                </a>
-            </li>
-            <li>
-                <a href="staffList.jsp">
-                    <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
-                    <span>Staff</span>
-                </a>
-            </li>
-        </ul>
-    </div>
+                    <i class="fa fa-sign-out" aria-hidden="true" onclick="logOut()" style="cursor: pointer;"></i>
+                </div>
+                <li>
+                    <a href="prodList.jsp">
+                        <ion-icon name="shirt-outline" style="font-size: 1.2rem;"></ion-icon>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="custList.jsp">
+                        <ion-icon name="people-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Customer List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.jsp">
+                        <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="staffList.jsp">
+                        <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Staff</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="editStaffOwn.jsp">    
+                        <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Edit My Account</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     <div class="content">
         <div class="wrapper">
             <strong>Customer List</strong>

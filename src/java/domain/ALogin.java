@@ -37,14 +37,13 @@ public class ALogin extends HttpServlet {
 
         try {
             // Debug logging
-            System.out.println("Login attempt started");
             
             // Get form parameters
             String staffid = request.getParameter("id");
             String psw = request.getParameter("psw");
             
-            System.out.println("Staff ID received: " + (staffid != null ? staffid : "null"));
-            System.out.println("Password received: " + (psw != null ? "not null" : "null"));
+            //System.out.println("Staff ID received: " + (staffid != null ? staffid : "null"));
+            //System.out.println("Password received: " + (psw != null ? "not null" : "null"));
             
             // Validate parameters
             if (staffid == null || staffid.trim().isEmpty() || psw == null || psw.trim().isEmpty()) {
@@ -103,7 +102,7 @@ public class ALogin extends HttpServlet {
             ex.printStackTrace();
             
             // Send a user-friendly error message
-            request.setAttribute("errorMessage", "System error occurred. Please try again later. Error: " + ex.getMessage());
+            request.setAttribute("errorMessage", "System error occurred: " + ex.getMessage());
             request.getRequestDispatcher("alogin.jsp").forward(request, response);
         } finally {
             // Always close the connection in finally block

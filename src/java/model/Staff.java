@@ -91,9 +91,10 @@ public class Staff implements Serializable {
         return psw;
     }
 
-    //public void setPsw(String psw) {
-    //    this.psw = psw;
-    //}
+    //USE WITH CAUTION
+    public void setPsw(String psw) {
+        this.psw = psw;
+    }
 
     public String getType() {
         return type;
@@ -120,5 +121,9 @@ public class Staff implements Serializable {
 
         // Compare the staffid and psw
         return this.staffid.equals(otherStaff.staffid) && this.psw.equals(otherStaff.psw);
+    }
+
+    public String toString() {
+        return "Staff [staffid=" + staffid + ", name=" + name + ", email=" + email + ", psw=" + psw + ", type=" + type + "]";
     }
 }

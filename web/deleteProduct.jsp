@@ -1,43 +1,61 @@
 <%-- 
-    Document   : addStaff
-    Created on : Apr 11, 2025, 12:10:41 PM
+    Document   : deleteProduct
+    Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="domain.Toolkit" %>
-<%@ page import="da.StaffDA" %>
+<%@ page import="da.ProductDA" %>
+<%@ page import="model.Product" %>
 <%@ page import="java.sql.SQLException" %>
 
-
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
-<jsp:useBean id="newStaff" class="model.Staff" scope="request" />
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
-        // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
-        return; // Stop further processing
+        return;
     }
-    if (newStaff == null || newStaff.getName() == null) {
-        response.sendRedirect("addStaff.jsp");
-        return; // Stop further processing
-    }
-%>
 
+    // Get the product SKU to delete from the request parameter
+    String deleteProductSku = request.getParameter("sku");
+    String confirmDelete = request.getParameter("confirm");
+    
+    if (deleteProductSku != null && confirmDelete != null && confirmDelete.equals("true")) {
+        try {
+            ProductDA productDA = new ProductDA();
+            
+            // Check if product exists before deletion    
+            Product productToDelete = productDA.getProduct(deleteProductSku);
+            if (productToDelete == null) {
+                request.setAttribute("error", "Product not found.");
+                request.getRequestDispatcher("prodList.jsp").forward(request, response);
+                return;
+            }
+            
+            // Perform the deletion
+            productDA.deleteProduct(deleteProductSku);
+            response.sendRedirect("prodList.jsp");
+            return;
+            
+        } catch (SQLException e) {
+            request.setAttribute("error", "Error deleting product: " + e.getMessage());
+            request.getRequestDispatcher("prodList.jsp").forward(request, response);
+            return;
+        }
+    } else if (deleteProductSku != null) {
+        // If no confirmation, show confirmation page
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add Staff Member</title>
+        <title>Delete Product</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
-            /* Preserve original form styles */
             .container {
                 max-width: 600px;
                 margin: 20px auto;
@@ -45,74 +63,49 @@
                 padding: 20px;
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                text-align: center;
             }
-            .form-group {
-                margin-bottom: 15px;
-            }
-            label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-            }
-            input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                box-sizing: border-box;
+            .btn-group {
+                margin-top: 20px;
             }
             .btn {
-                background-color: #4CAF50;
-                color: white;
-                padding: 10px 15px;
+                padding: 10px 20px;
+                margin: 0 10px;
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 16px;
-                width: 100%;
             }
-            .btn:hover {
-                background-color: #45a049;
+            .btn-danger {
+                background-color: #dc3545;
+                color: white;
             }
-            .password-requirements {
-                font-size: 0.8em;
-                color: #666;
-                margin-top: 5px;
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
             }
-
-            /* Additional styles for error messages */
-            .error {
-                border: 1px solid red;
-                padding: 10px;
-                border-radius: 5px;
-                background-color: rgb(255, 196, 196);
-                margin-bottom: 20px;
-            }
-            .error ul {
-                list-style-position: inside;
-                margin: 0;
-                padding: 0;
-            }
-
-            .table{
-                width: 80vh;
-                font-size: 1.2em;
-                border-collapse: collapse;
+            .warning-text {
+                color: #dc3545;
+                font-weight: bold;
                 margin: 20px 0;
+            }
+            .product-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            .product-table td {
+                padding: 10px;
                 border: 1px solid #ddd;
             }
 
-            .table th{
+            .product-table th {
+                padding: 10px;
+                border: 1px solid #ddd;
                 text-align: right;
-                padding: 8px;
-                margin: 20px 0;
             }
-
-            .table td{
-                text-align: left;
-                padding: 8px;
-                margin: 20px 0;
-            }
+            
         </style>
         <script>
             // Logout function
@@ -184,42 +177,67 @@
         </div>
 
         <div class="content">
-
             <div class="wrapper">
-                <strong>Are these details correct?</strong>
+                <strong id="deleteTitle">Delete Product</strong>
             </div>
             <div class="main-content">
                 <div class="container">
-                    <table class="table">
-                        <tr>
-                            <th>Staff ID:</th>
-                            <td><%= newStaff.getStaffid() + "  "%><span style="font-size: 0.8em; color: #666;">(This cannot be changed!)</span></td>
-                        </tr>
-                        <tr>
-                            <th>Name:</th>
-                            <td><%= newStaff.getName()%></td>
-                        </tr>
-                        <tr>     
-                            <th>Email:</th>
-                            <td><%= newStaff.getEmail()%></td>
-                        </tr>
-                    </table>
-                    <%-- Hidden fields --%>
-                    <form method="POST" action="AddStaffServlet" id="uploadForm">
-                        <input type="hidden" name="staffid" value="<%= newStaff.getStaffid()%>">
-                        <input type="hidden" name="name" value="<%= newStaff.getName()%>">
-                        <input type="hidden" name="email" value="<%= newStaff.getEmail()%>">
-                        <input type="hidden" name="psw" value="<%= newStaff.getPsw()%>">
-                        <input type="hidden" name="type" value="<%= newStaff.getType()%>">
-
-                        <button type="submit" class="btn">Confirm and Add Staff Member</button>
-                    </form>
+                    <%
+                        try {
+                            ProductDA productDA = new ProductDA();
+                            Product productToDelete = productDA.getProduct(deleteProductSku);
+                            if (productToDelete != null) {
+                    %>
+                    <h2>Confirm Deletion</h2>
+                    <p class="warning-text">Are you sure you want to delete the following product?</p>
+                    <div class="product-details" align="center">
+                        <img src="upload/<%= productToDelete.getFile()%>" alt="Product Image" style="width: 100px; height: 100px;">
+                        <table class="product-table"> 
+                            <tr>
+                                <th><strong>Name:</strong></th>
+                                <td><%= productToDelete.getName() %></td>
+                            </tr>
+                            <tr>
+                                <th><strong>SKU:</strong></th>
+                                <td><%= productToDelete.getSku().toUpperCase() %></td>
+                            </tr>
+                            <tr>
+                                <th><strong>Category:</strong></th>
+                                <td><%= productToDelete.getCatName() %></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <form action="deleteProduct.jsp" method="POST" style="display: inline;">
+                            <input type="hidden" name="sku" value="<%= deleteProductSku %>">
+                            <input type="hidden" name="confirm" value="true">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        <button onclick="window.location.href='prodList.jsp'" class="btn btn-secondary">Cancel</button>
+                    </div>
+                    <%
+                            } else {
+                    %>
+                    <p class="warning-text">Product not found.</p>
+                    <button onclick="window.location.href='prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
+                    <script>
+                        document.getElementById("deleteTitle").innerHTML = "Oops...";
+                    </script>
+                    <%
+                            }
+                        } catch (SQLException e) {
+                    %>
+                    <p class="warning-text">Error: <%= e.getMessage() %></p>
+                    <button onclick="window.location.href='prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
+                    <%
+                        }
+                    %>
                 </div>
             </div>
         </div>
 
         <script>
-        
 
             // Clock and date function
             window.onload = startTime();
@@ -250,7 +268,10 @@
                 }
                 return i;
             }
-            a
         </script>
     </body>
 </html>
+<% } else {
+    // No product SKU provided
+    response.sendRedirect("prodList.jsp");
+} %> 

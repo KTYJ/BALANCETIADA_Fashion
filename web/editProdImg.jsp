@@ -1,5 +1,5 @@
 <%-- 
-    Document   : addProduct
+    Document   : editProdImg
     Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
@@ -7,23 +7,31 @@
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
 <%@ page import="model.Product" %>
-<%@ page import="domain.Toolkit" %>
+<%@ page import="da.ProductDA" %>
+<%@ page import="java.sql.SQLException" %>
 
-<%-- The beans: product and staff --%>
-<jsp:useBean id="product" class="model.Product" scope="request" />
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
-
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
-        // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
-        return; // Stop further processing
+        return;
     }
 
+    // Get the product SKU from request parameter
+    String sku = request.getParameter("sku");
+    if (sku == null || sku.trim().isEmpty()) {
+        response.sendRedirect("prodList.jsp");
+        return;
+    }
+
+    // Initialize ProductDA and get the product
+    ProductDA productDA = new ProductDA();
+    Product product = productDA.getProduct(sku);
+    
     if (product == null) {
-        response.sendRedirect("addProduct.jsp");
-        return; // Stop further processing
+        response.sendRedirect("prodList.jsp");
+        return;
     }
 %>
 
@@ -32,7 +40,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BT Staff</title>
+        <title>Edit Product Image</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
@@ -44,10 +52,8 @@
                 background-position: center;
                 margin: 10px 0;
                 transform: translateX(28vh);
-
             }
 
-            /* Form Styling */
             .product-form {
                 background: white;
                 padding: 20px;
@@ -63,10 +69,7 @@
                 margin-bottom: 10px;
             }
 
-            .product-form input[type="text"],
-            .product-form input[type="number"],
-            .product-form textarea,
-            .product-form select {
+            .product-form input[type="file"] {
                 width: 300px;
                 padding: 8px;
                 margin-bottom: 10px;
@@ -74,7 +77,7 @@
                 border-radius: 4px;
             }
 
-            .product-form button[type="submit"], button[name="sbm"] {
+            .product-form button[type="submit"] {
                 background-color: #4CAF50;
                 color: white;
                 padding: 10px 20px;
@@ -84,26 +87,21 @@
                 font-size: 16px;
             }
 
-            .product-form button[type="submit"]:hover, button[name="sbm"]:hover {
+            .product-form button[type="submit"]:hover {
                 background-color: #45a049;
             }
 
-            
-            table.prodTable{
-                width: 80vh;
-                border-collapse: collapse;
-                margin: 20px 0;
-                border: 1px solid #ddd;
-            }
-
-            .prodTable th{
-                text-align: right;
-                padding: 8px;
-            }
-
-            .prodTable td{
-                text-align: left;
-                padding: 8px;
+            button[name="sbm"] {
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+            }   
+            button[name="sbm"]:hover {
+                background-color:rgb(45, 105, 48);
             }
         </style>
         <script>
@@ -178,13 +176,13 @@
 
         <div class="content">
             <div class="wrapper">
-                <strong>Are these details correct? Upload Product Image</strong>
+                <strong>Edit Product Image - <%= product.getSku().toUpperCase()%></strong>
             </div>
             <div class="main-content">
                 <div class="product-form">
                     <div class="product-info" align="center">
-                        <a href="addProduct.jsp" class="button" style="display: block;text-align: left;text-decoration: underline;color: black;"><< Change Product Details</a>
-                        <table class = prodTable>
+                        <a href="prodList.jsp" class="button" style="display: block;text-align: left;text-decoration: underline;color: black;"><< Back to Product List</a>
+                        <table class="prodTable">
                             <tr>
                                 <th>SKU:</th>
                                 <td><%= product.getSku()%></td>
@@ -194,54 +192,20 @@
                                 <td><%= product.getName()%></td>
                             </tr>
                             <tr>
-                                <th>Price :</th>
-                                <td>MYR <%= String.format("%.2f", product.getPrice()) %></td>
-                            </tr>
-                            <tr>
-                                <th>Stock:</th>
-                                <td>
-                                    <%
-                                        StringBuilder stockDisplay = new StringBuilder();
-                                        String[] sizes = product.getSize();
-                                        int[] stocks = product.getStock();
-
-                                        for (int i = 0; i < sizes.length; i++) {
-                                            stockDisplay.append(sizes[i]).append(" - ").append(stocks[i]).append("<br>");
-                                        }
-                                    %>
-                                    <%= stockDisplay.toString() %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Category:</th>
-                                <td><%= product.getCatName()%></td>
-                            </tr>
-                            <tr>
-                                <th style="text-align: left; padding-bottom: 0;">Description:</th>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="text-align: left;"   ><%= product.getDescription()%></td>
+                                <th>Current Image:</th>
+                                <td><img src="upload/<%= product.getFile() %>" width="100px" height="100px"></td>
                             </tr>
                         </table>
                     </div>
                     <div class="filefile-form">
-                    <form method="POST" action="UploadServlet" enctype="multipart/form-data" align="center" id="uploadForm">
+                    <form method="POST" action="UploadServletSimple" enctype="multipart/form-data" align="center" id="uploadForm">
                     
                     <%-- Hidden fields --%>
                     <input type="hidden" name="sku" value="<%= product.getSku() %>">
-                    <input type="hidden" name="name" value="<%= product.getName() %>">
-                    <input type="hidden" name="price" value="<%= product.getPrice() %>">
-                    <input type="hidden" name="cat" value="<%= product.getCatId() %>">
-                    <input type="hidden" name="desc" value="<%= product.getDescription() %>">
-                    <input type="hidden" name="sold" value="<%= product.getSold() %>">
-                    <input type="hidden" name="stock" value="<%= Toolkit.arrayToString(product.getStock()) %>">
-                    <input type="hidden" name="size" value="<%= Toolkit.arrayToString(product.getSize()) %>">
-                    
-
 
                         <div class="file-form" style="margin-bottom: 0;">
                             
-                            <label for="file">File:</label>
+                            <label for="file">New Image:</label>
                             <input type="file" id="file" name="file" required>
                         </div>
                         <br><br>
@@ -279,9 +243,8 @@
 
             function checkTime(i) {
                 if (i < 10) {
-                    i = "0" + i
+                    i = "0" + i;
                 }
-                ;
                 return i;
             }
 
@@ -298,8 +261,8 @@
 
                         reader.onload = function (e) {
                             const img = document.createElement('img');
-                            img.src = e.target.result;
                             img.alt = "Product Image Preview";
+                            img.src = e.target.result;
                             img.style.width = '100px';
                             img.style.margin = '5px';
                             displayFiles.appendChild(img);
@@ -341,11 +304,11 @@
 
             function confirmAndSubmit() {
                 if (validateForm()) {
-                    if (confirm("Are you sure you want to upload these images?")) {
+                    if (confirm("Are you sure you want to upload this image?")) {
                         document.getElementById('uploadForm').submit();
                     }
                 }
             }
         </script>
     </body>
-</html>
+</html> 

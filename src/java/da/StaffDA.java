@@ -49,6 +49,7 @@ public class StaffDA {
             staff = new Staff();
             staff.setStaffid(rs.getString("staffid"));
             staff.setName(rs.getString("name"));
+            staff.setPsw(rs.getString("psw"));
             staff.setEmail(rs.getString("email"));
             staff.setType(rs.getString("type"));
         }
@@ -86,6 +87,7 @@ public class StaffDA {
             staff = new Staff();
             staff.setStaffid(rs.getString("staffid"));
             staff.setName(rs.getString("name"));
+            staff.setPsw(rs.getString("psw"));
             staff.setEmail(rs.getString("email"));
             staff.setType(rs.getString("type"));
         }
@@ -105,6 +107,7 @@ public class StaffDA {
         if (rs.next()) {
             staff = new Staff();
             staff.setStaffid(rs.getString("staffid"));
+            staff.setPsw(rs.getString("psw"));
             staff.setName(rs.getString("name"));
             staff.setEmail(rs.getString("email"));
             staff.setType(rs.getString("type"));
@@ -130,6 +133,28 @@ public class StaffDA {
         }
 
         return staffList;
+    }
+
+    //search staff
+    public ArrayList<Staff> srcStaff(String search) throws SQLException {
+        String sql = "SELECT * FROM NBUSER.STAFF WHERE lower(name) LIKE ? OR lower(email) LIKE ? OR lower(staffid) LIKE ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + search + "%");
+            stmt.setString(2, "%" + search + "%");
+            stmt.setString(3, "%" + search + "%");
+            
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<Staff> staffList = new ArrayList<>();
+            while (rs.next()) {
+                Staff staff = new Staff();
+                staff.setStaffid(rs.getString("staffid"));
+                staff.setName(rs.getString("name"));
+                staff.setEmail(rs.getString("email"));
+                staff.setType(rs.getString("type"));
+                staffList.add(staff);
+            }
+            return staffList;
+        }
     }
 
     public List<Staff> findAllStaff(String type) throws SQLException {
@@ -163,13 +188,14 @@ public class StaffDA {
     }
 
     public void updateStaff(Staff staff) throws SQLException {
-        String updateStr = "UPDATE STAFF SET name = ?, email = ?, type = ? WHERE staffid = ?";
+        String updateStr = "UPDATE STAFF SET name = ?, email = ?, type = ?, psw = ? WHERE staffid = ?";
 
         stmt = connection.prepareStatement(updateStr);
         stmt.setString(1, staff.getName());
         stmt.setString(2, staff.getEmail());
         stmt.setString(3, staff.getType());
-        stmt.setString(4, staff.getStaffid());
+        stmt.setString(4, staff.getPsw());
+        stmt.setString(5, staff.getStaffid());
         stmt.executeUpdate();
     }
 

@@ -1,5 +1,5 @@
 <%-- 
-    Document   : addStaff
+    Document   : editStaff
     Created on : Apr 11, 2025, 12:10:41 PM
     Author     : KTYJ
 --%>
@@ -12,7 +12,6 @@
 <%@ page import="da.StaffDA" %>
 <%@ page import="java.sql.SQLException" %>
 
-
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%
     // Check if the staff object is set in the request
@@ -21,6 +20,9 @@
         response.sendRedirect("home.jsp");
         return; // Stop further processing
     }
+
+    // Use the staff bean directly instead of looking up by ID
+    Staff staffToEdit = staff;
 %>
 
 <!DOCTYPE html>
@@ -28,7 +30,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add Staff Member</title>
+        <title>Edit My Account</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
@@ -69,13 +71,6 @@
             .btn:hover {
                 background-color: #45a049;
             }
-            .password-requirements {
-                font-size: 0.8em;
-                color: #666;
-                margin-top: 5px;
-            }
-
-            /* Additional styles for error messages */
             .error {
                 border: 1px solid red;
                 padding: 10px;
@@ -88,7 +83,33 @@
                 margin: 0;
                 padding: 0;
             }
+            .btn-secondary {
+                background-color: #6c757d;
+                margin: 10px auto;
+                width: 50%;
+            }
+            .success {
+                border: 1px solid green;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: rgb(196, 255, 196);
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            #conpsw {
+                display: none;
+                transition: all 10s ease;
+            }
         </style>
+        <script>
+            // Logout function
+            function logOut() {
+                if (confirm("Are you sure want to logout?")) {
+                    window.location.href = "logout.jsp";
+                }
+            }
+        </script>
     </head>
     <body>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -151,18 +172,26 @@
         </div>
 
         <div class="content">
-
             <div class="wrapper">
-                <strong>Add New Staff Member</strong>
+                <strong>Edit My Account</strong>
             </div>
             <div class="main-content">
                 <div class="container">
+                    <div class="button-container" align="center">
+                        <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
+                    </div>
+
                     <%
                         if (request.getMethod().equals("POST")) {
+                            Boolean newPsw = false;
+                            String hashednewPsw = "";
+                            String staffId = staffToEdit.getStaffid();
+
                             String name = request.getParameter("name");
                             String email = request.getParameter("email");
-                            String psw = null;
-                            String staffId = null;
+                            String psw = request.getParameter("psw");
+                            String npsw = request.getParameter("npsw");
+                            String cpsw = request.getParameter("cpsw");
 
                             ArrayList<String> errors = new ArrayList<>();
 
@@ -176,80 +205,132 @@
                             // Validate email
                             if (email == null || email.trim().isEmpty()) {
                                 errors.add("Email is required.");
+                            } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                                errors.add("Invalid email format.");
                             } else {
                                 try {
-                                    // Check if email already exists
+                                    // Check if email already exists for other staff members
                                     StaffDA staffDA = new StaffDA();
                                     Staff existingStaff = staffDA.findByEmail(email);
-                                    if (existingStaff != null) {
-                                        errors.add("Email already exists.");
+                                    if (existingStaff != null && !existingStaff.getStaffid().equals(staffToEdit.getStaffid())) {
+                                        errors.add("Email already exists for another staff member.");
                                     }
                                 } catch (SQLException e) {
                                     errors.add("Error checking email: " + e.getMessage());
                                 }
                             }
-                            try {
-                                staffId = Toolkit.generateUniqueStaffId();
-                                psw = Toolkit.hashPsw(staffId);
+
+                            // Validate current password
+                            String hashedPsw = "";
+                            if (psw == null || psw.trim().isEmpty()) {
+                                errors.add("Current password is required.");
+                            } else {
+                                hashedPsw = Toolkit.hashPsw(psw);
                                 
-                            } catch (SQLException e) {
-                                errors.add("Error generating staff ID: " + e.getMessage());
+                                try {
+                                    StaffDA staffDA = new StaffDA();
+                                    Staff staffQ = staffDA.findbyIdAndPassword(staffToEdit.getStaffid(), hashedPsw);
+                                    
+                                    if (staffQ == null) {
+                                        errors.add("Current password is incorrect. Try again.");
+                                    }
+                                } catch (SQLException e) {
+                                    errors.add("Error checking current password: " + e.getMessage());
+                                }
                             }
 
+                            // Validate new password if provided
+                            if (npsw != null && !npsw.trim().isEmpty()) {
+                                if (cpsw == null || !npsw.equals(cpsw)) {
+                                    errors.add("New password and confirmation do not match.");
+                                } else {
+                                    try {
+                                        hashednewPsw = Toolkit.hashPsw(npsw);
+                                        newPsw = true;
+                                    } catch (Exception e) {
+                                        errors.add("Error processing new password: " + e.getMessage());
+                                    }
+                                }
+                            }
                     %>
                     <% if (!errors.isEmpty()) { %>
-                    <div class="error" >
+                    <div class="error">
                         <h3>Validation Errors:</h3>
                         <ul>
                             <% for (String error : errors) {%>
                             <li><%= error%></li>
-                                <% } %>
+                            <% } %>
                         </ul>
                     </div>
-
-                    <% } else { %>
+                    <% } else {
+                        try {
+                            String finalPassword = newPsw ? hashednewPsw : staffToEdit.getPsw();
+                            Staff updatedStaff = new Staff(staffId, name, email, finalPassword, staffToEdit.getType());
+                            StaffDA staffDA = new StaffDA();
+                            staffDA.updateStaff(updatedStaff);
+                            
+                            // Update the session bean with new information
+                            staff.setName(name);
+                            staff.setEmail(email);
+                            staff.setPsw(finalPassword);
+                            
+                            request.setAttribute("updateSuccess", true);
+                    %>
                     <div class="success">
-                        <h3>Staff member ok.</h3>
+                        <h3>Account Information updated successfully!</h3>
                     </div>
                     <%
-                                Staff newStaff = new Staff(staffId, name, email, psw, "staff");
-                                request.setAttribute("newStaff", newStaff);
-                                request.getRequestDispatcher("conStaff.jsp").forward(request, response);
+                        } catch (SQLException e) {
+                    %>
+                    <div class="error">
+                        <h3>Error updating account:</h3>
+                        <p><%= e.getMessage() %></p>
+                    </div>
+                    <%      
+                        }
+                    }
+                }
+                
+                // Only show the form if update was not successful
+                if (request.getAttribute("updateSuccess") == null) {
+                %>
+                    <form id="editStaffForm" method="POST" onsubmit="return confirm('Are you sure you want to update your account information?')">
+                        <input type="hidden" name="staffId" value="<%= staffToEdit.getStaffid()%>">
 
-                            }
-
-                        }%>
-                    <form id="addStaffForm"  method="POST">
                         <div class="form-group">
                             <label for="name">Full Name:</label>
-                            <input type="text" id="name" name="name" required>
+                            <input type="text" id="name" name="name" value="<%= staffToEdit.getName()%>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" value="<%= staffToEdit.getEmail()%>" required>
                         </div>
 
                         <div class="form-group">
-                            <label style="font-size: 12px; color: grey; font-weight: normal;">Password will be generated automatically.</label>
+                            <label for="psw">Current Password:</label>
+                            <input type="password" id="curpsw" name="psw" required>
                         </div>
 
-                        <button type="submit" class="btn">Add Staff Member</button>
+                        <div class="form-group">
+                            <label for="npsw">New Password:</label>
+                            <input type="password" id="npsw" name="npsw">
+                            <small>(Leave blank to keep current password)</small>
+                        </div>
+
+                        <div class="form-group" id="conpsw">
+                            <label for="cpsw">Confirm New Password:</label>
+                            <input type="password" id="cpsw" name="cpsw">
+                        </div>
+
+                        <button type="submit" class="btn">Update My Account</button>
                     </form>
+                <% } %>
                 </div>
             </div>
         </div>
 
         <script>
-            // Form 
-
-            // Logout function
-            function logOut() {
-                if (confirm("Are you sure want to logout?")) {
-                    window.location.href = "logout.jsp";
-                }
-            }
-
             // Clock and date function
             window.onload = startTime();
             function startTime() {
@@ -279,7 +360,24 @@
                 }
                 return i;
             }
-            a
+        </script>
+        <script>
+            const newPasswordInput = document.getElementById("npsw");
+            const confirmPassword = document.getElementById("conpsw");
+
+            function toggleConfirmPasswordField() {
+                if (newPasswordInput.value.trim() === "") {
+                    confirmPassword.style.display = "none";
+                } else {
+                    confirmPassword.style.display = "block";
+                }
+            }
+
+            // Initial state
+            toggleConfirmPasswordField();
+
+            // Listen for input changes
+            newPasswordInput.addEventListener("input", toggleConfirmPasswordField);
         </script>
     </body>
-</html>
+</html> 

@@ -123,6 +123,9 @@ public class Toolkit {
 
         return staffId; // Return the unique staff ID
     }
+
+    
+    //public static void main(String[] args) { System.out.println(hashPsw("0000"));}
 }
 
     

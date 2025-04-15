@@ -25,8 +25,9 @@
     try {
         String search = request.getParameter("search");
         if (search != null && !search.isEmpty()) {
-            // For now, get all staff since search is not implemented in StaffDA
-            staffList = staffDA.findAllStaff();
+            // For now, get all staff since search not yet implemented in StaffDA
+            //update: already dunnit
+            staffList = staffDA.srcStaff(search);
         } else {
             staffList = staffDA.findAllStaff();
         }
@@ -69,9 +70,10 @@
                 color: rgb(0, 0, 0);
             }
             .delete-btn{
+                text-align: center;
                 margin-top: 0;
                 display: inline-block;
-                width: 30%;
+                width: 50%;
                 background-color: #dc3545;
                 color: white;
                 padding: 10px 20px;
@@ -97,6 +99,7 @@
             a[href='addStaff.jsp']{
                 color: rgb(0, 128, 255);
                 font-size: 20px;
+                display: block;
                 font-weight: bold;
             }
             a[href='addStaff.jsp']:hover{
@@ -108,6 +111,14 @@
             }
 
         </style>
+        <script>
+            // Logout function
+            function logOut() {
+                if (confirm("Are you sure want to logout?")) {
+                    window.location.href = "logout.jsp";
+                }
+            }
+        </script>
     </head>
 
     <body>
@@ -132,20 +143,10 @@
                     <br />
 
                     Welcome,
-
-                    <!--Name-->
                     <span id="aName"><%= staff.getName()%></span>
                     <br /><br />
 
-
                     <i class="fa fa-sign-out" aria-hidden="true" onclick="logOut()" style="cursor: pointer;"></i>
-                    <script>
-                        function logOut() {
-                            if (confirm("Are you sure want to logout?")) {
-                                window.location.href = "logout.jsp";
-                            }
-                        }
-                    </script>
                 </div>
                 <li>
                     <a href="prodList.jsp">
@@ -160,7 +161,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="reports.jsp">
                         <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Reports</span>
                     </a>
@@ -169,6 +170,12 @@
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="editStaffOwn.jsp">    
+                        <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Edit My Account</span>
                     </a>
                 </li>
             </ul>
@@ -198,6 +205,7 @@
                 <%
                     if (visibleCount == 0) {
                         out.println("<p class='no-results' style='text-align: center;'>No results found! :(</p>");
+                        out.println("<br><div style='text-align: center;'><a href='addStaff.jsp'>+ Add Staff +</a></div>");
                     } else {
                         if (search != null && !search.isEmpty()) {
                             out.println("<p style='text-align: center;'>Showing " + visibleCount + " results for \"" + search + "\". <br><a href='addStaff.jsp'>+ Add Staff</a></p>");
@@ -205,6 +213,7 @@
                         else{
                             out.println("<p style='text-align: center;'>Showing " + visibleCount + " results. <br><a href='addStaff.jsp'>+ Add Staff</a></p>");
                         }
+                    
                 %>
                 <table>
                     <thead>
@@ -227,11 +236,11 @@
                             <td class="always-highlight"><%= s.getStaffid()%></td>
                             <td class="always-highlight"><%= s.getName()%></td>
                             <td><%= s.getEmail()%></td>
-                            <td><%= s.getType()%></td>
+                            <td><%= s.getType().toUpperCase()%></td>
                             <td class="details-link">
                                 <div class="button-container" align="center">
-                                    <a class="edit-btn" href="editStaff.jsp?id=<%= s.getStaffid()%>">Edit</a>
-                                    <a class="delete-btn" href="deleteStaff.jsp?id=<%= s.getStaffid()%>" onclick="return confirm('Are you sure you want to delete this staff member?')">Delete</a>
+                                    <a class="edit-btn" href="editStaff.jsp?staffId=<%= s.getStaffid()%>">Edit</a>
+                                    <a class="delete-btn" href="deleteStaff.jsp?staffId=<%= s.getStaffid()%>">Delete</a>
                                 </div>
                                 <% } %>
                             </td>

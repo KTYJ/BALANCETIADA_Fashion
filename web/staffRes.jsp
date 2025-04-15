@@ -1,31 +1,38 @@
 <%-- 
-    Document   : addStaff
-    Created on : Apr 11, 2025, 12:10:41 PM
+    Document   : addProduct
+    Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
+<%@ page import="model.Product" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="domain.Toolkit" %>
-<%@ page import="da.StaffDA" %>
-<%@ page import="java.sql.SQLException" %>
-
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
-<jsp:useBean id="newStaff" class="model.Staff" scope="request" />
+
 <%
-    // Check if the staff object is set in the request
-    if (staff == null || staff.getName() == null) {
-        // Redirect to home.html if no user is logged in
+    // Check if the staff object is set in the session
+    Staff staffObj = (Staff) session.getAttribute("staff");
+    if (staffObj == null || staffObj.getName() == null) {
         response.sendRedirect("home.jsp");
-        return; // Stop further processing
+        return;
     }
-    if (newStaff == null || newStaff.getName() == null) {
-        response.sendRedirect("addStaff.jsp");
-        return; // Stop further processing
+
+    // Get messages
+    String successMessage = (String) request.getAttribute("successMessage");
+    String errorMessage = (String) request.getAttribute("errorMessage");
+    
+    
+
+    // If no message, means no data was submitted, redirect to addProduct.jsp
+    if (successMessage == null && errorMessage == null) {
+        response.sendRedirect("addProduct.jsp");
+        return;
     }
+
+    String dupError = "INTERNAL ERROR: The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by 'SQL0000000004-e50d80a4-0196-011e-57be-ffffae0df08f' defined on 'STAFF'.";
 %>
 
 <!DOCTYPE html>
@@ -33,86 +40,49 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add Staff Member</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <title>BT Staff</title>
         <link rel="stylesheet" href="css/aproduct.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <style>
-            /* Preserve original form styles */
-            .container {
-                max-width: 600px;
-                margin: 20px auto;
-                background: white;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            }
-            .form-group {
-                margin-bottom: 15px;
-            }
-            label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-            }
-            input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                box-sizing: border-box;
-            }
-            .btn {
-                background-color: #4CAF50;
-                color: white;
-                padding: 10px 15px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 16px;
-                width: 100%;
-            }
-            .btn:hover {
-                background-color: #45a049;
-            }
-            .password-requirements {
-                font-size: 0.8em;
-                color: #666;
-                margin-top: 5px;
-            }
-
-            /* Additional styles for error messages */
-            .error {
+            .error{
                 border: 1px solid red;
                 padding: 10px;
                 border-radius: 5px;
                 background-color: rgb(255, 196, 196);
-                margin-bottom: 20px;
+
             }
-            .error ul {
+
+            .error ul, .success ul{
                 list-style-position: inside;
-                margin: 0;
-                padding: 0;
+            }
+            .success{
+                border: 1px solid green;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: rgb(196, 255, 196);
+
             }
 
-            .table{
-                width: 80vh;
-                font-size: 1.2em;
-                border-collapse: collapse;
-                margin: 20px 0;
-                border: 1px solid #ddd;
+            .back{
+                border-radius: 5px;
+                border: 1px solid black;
+                padding: 5px;
+                display: block; 
+                background-color:rgb(255, 255, 255);
+                text-decoration: none;
+                color: black;
+                text-align: center;
+                width: 100px;
+                margin: 0 auto;
+                
+                transition: 0.3s ease-in-out;
             }
 
-            .table th{
-                text-align: right;
-                padding: 8px;
-                margin: 20px 0;
+            .back:hover{
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 0);
             }
 
-            .table td{
-                text-align: left;
-                padding: 8px;
-                margin: 20px 0;
-            }
         </style>
         <script>
             // Logout function
@@ -184,45 +154,43 @@
         </div>
 
         <div class="content">
-
             <div class="wrapper">
-                <strong>Are these details correct?</strong>
+                <strong>Add New Staff</strong>
             </div>
-            <div class="main-content">
-                <div class="container">
-                    <table class="table">
-                        <tr>
-                            <th>Staff ID:</th>
-                            <td><%= newStaff.getStaffid() + "  "%><span style="font-size: 0.8em; color: #666;">(This cannot be changed!)</span></td>
-                        </tr>
-                        <tr>
-                            <th>Name:</th>
-                            <td><%= newStaff.getName()%></td>
-                        </tr>
-                        <tr>     
-                            <th>Email:</th>
-                            <td><%= newStaff.getEmail()%></td>
-                        </tr>
-                    </table>
-                    <%-- Hidden fields --%>
-                    <form method="POST" action="AddStaffServlet" id="uploadForm">
-                        <input type="hidden" name="staffid" value="<%= newStaff.getStaffid()%>">
-                        <input type="hidden" name="name" value="<%= newStaff.getName()%>">
-                        <input type="hidden" name="email" value="<%= newStaff.getEmail()%>">
-                        <input type="hidden" name="psw" value="<%= newStaff.getPsw()%>">
-                        <input type="hidden" name="type" value="<%= newStaff.getType()%>">
+            <div class="main-content" align="center">
 
-                        <button type="submit" class="btn">Confirm and Add Staff Member</button>
-                    </form>
+                <div class="product-form">
+                    <% if (successMessage != null && !successMessage.isEmpty()) { %>
+
+                        <div align="center" class="success" style="text-align: center;">
+                            <h3><%= successMessage %></h3>
+                            <img src="media/hahayes.png" alt="Sucessfull" style="width: 150px; height: 200px;">
+                            
+                        </div>
+                        <a class="back" href=v"prodList.jsp">Back</a>
+                    <% } else if (errorMessage != null && !errorMessage.isEmpty()) { %>
+                    <div align="center" class="error" style="text-align: center;">
+                        <h3>Error:</h3>
+                        <% if (errorMessage.contains(dupError)) { %>
+                            <h3>Staff already added!</h3>
+                        <% } else { %>
+                            <h3><%= errorMessage %></h3><a href="staffList.jsp">Back</a>
+                        <% 
+                        
+                            } %>
+                    </div>
+                    <a class="back" href="staffList.jsp">Back</a>
+                    <% } %>
                 </div>
             </div>
         </div>
 
         <script>
-        
+             // Clock and date function
+            document.addEventListener('DOMContentLoaded', function() {
+                startTime();
+            });
 
-            // Clock and date function
-            window.onload = startTime();
             function startTime() {
                 const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                 const monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -250,7 +218,11 @@
                 }
                 return i;
             }
-            a
+
+        
+
+            
+            
         </script>
     </body>
 </html>

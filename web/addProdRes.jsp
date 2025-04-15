@@ -23,6 +23,13 @@
     // Get messages
     String successMessage = (String) request.getAttribute("successMessage");
     String errorMessage = (String) request.getAttribute("errorMessage");
+    boolean containsImage = false;
+
+    if (successMessage != null && successMessage.toLowerCase().contains("image")) {
+        containsImage = true;
+    }
+    
+    
 
     // If no message, means no data was submitted, redirect to addProduct.jsp
     if (successMessage == null && errorMessage == null) {
@@ -41,6 +48,14 @@
         <title>BT Staff</title>
         <link rel="stylesheet" href="css/aproduct.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <script>
+            // Logout function
+            function logOut() {
+                if (confirm("Are you sure want to logout?")) {
+                    window.location.href = "logout.jsp";
+                }
+            }
+        </script>
         <style>
             .error{
                 border: 1px solid red;
@@ -123,7 +138,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="report.jsp">
+                    <a href="reports.jsp">
                         <ion-icon name="document-text-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Reports</span>
                     </a>
@@ -134,12 +149,18 @@
                         <span>Staff</span>
                     </a>
                 </li>
+                <li>
+                    <a href="editStaffOwn.jsp">    
+                        <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Edit My Account</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
         <div class="content">
             <div class="wrapper">
-                <strong>Enter New Product Details</strong>
+                <strong><%= (containsImage)? "Edit Product" :"Add New Product"%></strong>
             </div>
             <div class="main-content" align="center">
 
@@ -158,24 +179,18 @@
                         <% if (errorMessage.contains(dupError)) { %>
                             <h3>Product already added!</h3>
                         <% } else { %>
-                            <h3><%= errorMessage %></h3><a href="addProduct.jsp">Back</a>
+                            <h3><%= errorMessage %></h3><a href="prodList.jsp">Back</a>
                         <% 
                         
                             } %>
                     </div>
-                    <a class="back" href="addProduct.jsp">Back</a>
+                    <a class="back" href="prodList.jsp">Back</a>
                     <% } %>
                 </div>
             </div>
         </div>
 
         <script>
-            // Logout function
-            function logOut() {
-                if (confirm("Are you sure want to logout?")) {
-                    window.location.href = "logout.jsp";
-                }
-            }
 
             // Clock and date function
             document.addEventListener('DOMContentLoaded', function() {
