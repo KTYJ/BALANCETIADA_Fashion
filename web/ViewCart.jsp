@@ -24,7 +24,7 @@
 
         <title>Your Cart</title>
     </head>
-
+    
     <body>
 
         <!-- HEADER -->
