@@ -1,46 +1,68 @@
 <%-- 
-    Document   : addStaff
-    Created on : Apr 11, 2025, 12:10:41 PM
+    Document   : deleteCustomer
+    Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="domain.Toolkit" %>
-<%@ page import="da.StaffDA" %>
+<%@ page import="model.Customer" %>
+<%@ page import="da.CustomerDA" %>
 <%@ page import="java.sql.SQLException" %>
-
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
-        //kick staff to 403 if unathorised
-
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
-        return; // Stop further processing
-    }
-    else if(!staff.isManager()){
-            request.setAttribute("error", "403 Access Denied");
-            request.getRequestDispatcher("err403.jsp").forward(request, response);
-            //response.sendRedirect("prodList.jsp");
-    
-   }
-%>
+        return;
+    } else if (!staff.isManager()) { //staff bye bye
+        request.setAttribute("error", "403 Access Denied");
+        request.getRequestDispatcher("err403.jsp").forward(request, response);
+        //response.sendRedirect("prodList.jsp");
 
+    }
+
+    // Get the customer ID to delete from the request parameter
+    String deleteCustId = request.getParameter("custId");
+    String confirmDelete = request.getParameter("confirm");
+    
+    if (deleteCustId != null && confirmDelete != null && confirmDelete.equals("true")) {
+        try {
+            CustomerDA customerDA = new CustomerDA();
+            
+            // Check if customer exists before deletion    
+            Customer customerToDelete = customerDA.getCustomer(deleteCustId);
+            if (customerToDelete == null) {
+                request.setAttribute("error", "Customer not found.");
+                request.getRequestDispatcher("custList.jsp").forward(request, response);
+                return;
+            }
+            
+            // Perform the deletion
+            customerDA.deleteCustomer(deleteCustId);
+            response.sendRedirect("custList.jsp");
+            return;
+            
+        } catch (SQLException e) {
+            request.setAttribute("error", "Error deleting customer: " + e.getMessage());
+            request.getRequestDispatcher("custList.jsp").forward(request, response);
+            return;
+        }
+    } else if (deleteCustId != null) {
+        // If no confirmation, show confirmation page
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add Staff Member</title>
+        <title>Delete Customer</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
-            /* Preserve original form styles */
             .container {
                 max-width: 600px;
                 margin: 20px auto;
@@ -48,57 +70,34 @@
                 padding: 20px;
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                text-align: center;
             }
-            .form-group {
-                margin-bottom: 15px;
-            }
-            label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-            }
-            input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                box-sizing: border-box;
+            .btn-group {
+                margin-top: 20px;
             }
             .btn {
-                background-color: #4CAF50;
-                color: white;
-                padding: 10px 15px;
+                padding: 10px 20px;
+                margin: 0 10px;
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 16px;
-                width: 100%;
             }
-            .btn:hover {
-                background-color: #45a049;
+            .btn-danger {
+                background-color: #dc3545;
+                color: white;
             }
-            .password-requirements {
-                font-size: 0.8em;
-                color: #666;
-                margin-top: 5px;
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
             }
-
-            /* Additional styles for error messages */
-            .error {
-                border: 1px solid red;
-                padding: 10px;
-                border-radius: 5px;
-                background-color: rgb(255, 196, 196);
-                margin-bottom: 20px;
-            }
-            .error ul {
-                list-style-position: inside;
-                margin: 0;
-                padding: 0;
+            .warning-text {
+                color: #dc3545;
+                font-weight: bold;
+                margin: 20px 0;
             }
         </style>
-    <script>
-            // Logout function
+        <script>
             function logOut() {
                 if (confirm("Are you sure want to logout?")) {
                     window.location.href = "logout.jsp";
@@ -146,7 +145,7 @@
                     </a>
                 </li>
                 <%
-                        if(staff.getType().equalsIgnoreCase("manager")){
+                    if (staff.getType().equalsIgnoreCase("manager")) {
                 %>
                 <li>
                     <a href="reports.jsp">
@@ -154,15 +153,15 @@
                         <span>Reports</span>
                     </a>
                 </li>
-                     <li>
+                <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                    </li>
-                    <%
-                        }
-                    %>
+                </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -175,103 +174,60 @@
                         <span>Customer Orders</span>
                     </a>
                 </li>
+                <li>
+                    <a href="discounts.jsp">    
+                        <ion-icon name="pricetags-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Discounts & Vouchers</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
         <div class="content">
-
             <div class="wrapper">
-                <strong>Add New Staff Member</strong>
+                <strong>Delete Customer</strong>
             </div>
             <div class="main-content">
                 <div class="container">
                     <%
-                        if (request.getMethod().equals("POST")) {
-                            String name = request.getParameter("name");
-                            String email = request.getParameter("email");
-                            String psw = null;
-                            String staffId = null;
-
-                            ArrayList<String> errors = new ArrayList<>();
-
-                            // Validate name
-                            if (name == null || name.trim().isEmpty()) {
-                                errors.add("Name is required.");
-                            } else if (!name.matches("^[a-zA-Z0-9\\s]+$")) {
-                                errors.add("Name can only contain letters, numbers, and spaces.");
-                            }
-
-                            // Validate email
-                            if (email == null || email.trim().isEmpty()) {
-                                errors.add("Email is required.");
-                            } else {
-                                try {
-                                    // Check if email already exists
-                                    StaffDA staffDA = new StaffDA();
-                                    Staff existingStaff = staffDA.findByEmail(email);
-                                    if (existingStaff != null) {
-                                        errors.add("Email already exists.");
-                                    }
-                                } catch (SQLException e) {
-                                    errors.add("Error checking email: " + e.getMessage());
-                                }
-                            }
-                            try {
-                                staffId = Toolkit.generateUniqueStaffId();
-                                psw = Toolkit.hashPsw(staffId);
-                                
-                            } catch (SQLException e) {
-                                errors.add("Error generating staff ID: " + e.getMessage());
-                            }
-
+                        try {
+                            CustomerDA customerDA = new CustomerDA();
+                            Customer customerToDelete = customerDA.getCustomer(deleteCustId);
+                            if (customerToDelete != null) {
                     %>
-                    <% if (!errors.isEmpty()) { %>
-                    <div class="error" >
-                        <h3>Validation Errors:</h3>
-                        <ul>
-                            <% for (String error : errors) {%>
-                            <li><%= error%></li>
-                                <% } %>
-                        </ul>
-                    </div>
-
-                    <% } else { %>
-                    <div class="success">
-                        <h3>Staff member ok.</h3>
+                    <h2>Confirm Deletion</h2>
+                    <p class="warning-text">Are you sure you want to delete the following customer?</p>
+                    <p><strong>Name:</strong> <%= customerToDelete.getFname() %> <%= customerToDelete.getLname() %></p>
+                    <p><strong>Email:</strong> <%= customerToDelete.getEmail() %></p>
+                    <p><strong>Customer ID:</strong> <%= customerToDelete.getCustid() %></p>
+                    
+                    <div class="btn-group">
+                        <form action="deleteCustomer.jsp" method="POST" style="display: inline;">
+                            <input type="hidden" name="custId" value="<%= deleteCustId %>">
+                            <input type="hidden" name="confirm" value="true">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        <button onclick="window.location.href='custList.jsp'" class="btn btn-secondary">Cancel</button>
                     </div>
                     <%
-                                Staff newStaff = new Staff(staffId, name, email, psw, "staff");
-                                request.setAttribute("newStaff", newStaff);
-                                request.getRequestDispatcher("conStaff.jsp").forward(request, response);
-
+                            } else {
+                    %>
+                    <p class="warning-text">Customer not found.</p>
+                    <button onclick="window.location.href='custList.jsp'" class="btn btn-secondary">Back to Customer List</button>
+                    <%
                             }
-
-                        }%>
-                    <form id="addStaffForm"  method="POST">
-                        <div class="form-group">
-                            <label for="name">Full Name:</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label style="font-size: 12px; color: grey; font-weight: normal;">Password will be generated automatically.</label>
-                        </div>
-
-                        <button type="submit" class="btn">Add Staff Member</button>
-                    </form>
+                        } catch (SQLException e) {
+                    %>
+                    <p class="warning-text">Error: <%= e.getMessage() %></p>
+                    <button onclick="window.location.href='custList.jsp'" class="btn btn-secondary">Back to Customer List</button>
+                    <%
+                        }
+                    %>
                 </div>
             </div>
         </div>
 
         <script>
-            // Form 
-
-            // Clock and date function
             window.onload = startTime();
             function startTime() {
                 const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -300,7 +256,10 @@
                 }
                 return i;
             }
-            a
         </script>
     </body>
 </html>
+<% } else {
+    // No customer ID provided
+    response.sendRedirect("custList.jsp");
+} %> 

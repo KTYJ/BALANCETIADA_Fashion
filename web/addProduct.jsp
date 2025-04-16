@@ -113,6 +113,12 @@
                         <span>Customer Orders</span>
                     </a>
                 </li>
+                <li>
+                    <a href="discounts.jsp">    
+                        <ion-icon name="pricetags-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Discounts & Vouchers</span>
+                    </a>
+                </li>
             </ul>
         </div>
 

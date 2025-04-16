@@ -1,28 +1,25 @@
 <%-- 
-    Document   : editStaff
-    Created on : Apr 11, 2025, 12:10:41 PM
+    Document   : addDiscount
+    Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="model.Discount" %>
+<%@ page import="da.DiscountDA" %>
 <%@ page import="domain.Toolkit" %>
-<%@ page import="da.StaffDA" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="java.sql.SQLException" %>
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
-        // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
-        return; // Stop further processing
+        return;
     }
-
-    // Use the staff bean directly instead of looking up by ID
-    Staff staffToEdit = staff;
 %>
 
 <!DOCTYPE html>
@@ -30,11 +27,10 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Edit My Account</title>
+        <title>Add New Discount</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
-            /* Preserve original form styles */
             .container {
                 max-width: 600px;
                 margin: 20px auto;
@@ -51,7 +47,9 @@
                 margin-bottom: 5px;
                 font-weight: bold;
             }
-            input {
+            input[type="text"],
+            input[type="number"],
+            textarea {
                 width: 100%;
                 padding: 10px;
                 border: 1px solid #ddd;
@@ -88,34 +86,37 @@
                 margin: 10px auto;
                 width: 50%;
             }
-            .success {
-                border: 1px solid green;
-                padding: 10px;
-                border-radius: 5px;
-                background-color: rgb(196, 255, 196);
-                margin-bottom: 20px;
-                text-align: center;
+            .radio-group {
+                display: flex;
+                gap: 20px;
+                margin: 10px 0;
             }
-
-            #conpsw {
-                display: none;
-                transition: all 10s ease;
+            .radio-group label {
+                display: flex;
+                align-items: center;
+                font-weight: normal;
+                cursor: pointer;
+            }
+            .radio-group input[type="radio"] {
+                margin-right: 5px;
+                cursor: pointer;
+            }
+            #valueInput {
+                width: 150px;
+            }
+            .value-suffix {
+                display: inline-block;
+                margin-left: 5px;
+                font-weight: bold;
             }
         </style>
-        <script>
-            // Logout function
-            function logOut() {
-                if (confirm("Are you sure want to logout?")) {
-                    window.location.href = "logout.jsp";
-                }
-            }
-        </script>
     </head>
     <body>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
         <div class="sidebar">
+            <!-- Same sidebar as discounts.jsp -->
             <ul class="menu">
                 <div class="logo">
                     BALANCETIADA<br />
@@ -191,166 +192,180 @@
 
         <div class="content">
             <div class="wrapper">
-                <strong>Edit My Account</strong>
+                <strong>Add New Discount</strong>
             </div>
             <div class="main-content">
                 <div class="container">
                     <div class="button-container" align="center">
-                        <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
+                        <button onclick="window.location.href='discounts.jsp'" class="btn btn-secondary">Back to Discounts</button>
                     </div>
 
                     <%
                         if (request.getMethod().equals("POST")) {
-                            Boolean newPsw = false;
-                            String hashednewPsw = "";
-                            String staffId = staffToEdit.getStaffid();
-
-                            String name = request.getParameter("name");
-                            String email = request.getParameter("email");
-                            String psw = request.getParameter("psw");
-                            String npsw = request.getParameter("npsw");
-                            String cpsw = request.getParameter("cpsw");
+                            String code = request.getParameter("code");
+                            String type = request.getParameter("type");
+                            String value = request.getParameter("value");
+                            String description = request.getParameter("description");
+                            String id = null;
 
                             ArrayList<String> errors = new ArrayList<>();
 
-                            // Validate name
-                            if (name == null || name.trim().isEmpty()) {
-                                errors.add("Name is required.");
-                            } else if (!name.matches("^[a-zA-Z0-9\\s]+$")) {
-                                errors.add("Name can only contain letters, numbers, and spaces.");
-                            }
-
-                            // Validate email
-                            if (email == null || email.trim().isEmpty()) {
-                                errors.add("Email is required.");
-                            } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
-                                errors.add("Invalid email format.");
+                            // Validate code
+                            if (code == null || code.trim().isEmpty()) {
+                                errors.add("Discount code is required.");
                             } else {
                                 try {
-                                    // Check if email already exists for other staff members
-                                    StaffDA staffDA = new StaffDA();
-                                    Staff existingStaff = staffDA.findByEmail(email);
-                                    if (existingStaff != null && !existingStaff.getStaffid().equals(staffToEdit.getStaffid())) {
-                                        errors.add("Email already exists for another staff member.");
+                                    DiscountDA discountDA = new DiscountDA();
+                                    Discount existingDiscount = discountDA.findByCode(code);
+                                    if (existingDiscount != null) {
+                                        errors.add("Discount code already exists.");
                                     }
                                 } catch (SQLException e) {
-                                    errors.add("Error checking email: " + e.getMessage());
+                                    errors.add("Error checking discount code: " + e.getMessage());
                                 }
                             }
 
-                            // Validate current password
-                            String hashedPsw = "";
-                            if (psw == null || psw.trim().isEmpty()) {
-                                errors.add("Current password is required.");
+                            // Validate type
+                            if (type == null || (!type.equals("P") && !type.equals("A"))) {
+                                errors.add("Invalid discount type.");
+                            }
+
+                            // Validate value
+                            if (value == null || value.trim().isEmpty()) {
+                                errors.add("Discount value is required.");
                             } else {
-                                hashedPsw = Toolkit.hashPsw(psw);
-
                                 try {
-                                    StaffDA staffDA = new StaffDA();
-                                    Staff staffQ = staffDA.findbyIdAndPassword(staffToEdit.getStaffid(), hashedPsw);
-
-                                    if (staffQ == null) {
-                                        errors.add("Current password is incorrect. Try again.");
+                                    int numValue = Integer.parseInt(value);
+                                    if (numValue <= 0) {
+                                        errors.add("Discount value must be greater than 0.");
+                                    } else if (type != null && type.equals("P") && numValue > 100) {
+                                        errors.add("Percentage discount cannot exceed 100%.");
                                     }
-                                } catch (SQLException e) {
-                                    errors.add("Error checking current password: " + e.getMessage());
+                                } catch (NumberFormatException e) {
+                                    errors.add("Invalid discount value format. Please enter a whole number.");
                                 }
                             }
 
-                            // Validate new password if provided
-                            if (npsw != null && !npsw.trim().isEmpty()) {
-                                if (cpsw == null || !npsw.equals(cpsw)) {
-                                    errors.add("New password and confirmation do not match.");
-                                } else {
-                                    try {
-                                        hashednewPsw = Toolkit.hashPsw(npsw);
-                                        newPsw = true;
-                                    } catch (Exception e) {
-                                        errors.add("Error processing new password: " + e.getMessage());
-                                    }
-                                }
+                            // Generate unique ID
+                            try {
+                                id = Toolkit.generateUID();
+                            } catch (Exception e) {
+                                errors.add("Error generating discount ID: " + e.getMessage());
                             }
+
+                            if (!errors.isEmpty()) {
                     %>
-                    <% if (!errors.isEmpty()) { %>
                     <div class="error">
                         <h3>Validation Errors:</h3>
                         <ul>
-                            <% for (String error : errors) {%>
-                            <li><%= error%></li>
-                                <% } %>
+                            <% for (String error : errors) { %>
+                            <li><%= error %></li>
+                            <% } %>
                         </ul>
                     </div>
-                    <% } else {
-                        try {
-                            String finalPassword = newPsw ? hashednewPsw : staffToEdit.getPsw();
-                            Staff updatedStaff = new Staff(staffId, name, email, finalPassword, staffToEdit.getType());
-                            StaffDA staffDA = new StaffDA();
-                            staffDA.updateStaff(updatedStaff);
-
-                            // Update the session bean with new information
-                            staff.setName(name);
-                            staff.setEmail(email);
-                            staff.setPsw(finalPassword);
-
-                            request.setAttribute("updateSuccess", true);
-                    %>
-                    <div class="success">
-                        <h3>Account Information updated successfully!</h3>
-                    </div>
                     <%
-                    } catch (SQLException e) {
+                    } else {
+                        try {
+                            Discount newDiscount = new Discount(id, code, type, Integer.parseInt(value), description != null ? description : "");
+                            DiscountDA discountDA = new DiscountDA();
+                            discountDA.addDiscount(newDiscount);
+                            response.sendRedirect("discounts.jsp");
+                            return;
+                        } catch (SQLException e) {
                     %>
                     <div class="error">
-                        <h3>Error updating account:</h3>
-                        <p><%= e.getMessage()%></p>
+                        <h3>Error adding discount:</h3>
+                        <p><%= e.getMessage() %></p>
                     </div>
                     <%
-                                }
                             }
                         }
-
-                        // Only show the form if update was not successful
-                        if (request.getAttribute("updateSuccess") == null) {
+                    }
                     %>
-                    <form id="editStaffForm" method="POST" onsubmit="return confirm('Are you sure you want to update your account information?')">
-                        <input type="hidden" name="staffId" value="<%= staffToEdit.getStaffid()%>">
 
+                    <form id="addDiscountForm" method="POST" onsubmit="return validateForm()">
                         <div class="form-group">
-                            <label for="name">Full Name:</label>
-                            <input type="text" id="name" name="name" value="<%= staffToEdit.getName()%>" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" value="<%= staffToEdit.getEmail()%>" required>
+                            <label for="code">Discount Code:</label>
+                            <input type="text" id="code" name="code" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="psw">Current Password:</label>
-                            <input type="password" id="curpsw" name="psw" required>
+                            <label>Discount Type:</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="type" value="P" checked onchange="updateValueSuffix()">
+                                    Percentage
+                                </label>
+                                <label>
+                                    <input type="radio" name="type" value="A" onchange="updateValueSuffix()">
+                                    Amount (RM)
+                                </label>
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="npsw">New Password:</label>
-                            <input type="password" id="npsw" name="npsw">
-                            <small>(Leave blank to keep current password)</small>
+                            <label for="value">Value:</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="number" id="value" name="value" step="1" min="1" required>
+                                <span class="value-suffix" id="valueSuffix">%</span>
+                            </div>
                         </div>
 
-                        <div class="form-group" id="conpsw">
-                            <label for="cpsw">Confirm New Password:</label>
-                            <input type="password" id="cpsw" name="cpsw">
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" rows="3"></textarea>
                         </div>
 
-                        <button type="submit" class="btn">Update My Account</button>
+                        <button type="submit" class="btn">Add Discount</button>
                     </form>
-                    <% }%>
                 </div>
             </div>
         </div>
 
         <script>
+            // Update value suffix based on discount type
+            function updateValueSuffix() {
+                const suffix = document.querySelector('input[name="type"]:checked').value === 'P' ? '%' : ' RM';
+                document.getElementById('valueSuffix').textContent = suffix;
+            }
+
+            // Form validation
+            function validateForm() {
+                const value = document.getElementById('value').value;
+                const type = document.querySelector('input[name="type"]:checked').value;
+                const numValue = parseInt(value);
+
+                if (isNaN(numValue) || numValue <= 0) {
+                    alert('Value must be a positive whole number');
+                    return false;
+                }
+
+                if (type === 'P' && numValue > 100) {
+                    alert('Percentage discount cannot exceed 100%');
+                    return false;
+                }
+
+                if (value.includes('.')) {
+                    alert('Please enter a whole number without decimal places');
+                    return false;
+                }
+
+                return true;
+            }
+
+            // Logout function
+            function logOut() {
+                if (confirm("Are you sure want to logout?")) {
+                    window.location.href = "logout.jsp";
+                }
+            }
+
             // Clock and date function
-            window.onload = startTime();
+            window.onload = function() {
+                startTime();
+                updateValueSuffix();
+            };
+            
             function startTime() {
                 const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                 const monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -378,24 +393,6 @@
                 }
                 return i;
             }
-        </script>
-        <script>
-            const newPasswordInput = document.getElementById("npsw");
-            const confirmPassword = document.getElementById("conpsw");
-
-            function toggleConfirmPasswordField() {
-                if (newPasswordInput.value.trim() === "") {
-                    confirmPassword.style.display = "none";
-                } else {
-                    confirmPassword.style.display = "block";
-                }
-            }
-
-            // Initial state
-            toggleConfirmPasswordField();
-
-            // Listen for input changes
-            newPasswordInput.addEventListener("input", toggleConfirmPasswordField);
         </script>
     </body>
 </html> 

@@ -19,22 +19,21 @@
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
         return; // Stop further processing
+    } else if (!staff.isManager()) {
+        request.setAttribute("error", "403 Access Denied");
+        request.getRequestDispatcher("err403.jsp").forward(request, response);
+        //response.sendRedirect("prodList.jsp");
+
     }
-    else if(!staff.isManager()){
-            request.setAttribute("error", "403 Access Denied");
-            request.getRequestDispatcher("err403.jsp").forward(request, response);
-            //response.sendRedirect("prodList.jsp");
-    
-   }
 
     // Get the product SKU to delete from the request parameter
     String deleteProductSku = request.getParameter("sku");
     String confirmDelete = request.getParameter("confirm");
-    
+
     if (deleteProductSku != null && confirmDelete != null && confirmDelete.equals("true")) {
         try {
             ProductDA productDA = new ProductDA();
-            
+
             // Check if product exists before deletion    
             Product productToDelete = productDA.getProduct(deleteProductSku);
             if (productToDelete == null) {
@@ -42,12 +41,12 @@
                 request.getRequestDispatcher("prodList.jsp").forward(request, response);
                 return;
             }
-            
+
             // Perform the deletion
             productDA.deleteProduct(deleteProductSku);
             response.sendRedirect("prodList.jsp");
             return;
-            
+
         } catch (SQLException e) {
             request.setAttribute("error", "Error deleting product: " + e.getMessage());
             request.getRequestDispatcher("prodList.jsp").forward(request, response);
@@ -114,7 +113,7 @@
                 border: 1px solid #ddd;
                 text-align: right;
             }
-            
+
         </style>
         <script>
             // Logout function
@@ -165,7 +164,7 @@
                     </a>
                 </li>
                 <%
-                        if(staff.getType().equalsIgnoreCase("manager")){
+                    if (staff.getType().equalsIgnoreCase("manager")) {
                 %>
                 <li>
                     <a href="reports.jsp">
@@ -173,15 +172,15 @@
                         <span>Reports</span>
                     </a>
                 </li>
-                     <li>
+                <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                    </li>
-                    <%
-                        }
-                    %>
+                </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -192,6 +191,12 @@
                     <a href="staffOrders.jsp">    
                         <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Customer Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="discounts.jsp">    
+                        <ion-icon name="pricetags-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Discounts & Vouchers</span>
                     </a>
                 </li>
             </ul>
@@ -216,41 +221,41 @@
                         <table class="product-table"> 
                             <tr>
                                 <th><strong>Name:</strong></th>
-                                <td><%= productToDelete.getName() %></td>
+                                <td><%= productToDelete.getName()%></td>
                             </tr>
                             <tr>
                                 <th><strong>SKU:</strong></th>
-                                <td><%= productToDelete.getSku().toUpperCase() %></td>
+                                <td><%= productToDelete.getSku().toUpperCase()%></td>
                             </tr>
                             <tr>
                                 <th><strong>Category:</strong></th>
-                                <td><%= productToDelete.getCatName() %></td>
+                                <td><%= productToDelete.getCatName()%></td>
                             </tr>
                         </table>
                     </div>
-                    
+
                     <div class="btn-group">
                         <form action="deleteProduct.jsp" method="POST" style="display: inline;">
-                            <input type="hidden" name="sku" value="<%= deleteProductSku %>">
+                            <input type="hidden" name="sku" value="<%= deleteProductSku%>">
                             <input type="hidden" name="confirm" value="true">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
-                        <button onclick="window.location.href='prodList.jsp'" class="btn btn-secondary">Cancel</button>
+                        <button onclick="window.location.href = 'prodList.jsp'" class="btn btn-secondary">Cancel</button>
                     </div>
                     <%
-                            } else {
+                    } else {
                     %>
                     <p class="warning-text">Product not found.</p>
-                    <button onclick="window.location.href='prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
+                    <button onclick="window.location.href = 'prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
                     <script>
                         document.getElementById("deleteTitle").innerHTML = "Oops...";
                     </script>
                     <%
-                            }
-                        } catch (SQLException e) {
+                        }
+                    } catch (SQLException e) {
                     %>
-                    <p class="warning-text">Error: <%= e.getMessage() %></p>
-                    <button onclick="window.location.href='prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
+                    <p class="warning-text">Error: <%= e.getMessage()%></p>
+                    <button onclick="window.location.href = 'prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
                     <%
                         }
                     %>
@@ -293,6 +298,6 @@
     </body>
 </html>
 <% } else {
-    // No product SKU provided
-    response.sendRedirect("prodList.jsp");
-} %> 
+        // No product SKU provided
+        response.sendRedirect("prodList.jsp");
+    }%> 

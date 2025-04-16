@@ -1,71 +1,65 @@
 <%-- 
-    Document   : editStaff
-    Created on : Apr 11, 2025, 12:10:41 PM
+    Document   : editCustomer
+    Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="model.Customer" %>
+<%@ page import="da.CustomerDA" %>
 <%@ page import="domain.Toolkit" %>
-<%@ page import="da.StaffDA" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="java.sql.SQLException" %>
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%
+    // Check if the staff object is set in the request
+    if (staff == null || staff.getName() == null) {
+        // Redirect to home.html if no user is logged in
+        response.sendRedirect("home.jsp");
+        return;
+    } else if (!staff.isManager()) { //staff bye bye
+        request.setAttribute("error", "403 Access Denied");
+        request.getRequestDispatcher("err403.jsp").forward(request, response);
+        //response.sendRedirect("prodList.jsp");
+
+    }
 
     // Initialize variables
-    Staff staffToEdit = null;
+    Customer customerToEdit = null;
+    Boolean updateSuccess = false;
     String errorMessage = "";
     String pageTitle = "Error";
     String headerText = "Error";
 
-    // Get the staff ID to edit from the request parameter
-    String editStaffId = request.getParameter("staffId");
+    // Get the customer ID to edit from the request parameter
+    String editCustId = request.getParameter("custId");
 
-    if (editStaffId != null) {
-
+    if (editCustId != null) {
         // Check if the staff object is set in the request
         if (staff == null || staff.getName() == null) {
-            //kick staff to 403 if unathorised
-
-            // Redirect to home.html if no user is logged in
             response.sendRedirect("home.jsp");
-            return; // Stop further processing
-        } else if (!staff.isManager()) {
-            request.setAttribute("error", "403 Access Denied");
-            request.getRequestDispatcher("err403.jsp").forward(request, response);
-            //response.sendRedirect("prodList.jsp");
-
+            return;
         }
 
-        //Debugging
-        System.out.println("editStaffId: " + editStaffId);
-        System.out.println("staff: " + staff);
+        try {
+            CustomerDA customerDA = new CustomerDA();
+            customerToEdit = customerDA.getCustomer(editCustId);
 
-        if (editStaffId == null || editStaffId.trim().isEmpty()) {
-            errorMessage = "No staff ID provided.";
-        } else {
-            try {
-                StaffDA staffDA = new StaffDA();
-                staffToEdit = staffDA.findById(editStaffId);
-
-                if (staffToEdit == null) {
-                    //Debugging  
-                    System.out.println("Staff member not found.");
-                    response.sendRedirect("staffList.jsp");
-
-                    errorMessage = "Staff member not found.";
-                } else {
-                    pageTitle = "Edit Staff Member";
-                    headerText = "Editing Staff - ID: " + staffToEdit.getStaffid();
-                }
-            } catch (SQLException e) {
-                errorMessage = "Error retrieving staff details: " + e.getMessage();
-                e.printStackTrace();
+            if (customerToEdit == null) {
+                response.sendRedirect("custList.jsp");
+                errorMessage = "Customer not found.";
+            } else {
+                pageTitle = "Edit Customer";
+                headerText = "Editing Customer - ID: " + customerToEdit.getCustid();
             }
+        } catch (SQLException e) {
+            errorMessage = "Error retrieving customer details: " + e.getMessage();
+            e.printStackTrace();
         }
+    }
 %>
 
 <!DOCTYPE html>
@@ -77,7 +71,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
-            /* Preserve original form styles */
             .container {
                 max-width: 600px;
                 margin: 20px auto;
@@ -139,13 +132,33 @@
                 margin-bottom: 20px;
                 text-align: center;
             }
-
             #conpsw {
                 display: none;
                 transition: all 10s ease;
             }
+
+            #togglePassword {
+                cursor: pointer;
+                background-color: transparent;
+                font-size: 1em;
+                float: right;
+            }
         </style>
+        <script src="js/jquery-1.9.1.js"></script>
         <script>
+            $(document).ready(function () {
+                $('#togglePassword').click(function () {
+                    const password = $('#npsw');
+                    const type = password.attr('type') === 'password' ? 'text' : 'password';
+                    password.attr('type', type);
+
+                    // Change the icon based on the password visibility
+                    const icon = type === 'password' ? 'eye-outline' : 'eye-off-outline';
+                    $('#eyeIcon').attr('name', icon);
+                });
+            });
+
+
             // Logout function
             function logOut() {
                 if (confirm("Are you sure want to logout?")) {
@@ -239,35 +252,41 @@
             <div class="main-content">
                 <div class="container">
                     <div class="button-container" align="center">
-                        <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
+                        <button onclick="window.location.href = 'custList.jsp'" class="btn btn-secondary">Back to Customer List</button>
                     </div>
 
                     <%
-                        if (!errorMessage.isEmpty()) {%>
+                        if (!errorMessage.isEmpty()) {
+                    %>
                     <div class="error">
                         <p>Error</p>
                         <p><%= errorMessage%></p>
                     </div>
-                    <% } else if (staffToEdit != null) { %>
-
-                    <%
+                    <% } else if (customerToEdit != null) {
                         if (request.getMethod().equals("POST")) {
                             Boolean newPsw = false;
                             String hashednewPsw = "";
-                            String staffId = staffToEdit.getStaffid();
-
-                            String name = request.getParameter("name");
+                            String custId = customerToEdit.getCustid();
+                            String fname = request.getParameter("fname");
+                            String lname = request.getParameter("lname");
                             String email = request.getParameter("email");
                             String npsw = request.getParameter("npsw");
                             String cpsw = request.getParameter("cpsw");
 
                             ArrayList<String> errors = new ArrayList<>();
 
-                            // Validate name
-                            if (name == null || name.trim().isEmpty()) {
-                                errors.add("Name is required.");
-                            } else if (!name.matches("^[a-zA-Z0-9\\s]+$")) {
-                                errors.add("Name can only contain letters, numbers, and spaces.");
+                            // Validate first name
+                            if (fname == null || fname.trim().isEmpty()) {
+                                errors.add("First name is required.");
+                            } else if (!fname.matches("^[a-zA-Z\\s]+$")) {
+                                errors.add("First name can only contain letters and spaces.");
+                            }
+
+                            // Validate last name
+                            if (lname == null || lname.trim().isEmpty()) {
+                                errors.add("Last name is required.");
+                            } else if (!lname.matches("^[a-zA-Z\\s]+$")) {
+                                errors.add("Last name can only contain letters and spaces.");
                             }
 
                             // Validate email
@@ -277,11 +296,11 @@
                                 errors.add("Invalid email format.");
                             } else {
                                 try {
-                                    // Check if email already exists for other staff members
-                                    StaffDA staffDA = new StaffDA();
-                                    Staff existingStaff = staffDA.findByEmail(email);
-                                    if (existingStaff != null && !existingStaff.getStaffid().equals(staffToEdit.getStaffid())) {
-                                        errors.add("Email already exists for another staff member.");
+                                    // Check if email already exists
+                                    CustomerDA cda = new CustomerDA();
+                                    Customer existingCust = cda.getCustomerByEmail(email);
+                                    if (existingCust != null) {
+                                        errors.add("Email already exists for another customer.");
                                     }
                                 } catch (SQLException e) {
                                     errors.add("Error checking email: " + e.getMessage());
@@ -290,7 +309,11 @@
 
                             // Validate new password if provided
                             if (npsw != null && !npsw.trim().isEmpty()) {
-                                if (cpsw == null || !npsw.equals(cpsw)) {
+                                if (npsw.length() < 5 || npsw.length() > 15) {
+                                    errors.add("Password must be at least 5 characters and less than 15 characters long.");
+                                } else if (!npsw.matches("^[a-zA-Z0-9@$!%*?&]+$")) {
+                                    errors.add("Password can only contain letters, numbers, and special characters.");
+                                } else if (cpsw == null || !npsw.equals(cpsw)) {
                                     errors.add("New password and confirmation do not match.");
                                 } else {
                                     try {
@@ -301,8 +324,9 @@
                                     }
                                 }
                             }
+
+                            if (!errors.isEmpty()) {
                     %>
-                    <% if (!errors.isEmpty()) { %>
                     <div class="error">
                         <h3>Validation Errors:</h3>
                         <ul>
@@ -311,49 +335,58 @@
                                 <% } %>
                         </ul>
                     </div>
-                    <% } else {
+                    <%
+                    } else {
                         try {
-                            String finalPassword = newPsw ? hashednewPsw : staffToEdit.getPsw();
-                            Staff updatedStaff = new Staff(staffId, name, email, finalPassword, "staff");
-                            StaffDA staffDA = new StaffDA();
-                            staffDA.updateStaff(updatedStaff);
-
-                            request.setAttribute("updateSuccess", true);
+                            String finalPassword = newPsw ? hashednewPsw : customerToEdit.getPsw();
+                            Customer updatedCustomer = new Customer(custId, fname, lname, email, finalPassword);
+                            CustomerDA customerDA = new CustomerDA();
+                            customerDA.updateCustomer(updatedCustomer);
                     %>
                     <div class="success">
-                        <h3>Staff Information updated successfully!</h3>
+                        <h3>Customer Information updated successfully!</h3>
+                        <img src="media/hahayes.png" alt="Sucessfull" style="width: 150px; height: 200px; margin: 10px 0;">
                     </div>
                     <%
+                        updateSuccess = true;
                     } catch (SQLException e) {
                     %>
                     <div class="error">
-                        <h3>Error updating staff member:</h3>
+                        <h3>Error updating customer:</h3>
                         <p><%= e.getMessage()%></p>
                     </div>
-
-                    <%      }
+                    <%
                                 }
                             }
                         }
 
                         // Only show the form if update was not successful
-                        if (request.getAttribute("updateSuccess") == null) {
+                        if (!updateSuccess) {
                     %>
-                    <form id="editStaffForm" method="POST" onsubmit="return confirm('Are you sure you want to update THIS INFORMATION?')">
-                        <input type="hidden" name="staffId" value="<%= staffToEdit.getStaffid()%>">
+                    <form id="editCustomerForm" method="POST" onsubmit="return confirm('Are you sure you want to update this customer\'s information?')">
+                        <input type="hidden" name="custId" value="<%= customerToEdit.getCustid()%>">
 
                         <div class="form-group">
-                            <label for="name">Full Name:</label>
-                            <input type="text" id="name" name="name" value="<%= staffToEdit.getName()%>" required>
+                            <label for="fname">First Name:</label>
+                            <input type="text" id="fname" name="fname" value="<%= customerToEdit.getFname()%>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lname">Last Name:</label>
+                            <input type="text" id="lname" name="lname" value="<%= customerToEdit.getLname()%>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" value="<%= staffToEdit.getEmail()%>" required>
+                            <input type="email" id="email" name="email" value="<%= customerToEdit.getEmail()%>" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="npsw">New Password:</label>
+                            <label for="npsw">New Password:
+                                <button type="button" id="togglePassword" class="toggle-password">
+                                    <ion-icon name="eye-outline" id="eyeIcon"></ion-icon>
+                                </button>
+                            </label>    
                             <input type="password" id="npsw" name="npsw">
                             <small>(Leave blank to keep current password)</small>
                         </div>
@@ -363,22 +396,15 @@
                             <input type="password" id="cpsw" name="cpsw">
                         </div>
 
-                        <button type="submit" class="btn">Update Staff Member</button>
+                        <button type="submit" class="btn">Update Customer</button>
                     </form>
+                    <% } %>
                     <% }%>
                 </div>
             </div>
         </div>
 
-        <script>
-            // Logout function
-            function logOut() {
-                if (confirm("Are you sure want to logout?")) {
-                    window.location.href = "logout.jsp";
-                }
-            }
-
-            // Clock and date function
+        <script type="text/javascript">
             window.onload = startTime();
             function startTime() {
                 const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -407,16 +433,18 @@
                 }
                 return i;
             }
-        </script>
-        <script>
-            const newPasswordInput = document.getElementById("npsw");
-            const confirmPassword = document.getElementById("conpsw");
+
+            const newPasswordInput = $('#npsw');
+            const confirmPassword = $('#conpsw');
+            const togglePasswordButton = $('#togglePassword');
 
             function toggleConfirmPasswordField() {
-                if (newPasswordInput.value.trim() === "") {
-                    confirmPassword.style.display = "none";
+                if (newPasswordInput.val().trim() === "") {
+                    confirmPassword.hide();
+                    togglePasswordButton.hide();
                 } else {
-                    confirmPassword.style.display = "block";
+                    confirmPassword.show();
+                    togglePasswordButton.show();
                 }
             }
 
@@ -424,11 +452,7 @@
             toggleConfirmPasswordField();
 
             // Listen for input changes
-            newPasswordInput.addEventListener("input", toggleConfirmPasswordField);
+            newPasswordInput.on('input', toggleConfirmPasswordField);
         </script>
     </body>
-</html>
-<% } else {
-        // No staff ID provided
-        response.sendRedirect("staffList.jsp");
-    }%> 
+</html> 

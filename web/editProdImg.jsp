@@ -28,7 +28,7 @@
     // Initialize ProductDA and get the product
     ProductDA productDA = new ProductDA();
     Product product = productDA.getProduct(sku);
-    
+
     if (product == null) {
         response.sendRedirect("prodList.jsp");
         return;
@@ -99,7 +99,7 @@
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 16px;
-            }   
+            }
             button[name="sbm"]:hover {
                 background-color:rgb(45, 105, 48);
             }
@@ -154,7 +154,7 @@
                     </a>
                 </li>
                 <%
-                        if(staff.getType().equalsIgnoreCase("manager")){
+                    if (staff.getType().equalsIgnoreCase("manager")) {
                 %>
                 <li>
                     <a href="reports.jsp">
@@ -162,15 +162,15 @@
                         <span>Reports</span>
                     </a>
                 </li>
-                     <li>
+                <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                    </li>
-                    <%
-                        }
-                    %>
+                </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -181,6 +181,12 @@
                     <a href="staffOrders.jsp">    
                         <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Customer Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="discounts.jsp">    
+                        <ion-icon name="pricetags-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Discounts & Vouchers</span>
                     </a>
                 </li>
             </ul>
@@ -205,122 +211,122 @@
                             </tr>
                             <tr>
                                 <th>Current Image:</th>
-                                <td><img src="upload/<%= product.getFile() %>" width="100px" height="100px"></td>
+                                <td><img src="upload/<%= product.getFile()%>" width="100px" height="100px"></td>
                             </tr>
                         </table>
                     </div>
                     <div class="filefile-form">
-                    <form method="POST" action="UploadServletSimple" enctype="multipart/form-data" align="center" id="uploadForm">
-                    
-                    <%-- Hidden fields --%>
-                    <input type="hidden" name="sku" value="<%= product.getSku() %>">
+                        <form method="POST" action="UploadServletSimple" enctype="multipart/form-data" align="center" id="uploadForm">
 
-                        <div class="file-form" style="margin-bottom: 0;">
-                            
-                            <label for="file">New Image:</label>
-                            <input type="file" id="file" name="file" required>
-                        </div>
-                        <br><br>
-                        <div id="displayFiles"></div>
-                        <button type="button" name="sbm" onclick="confirmAndSubmit()">Submit</button>
-                    </form>
+                            <%-- Hidden fields --%>
+                            <input type="hidden" name="sku" value="<%= product.getSku()%>">
+
+                            <div class="file-form" style="margin-bottom: 0;">
+
+                                <label for="file">New Image:</label>
+                                <input type="file" id="file" name="file" required>
+                            </div>
+                            <br><br>
+                            <div id="displayFiles"></div>
+                            <button type="button" name="sbm" onclick="confirmAndSubmit()">Submit</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <script>
+            <script>
 
-            // Clock and date function
-            window.onload = startTime();
-            function startTime() {
-                const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                const monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                // Clock and date function
+                window.onload = startTime();
+                function startTime() {
+                    const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                    const monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-                const today = new Date();
-                let h = today.getHours();
-                let m = today.getMinutes();
-                let s = today.getSeconds();
+                    const today = new Date();
+                    let h = today.getHours();
+                    let m = today.getMinutes();
+                    let s = today.getSeconds();
 
-                let day = today.getDate();
-                var week = weekArr[today.getDay()];
-                var month = monthArr[today.getMonth()];
+                    let day = today.getDate();
+                    var week = weekArr[today.getDay()];
+                    var month = monthArr[today.getMonth()];
 
-                document.getElementById("date1").innerHTML = week + ", " + day + " " + month;
-                h = checkTime(h);
-                m = checkTime(m);
-                s = checkTime(s);
-                document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
-                setTimeout(startTime, 1000);
-            }
-
-            function checkTime(i) {
-                if (i < 10) {
-                    i = "0" + i;
+                    document.getElementById("date1").innerHTML = week + ", " + day + " " + month;
+                    h = checkTime(h);
+                    m = checkTime(m);
+                    s = checkTime(s);
+                    document.getElementById('clock').innerHTML = h + ":" + m + ":" + s;
+                    setTimeout(startTime, 1000);
                 }
-                return i;
-            }
 
-            // Image preview function
-            document.addEventListener('DOMContentLoaded', function () {
-                const fileInput = document.querySelector('#file');
-                const displayFiles = document.querySelector('#displayFiles');
+                function checkTime(i) {
+                    if (i < 10) {
+                        i = "0" + i;
+                    }
+                    return i;
+                }
 
-                fileInput.addEventListener('change', function () {
-                    displayFiles.innerHTML = '';
+                // Image preview function
+                document.addEventListener('DOMContentLoaded', function () {
+                    const fileInput = document.querySelector('#file');
+                    const displayFiles = document.querySelector('#displayFiles');
 
-                    Array.from(fileInput.files).forEach(file => {
-                        const reader = new FileReader();
+                    fileInput.addEventListener('change', function () {
+                        displayFiles.innerHTML = '';
 
-                        reader.onload = function (e) {
-                            const img = document.createElement('img');
-                            img.alt = "Product Image Preview";
-                            img.src = e.target.result;
-                            img.style.width = '100px';
-                            img.style.margin = '5px';
-                            displayFiles.appendChild(img);
-                        };
+                        Array.from(fileInput.files).forEach(file => {
+                            const reader = new FileReader();
 
-                        reader.readAsDataURL(file);
+                            reader.onload = function (e) {
+                                const img = document.createElement('img');
+                                img.alt = "Product Image Preview";
+                                img.src = e.target.result;
+                                img.style.width = '100px';
+                                img.style.margin = '5px';
+                                displayFiles.appendChild(img);
+                            };
+
+                            reader.readAsDataURL(file);
+                        });
                     });
                 });
-            });
 
-            function validateForm() {
-                const fileInput = document.getElementById('file');
-                
-                // Check if files are selected
-                if (!fileInput.files || fileInput.files.length === 0) {
-                    alert("Please select at least one image file.");
-                    return false;
-                }
+                function validateForm() {
+                    const fileInput = document.getElementById('file');
 
-                // Check file types
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-                for (let i = 0; i < fileInput.files.length; i++) {
-                    const file = fileInput.files[i];
-                    if (!allowedTypes.includes(file.type)) {
-                        alert("Invalid file type. Please upload only image files (JPEG, PNG, JPG, GIF).");
+                    // Check if files are selected
+                    if (!fileInput.files || fileInput.files.length === 0) {
+                        alert("Please select at least one image file.");
                         return false;
                     }
 
-                    // Check file size (max 10MB)
-                    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
-                    if (file.size > maxSize) {
-                        alert("File size too large. Maximum file size is 10MB.");
-                        return false;
+                    // Check file types
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const file = fileInput.files[i];
+                        if (!allowedTypes.includes(file.type)) {
+                            alert("Invalid file type. Please upload only image files (JPEG, PNG, JPG, GIF).");
+                            return false;
+                        }
+
+                        // Check file size (max 10MB)
+                        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                        if (file.size > maxSize) {
+                            alert("File size too large. Maximum file size is 10MB.");
+                            return false;
+                        }
                     }
+
+                    return true;
                 }
 
-                return true;
-            }
-
-            function confirmAndSubmit() {
-                if (validateForm()) {
-                    if (confirm("Are you sure you want to upload this image?")) {
-                        document.getElementById('uploadForm').submit();
+                function confirmAndSubmit() {
+                    if (validateForm()) {
+                        if (confirm("Are you sure you want to upload this image?")) {
+                            document.getElementById('uploadForm').submit();
+                        }
                     }
                 }
-            }
-        </script>
+            </script>
     </body>
 </html> 

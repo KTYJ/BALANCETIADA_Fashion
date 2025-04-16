@@ -55,7 +55,7 @@ body {
 }
 
 .menu li {
-  padding: 1rem;
+  padding: 0.6rem;
   border-radius: 8px;
   transition: all 0.5s ease-in-out;
 }
@@ -295,7 +295,6 @@ tbody tr:hover {
   font-weight: bold;
   text-transform: uppercase;
   font-size: 12px;
-  cursor: pointer;
 }
 
 .search-bar {

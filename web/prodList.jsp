@@ -101,7 +101,7 @@
             td.img{
                 text-align: center;
             }
-            
+
             td a{
                 text-align: center;
                 width: 100%;
@@ -174,7 +174,7 @@
                     </a>
                 </li>
                 <%
-                        if(staff.getType().equalsIgnoreCase("manager")){
+                    if (staff.getType().equalsIgnoreCase("manager")) {
                 %>
                 <li>
                     <a href="reports.jsp">
@@ -182,15 +182,15 @@
                         <span>Reports</span>
                     </a>
                 </li>
-                     <li>
+                <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                    </li>
-                    <%
-                        }
-                    %>
+                </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -201,6 +201,12 @@
                     <a href="staffOrders.jsp">    
                         <ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Customer Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="discounts.jsp">    
+                        <ion-icon name="pricetags-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Discounts & Vouchers</span>
                     </a>
                 </li>
             </ul>
@@ -230,7 +236,6 @@
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </div>
                     <%
-
                         String search = request.getParameter("search");
                         int rsCount = products.size();
 
@@ -287,7 +292,7 @@
                                         description = description.substring(0, 20) + "...";
                                     }
                                 %>
-                                <%= description %>
+                                <%= description%>
                             </td>
                             <td><%= product.getCatName()%></td>
 
@@ -296,14 +301,14 @@
                             <td><%= product.getSold()%></td>
                             <td class="details-link">
                                 <a class="edit-btn" href="editProduct.jsp?sku=<%= product.getSku()%>">Edit Details</a>
-                                
+
                                 <%
                                     //only manager can delete
-                                    if(staff.getType().equalsIgnoreCase("manager")){
-                                    
-                                    %>
-                                        <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>">Delete</a>
-                                    <%}
+                                    if (staff.getType().equalsIgnoreCase("manager")) {
+
+                                %>
+                                <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>">Delete</a>
+                                <%}
                                 %>
                                 <a class="restock-btn" href="restock.jsp?sku=<%= product.getSku()%>">Restock</a>
                             </td>

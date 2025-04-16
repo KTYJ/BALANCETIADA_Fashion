@@ -1,7 +1,7 @@
-    <%-- 
-    Document   : editProduct
-    Created on : Apr 13, 2025, 8:12:00 PM
-    Author     : KTYJ
+<%-- 
+Document   : editProduct
+Created on : Apr 13, 2025, 8:12:00 PM
+Author     : KTYJ
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
@@ -30,7 +30,7 @@
     // Initialize ProductDA and get the product
     ProductDA productDA = new ProductDA();
     Product product = productDA.getProduct(sku);
-    
+
     if (product == null) {
         response.sendRedirect("prodList.jsp");
         return;
@@ -132,7 +132,7 @@
                     </a>
                 </li>
                 <%
-                        if(staff.getType().equalsIgnoreCase("manager")){
+                    if (staff.getType().equalsIgnoreCase("manager")) {
                 %>
                 <li>
                     <a href="reports.jsp">
@@ -140,15 +140,15 @@
                         <span>Reports</span>
                     </a>
                 </li>
-                     <li>
+                <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                    </li>
-                    <%
-                        }
-                    %>
+                </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -161,18 +161,24 @@
                         <span>Customer Orders</span>
                     </a>
                 </li>
+                <li>
+                    <a href="discounts.jsp">    
+                        <ion-icon name="pricetags-outline" style="font-size: 1.5rem;"></ion-icon>
+                        <span>Discounts & Vouchers</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
         <div class="content">
             <div class="wrapper">
-                <strong>Editing Product: <span style="color:rgb(255, 0, 0);"><%= product.getSku().toUpperCase() %></span></strong>
+                <strong>Editing Product: <span style="color:rgb(255, 0, 0);"><%= product.getSku().toUpperCase()%></span></strong>
             </div>
             <div class="main-content">
                 <div class="product-form">
-                <div class="button-container" align="center">
-                    <button onclick="window.location.href = 'prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
-                </div>
+                    <div class="button-container" align="center">
+                        <button onclick="window.location.href = 'prodList.jsp'" class="btn btn-secondary">Back to Product List</button>
+                    </div>
                     <%
                         if (request.getMethod().equals("POST")) {
                             String name = request.getParameter("name");
@@ -199,11 +205,10 @@
                             // Validate category
                             if (category == null || category.trim().isEmpty()) {
                                 errors.add("Category is required.");
-                            }
-                            else{
-                                try{
+                            } else {
+                                try {
                                     int categoryInt = Integer.parseInt(category);
-                                    if(categoryInt < 1 || categoryInt > 3){
+                                    if (categoryInt < 1 || categoryInt > 3) {
                                         errors.add("Category must be a valid number.");
                                     }
                                 } catch (NumberFormatException e) {
@@ -246,8 +251,7 @@
                                             int stockInt = Integer.parseInt(stockValue);
                                             if (stockInt < 0 || stockInt > 1000) {
                                                 errors.add("Stock for size " + selectedSize + " must not exceed 1000 or be negative.");
-                                            }
-                                            else{
+                                            } else {
                                                 stockArray[i] = stockInt;
                                                 i++;
                                             }
@@ -283,9 +287,9 @@
                                 System.out.println(product);
 
                                 String uploadErr = "";
-                                try{
+                                try {
                                     productDA.updateProduct(product);
-                                    request.setAttribute("updateSuccess", true); 
+                                    request.setAttribute("updateSuccess", true);
                                 } catch (SQLException e) {
                                     uploadErr = e.getMessage();
                                     request.setAttribute("uploadErr", uploadErr);
@@ -295,88 +299,87 @@
                         }
                     %>
 
-                    <% if (request.getAttribute("updateSuccess") != null) { 
-                            if(request.getAttribute("updateSuccess").equals(true)){
-                        
-                        %>
-                        <div class="success">
-                            <h3>Product <%= product.getSku().toUpperCase() %> updated successfully!</h3>
-                        </div>
-                        <div align="center">
-                            <img src="media/hahayes.png" alt="Sucessfull" style="width: 150px; height: 200px;">
-                        </div>
-                        <% } 
-                        else if(request.getAttribute("uploadErr") != null){
-                            %>
-                            <div class="error">
-                                <h3>Error updating product: <%= request.getAttribute("uploadErr") %></h3>
-                            </div>
-                            <%
+                    <% if (request.getAttribute("updateSuccess") != null) {
+                            if (request.getAttribute("updateSuccess").equals(true)) {
+
+                    %>
+                    <div class="success">
+                        <h3>Product <%= product.getSku().toUpperCase()%> updated successfully!</h3>
+                    </div>
+                    <div align="center">
+                        <img src="media/hahayes.png" alt="Sucessfull" style="width: 150px; height: 200px;">
+                    </div>
+                    <% } else if (request.getAttribute("uploadErr") != null) {
+                    %>
+                    <div class="error">
+                        <h3>Error updating product: <%= request.getAttribute("uploadErr")%></h3>
+                    </div>
+                    <%
                         }
-                        %>
-                    <% }else { %>
+                    %>
+                    <% } else {%>
                     <form method="POST" onsubmit="return confirm('Are you sure you want to update THIS INFORMATION?')">
                         <div style="display:flex; justify-content:center; align-items:center; margin: 0 auto;">
-                            <img src="upload/<%= product.getFile() %>" width="200px" height="200px">
+                            <img src="upload/<%= product.getFile()%>" width="200px" height="200px">
                         </div>
                         <br/>
                         <div>
-                        <input type="hidden" id="sku" name="sku" value="<%= product.getSku() %>" readonly><br><br>
-                        <label for="name">Name:</label><br>
-                        <input type="text" id="name" name="name" value="<%= product.getName() %>" required><br><br>
+                            <input type="hidden" id="sku" name="sku" value="<%= product.getSku()%>" readonly><br><br>
+                            <label for="name">Name:</label><br>
+                            <input type="text" id="name" name="name" value="<%= product.getName()%>" required><br><br>
 
-                        <label for="description">Description:</label>
-                        <textarea id="description" name="description" required rows="5" maxlength="100"><%= product.getDescription() %></textarea><br><br>
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" required rows="5" maxlength="100"><%= product.getDescription()%></textarea><br><br>
 
-                        <label for="catid">Category:</label>
-                        <select id="catid" name="catid" required>
-                            <option value="1" <%= product.getCatId() == 1 ? "selected" : "" %>>Men</option>
-                            <option value="2" <%= product.getCatId() == 2 ? "selected" : "" %>>Women</option>
-                            <option value="3" <%= product.getCatId() == 3 ? "selected" : "" %>>Kids</option>
-                        </select><br><br>
+                            <label for="catid">Category:</label>
+                            <select id="catid" name="catid" required>
+                                <option value="1" <%= product.getCatId() == 1 ? "selected" : ""%>>Men</option>
+                                <option value="2" <%= product.getCatId() == 2 ? "selected" : ""%>>Women</option>
+                                <option value="3" <%= product.getCatId() == 3 ? "selected" : ""%>>Kids</option>
+                            </select><br><br>
 
-                        <label for="size">Size:</label>
-                        <div id="sizeContainer">
-                            <%
-                                String[] existingSizes = product.getSize();
-                                int[] existingStock = product.getStock();
-                                String[] allSizes = {"S", "M", "L", "XL"};
-                                
-                                for (int i = 0; i < allSizes.length; i++) {
-                                    String currentSize = allSizes[i];
-                                    boolean isChecked = false;
-                                    int stockValue = 0;
-                                    
-                                    // Find if this size exists in the product's sizes
-                                    for (int j = 0; j < existingSizes.length; j++) {
-                                        if (existingSizes[j].equals(currentSize)) {
-                                            isChecked = true;
-                                            stockValue = existingStock[j];
-                                            break;
+                            <label for="size">Size:</label>
+                            <div id="sizeContainer">
+                                <%
+                                    String[] existingSizes = product.getSize();
+                                    int[] existingStock = product.getStock();
+                                    String[] allSizes = {"S", "M", "L", "XL"};
+
+                                    for (int i = 0; i < allSizes.length; i++) {
+                                        String currentSize = allSizes[i];
+                                        boolean isChecked = false;
+                                        int stockValue = 0;
+
+                                        // Find if this size exists in the product's sizes
+                                        for (int j = 0; j < existingSizes.length; j++) {
+                                            if (existingSizes[j].equals(currentSize)) {
+                                                isChecked = true;
+                                                stockValue = existingStock[j];
+                                                break;
+                                            }
                                         }
+                                %>
+                                <div class="size-row">
+                                    <input type="checkbox" id="size<%= currentSize%>" name="size[]" value="<%= currentSize%>" 
+                                           onchange="toggleStockInput('<%= currentSize%>')" <%= isChecked ? "checked" : ""%>>
+                                    <label for="size<%= currentSize%>"><%= currentSize%></label>
+                                    <span id="stockInput<%= currentSize%>">
+                                        <% if (isChecked) {%>
+                                        <input type="number" id="stock<%= currentSize%>" name="stock<%= currentSize%>" 
+                                               value="<%= stockValue%>" min="0" max="1000" required>
+                                        <% } %>
+                                    </span>
+                                </div>
+                                <%
                                     }
-                            %>
-                            <div class="size-row">
-                                <input type="checkbox" id="size<%= currentSize %>" name="size[]" value="<%= currentSize %>" 
-                                       onchange="toggleStockInput('<%= currentSize %>')" <%= isChecked ? "checked" : "" %>>
-                                <label for="size<%= currentSize %>"><%= currentSize %></label>
-                                <span id="stockInput<%= currentSize %>">
-                                    <% if (isChecked) { %>
-                                        <input type="number" id="stock<%= currentSize %>" name="stock<%= currentSize %>" 
-                                               value="<%= stockValue %>" min="0" max="1000" required>
-                                    <% } %>
-                                </span>
+                                %>
                             </div>
-                            <%
-                                }
-                            %>
-                        </div>
 
-                        <label for="price">Price (RM):</label>
-                        <input type="number" id="price" name="price" step="0" required min="0" max="1000" 
-                               value="<%= product.getPrice() %>"><br><br>
+                            <label for="price">Price (RM):</label>
+                            <input type="number" id="price" name="price" step="0" required min="0" max="1000" 
+                                   value="<%= product.getPrice()%>"><br><br>
 
-                        <button type="submit">Update Product</button>
+                            <button type="submit">Update Product</button>
                     </form>
                     <% }%>
                 </div>
@@ -392,7 +395,7 @@
             }
 
             // Clock and date function
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 startTime();
             });
 
@@ -427,7 +430,7 @@
             function toggleStockInput(size) {
                 const checkbox = document.getElementById('size' + size);
                 const stockContainer = document.getElementById('stockInput' + size);
-                
+
                 if (checkbox.checked) {
                     // Create new stock input
                     const stockInput = document.createElement('input');
@@ -438,7 +441,7 @@
                     stockInput.max = '1000';
                     stockInput.required = true;
                     stockInput.placeholder = 'Stock for ' + size;
-                    
+
                     // Add the input to the container
                     stockContainer.appendChild(stockInput);
                 } else {

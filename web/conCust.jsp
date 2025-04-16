@@ -1,34 +1,43 @@
 <%-- 
-    Document   : addStaff
-    Created on : Apr 11, 2025, 12:10:41 PM
+    Document   : conCust
+    Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="domain.Toolkit" %>
-<%@ page import="da.StaffDA" %>
+<%@ page import="model.Customer" %>
+<%@ page import="da.CustomerDA" %>
 <%@ page import="java.sql.SQLException" %>
 
-
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
+<jsp:useBean id="newCustomer" class="model.Customer" scope="request" />
+
 <%
+    //after confirm weed need this 
+    String finalId = (String) request.getParameter("custId");
+    String confirmed = request.getParameter("confirmed");
+
     // Check if the staff object is set in the request
     if (staff == null || staff.getName() == null) {
-        //kick staff to 403 if unathorised
-
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
-        return; // Stop further processing
+        return;
+    } else if (!staff.isManager()) { //staff bye bye
+        request.setAttribute("error", "403 Access Denied");
+        request.getRequestDispatcher("err403.jsp").forward(request, response);
+        //response.sendRedirect("prodList.jsp");
+
     }
-    else if(!staff.isManager()){
-            request.setAttribute("error", "403 Access Denied");
-            request.getRequestDispatcher("err403.jsp").forward(request, response);
-            //response.sendRedirect("prodList.jsp");
-    
-   }
+
+    // Check if we have either a new customer object or confirmation data
+    if (newCustomer == null && finalId == null) {
+        response.sendRedirect("addCust.jsp");
+        return;
+    }
+
+    String dupError = "SQL0000000000-e8afc026-0196-011e-57be-ffffae0df08f";
 %>
 
 <!DOCTYPE html>
@@ -36,11 +45,10 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add Staff Member</title>
+        <title>Confirm Customer Details</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/aproduct.css">
         <style>
-            /* Preserve original form styles */
             .container {
                 max-width: 600px;
                 margin: 20px auto;
@@ -48,21 +56,6 @@
                 padding: 20px;
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            }
-            .form-group {
-                margin-bottom: 15px;
-            }
-            label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-            }
-            input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                box-sizing: border-box;
             }
             .btn {
                 background-color: #4CAF50;
@@ -77,13 +70,23 @@
             .btn:hover {
                 background-color: #45a049;
             }
-            .password-requirements {
-                font-size: 0.8em;
-                color: #666;
-                margin-top: 5px;
+            .table {
+                width: 80vh;
+                font-size: 1.2em;
+                border-collapse: collapse;
+                margin: 20px 0;
+                border: 1px solid #ddd;
             }
-
-            /* Additional styles for error messages */
+            .table th {
+                text-align: right;
+                padding: 8px;
+                margin: 20px 0;
+            }
+            .table td {
+                text-align: left;
+                padding: 8px;
+                margin: 20px 0;
+            }
             .error {
                 border: 1px solid red;
                 padding: 10px;
@@ -91,10 +94,13 @@
                 background-color: rgb(255, 196, 196);
                 margin-bottom: 20px;
             }
-            .error ul {
-                list-style-position: inside;
-                margin: 0;
-                padding: 0;
+            .success {
+                border: 1px solid green;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: rgb(196, 255, 196);
+                margin-bottom: 20px;
+                text-align: center;
             }
         </style>
     </head>
@@ -138,7 +144,7 @@
                     </a>
                 </li>
                 <%
-                        if(staff.getType().equalsIgnoreCase("manager")){
+                    if (staff.getType().equalsIgnoreCase("manager")) {
                 %>
                 <li>
                     <a href="reports.jsp">
@@ -146,15 +152,15 @@
                         <span>Reports</span>
                     </a>
                 </li>
-                     <li>
+                <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                    </li>
-                    <%
-                        }
-                    %>
+                </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -177,98 +183,88 @@
         </div>
 
         <div class="content">
-
             <div class="wrapper">
-                <strong>Add New Staff Member</strong>
+                <strong>Confirm Customer Details</strong>
             </div>
             <div class="main-content">
                 <div class="container">
                     <%
-                        if (request.getMethod().equals("POST")) {
-                            String name = request.getParameter("name");
-                            String email = request.getParameter("email");
-                            String psw = null;
-                            String staffId = null;
-
-                            ArrayList<String> errors = new ArrayList<>();
-
-                            // Validate name
-                            if (name == null || name.trim().isEmpty()) {
-                                errors.add("Name is required.");
-                            } else if (!name.matches("^[a-zA-Z0-9\\s]+$")) {
-                                errors.add("Name can only contain letters, numbers, and spaces.");
-                            }
-
-                            // Validate email
-                            if (email == null || email.trim().isEmpty()) {
-                                errors.add("Email is required.");
-                            } else {
-                                try {
-                                    // Check if email already exists
-                                    StaffDA staffDA = new StaffDA();
-                                    Staff existingStaff = staffDA.findByEmail(email);
-                                    if (existingStaff != null) {
-                                        errors.add("Email already exists.");
-                                    }
-                                } catch (SQLException e) {
-                                    errors.add("Error checking email: " + e.getMessage());
-                                }
-                            }
+                        if (request.getMethod().equals("POST") && "true".equals(confirmed)) {
                             try {
-                                staffId = Toolkit.generateUniqueStaffId();
-                                psw = Toolkit.hashPsw(staffId);
-                                
-                            } catch (SQLException e) {
-                                errors.add("Error generating staff ID: " + e.getMessage());
-                            }
+                                String fname = request.getParameter("fname");
+                                String lname = request.getParameter("lname");
+                                String email = request.getParameter("email");
+                                String psw = request.getParameter("psw");
 
+                                if (fname == null || lname == null || email == null || psw == null) {
+                                    throw new SQLException("Missing required fields");
+                                }
+
+                                //at this point new customer may be null so we need to use
+                                Customer nCustomer = new Customer(finalId, fname, lname, email, psw);
+                                CustomerDA cda = new CustomerDA();
+                                cda.addCustomer(nCustomer);
                     %>
-                    <% if (!errors.isEmpty()) { %>
-                    <div class="error" >
-                        <h3>Validation Errors:</h3>
-                        <ul>
-                            <% for (String error : errors) {%>
-                            <li><%= error%></li>
-                                <% } %>
-                        </ul>
-                    </div>
-
-                    <% } else { %>
                     <div class="success">
-                        <h3>Staff member ok.</h3>
+                        <h3>Customer <%= finalId%> added successfully!</h3>
+                        <img src="media/hahayes.png" alt="Successful" style="width: 150px; height: 200px; margin: 10px 0;">
+                        <br>
+                        <button onclick="window.location.href = 'custList.jsp'" class="btn">Return to Customer List</button>
                     </div>
                     <%
-                                Staff newStaff = new Staff(staffId, name, email, psw, "staff");
-                                request.setAttribute("newStaff", newStaff);
-                                request.getRequestDispatcher("conStaff.jsp").forward(request, response);
+                    } catch (SQLException e) {
+                        String errorMsg = e.getMessage();
+                        if (errorMsg.contains(dupError)) {
+                            errorMsg = "Customer " + finalId + " ALREADY added.";
+                        }
+                    %>
+                    <div class="error">
+                        <h3>Error adding customer:</h3>
+                        <p><%= errorMsg%></p>
+                        <button onclick="window.location.href = 'addCust.jsp'" class="btn" style="margin-top:10px;">Try Again</button>
+                    </div>
+                    <%
+                        }
+                    } else {
+                    %>
+                    <table class="table">
+                        <tr>
+                            <th>Customer ID:</th>
+                            <td><%= newCustomer.getCustid()%> <span style="font-size: 0.8em; color: #666;">(This cannot be changed!)</span></td>
+                        </tr>
+                        <tr>
+                            <th>First Name:</th>
+                            <td><%= newCustomer.getFname()%></td>
+                        </tr>
+                        <tr>
+                            <th>Last Name:</th>
+                            <td><%= newCustomer.getLname()%></td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td><%= newCustomer.getEmail()%></td>
+                        </tr>
+                    </table>
 
-                            }
-
-                        }%>
-                    <form id="addStaffForm"  method="POST">
-                        <div class="form-group">
-                            <label for="name">Full Name:</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label style="font-size: 12px; color: grey; font-weight: normal;">Password will be generated automatically.</label>
-                        </div>
-
-                        <button type="submit" class="btn">Add Staff Member</button>
+                    <form method="POST" id="confirmForm" action="conCust.jsp">
+                        <input type="hidden" name="confirmed" value="true">
+                        <input type="hidden" name="custId" value="<%= newCustomer.getCustid()%>">
+                        <input type="hidden" name="fname" value="<%= newCustomer.getFname()%>">
+                        <input type="hidden" name="lname" value="<%= newCustomer.getLname()%>">
+                        <input type="hidden" name="email" value="<%= newCustomer.getEmail()%>">
+                        <input type="hidden" name="psw" value="<%= newCustomer.getPsw()%>">
+                        <button type="submit" class="btn">Confirm and Add Customer</button>
                     </form>
+                    <br>
+                    <button onclick="window.location.href = 'addCust.jsp'" class="btn" style="background-color: #6c757d;">Back to Edit</button>
+                    <%
+                        }
+                    %>
                 </div>
             </div>
         </div>
 
         <script>
-            // Form 
-
             // Logout function
             function logOut() {
                 if (confirm("Are you sure want to logout?")) {
@@ -305,7 +301,6 @@
                 }
                 return i;
             }
-            a
         </script>
     </body>
-</html>
+</html> 

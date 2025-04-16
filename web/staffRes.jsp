@@ -179,7 +179,7 @@
                             <img src="media/hahayes.png" alt="Sucessfull" style="width: 150px; height: 200px;">
                             
                         </div>
-                        <a class="back" href=v"prodList.jsp">Back</a>
+                        <a class="back" href="prodList.jsp">Back</a>
                     <% } else if (errorMessage != null && !errorMessage.isEmpty()) { %>
                     <div align="center" class="error" style="text-align: center;">
                         <h3>Error:</h3>

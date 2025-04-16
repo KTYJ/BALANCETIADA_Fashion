@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package da; // Adjust this package name as needed
+package da;
 
 import domain.Toolkit;
 import java.sql.Connection;
@@ -16,12 +16,11 @@ import model.Product;
 public class ProductDA {
 
     private static Connection connection;
-    
+
     private final static String url = "jdbc:derby://localhost:1527/btdb";
     private final static String user = "nbuser";
     private final static String password = "nbuser";
-    
-    
+
     // Constructor to establish the database connection
     public ProductDA() throws SQLException {
         this.connection = DriverManager.getConnection(url, user, password);
@@ -50,7 +49,7 @@ public class ProductDA {
             stmt.setString(1, "%" + search + "%");
             stmt.setString(2, "%" + search + "%");
             stmt.setString(3, "%" + search + "%");
-            
+
             ResultSet rs = stmt.executeQuery();
             ArrayList<Product> productList = new ArrayList<>();
             while (rs.next()) {
@@ -69,6 +68,7 @@ public class ProductDA {
             return productList;
         }
     }
+
     // Method to retrieve a product by SKU
     public Product getProduct(String sku) throws SQLException {
         String sql = "SELECT * FROM NBUSER.PRODUCT WHERE sku = ?";
@@ -95,8 +95,7 @@ public class ProductDA {
     public ArrayList<Product> getAllProduct() throws SQLException {
         String sql = "SELECT * FROM NBUSER.PRODUCT";
         ArrayList<Product> productList = new ArrayList<>(); // Initialize the ArrayList
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) { // Loop through the ResultSet
                 productList.add(new Product(
                         rs.getString("sku"),
@@ -142,7 +141,7 @@ public class ProductDA {
         }
     }
 
-    public void updateFile(String prodSku   , String file) throws SQLException {
+    public void updateFile(String prodSku, String file) throws SQLException {
         String sql = "UPDATE product SET file = ? WHERE sku = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, file);
@@ -160,7 +159,26 @@ public class ProductDA {
         }
     }
 
-    // Optional: Method to close the connection
+    public void updateStockBySize(String sku, String targetSize, int newStock) throws SQLException {
+        // Step 1: Get the product from DB
+        Product product = getProduct(sku);
+        if (product == null) {
+            throw new SQLException("Product with SKU '" + sku + "' not found.");
+        }
+
+        // Step 2: Generate the new stock string using Product method
+        String updatedStockStr = product.updateStockStr(targetSize, newStock);
+
+        // Step 3: Run the update in DB
+        String sql = "UPDATE product SET stock = ? WHERE sku = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, updatedStockStr);
+            stmt.setString(2, sku);
+            stmt.executeUpdate();
+        }
+    }
+
+    //Method to close the connection
     public void closeConnection() throws SQLException {
         if (connection != null && !connection.isClosed()) {
             connection.close();

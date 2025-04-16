@@ -17,13 +17,9 @@ public class Customer {
 
     @Id
     private String custid;
-
     private String fname;
-
     private String lname;
-
     private String email;
-
     private String psw;
 
     // Constructors
