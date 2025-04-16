@@ -16,11 +16,11 @@ document.querySelectorAll('.edit-button').forEach(btn => {
         const price = item.getAttribute('data-price');
 
         document.getElementById('modal-uid').value = uid;
-        modalImg.src = img;
-        modalTitle.innerText = name;
-        modalPrice.innerText = "RM " + parseFloat(price).toFixed(2);
-        modalSize.value = size;
-        modalQuantity.value = qty;
+        document.getElementById('modal-img').src = img;
+        document.getElementById('modal-title').innerText = name;
+        document.getElementById('modal-price').innerText = "RM " + parseFloat(price).toFixed(2);
+        document.getElementById('modal-size').value = size;
+        document.getElementById('modal-quantity').value = qty;
 
         modal.style.display = 'flex';
     });
@@ -30,37 +30,6 @@ function closeModal() {
     modal.style.display = 'none';
 }
 
-function saveChanges() {
-        const uid = document.getElementById('modal-uid').value;
-        const size = document.getElementById('modal-size').value;
-        const qty = document.getElementById('modal-quantity').value;
-        const custId = document.getElementById('customer-id').value;
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'updateCartItem';
-
-        const inputs = [
-            { name: 'uid', value: uid },
-            { name: 'size', value: size },
-            { name: 'qty', value: qty },
-            { name: 'custid', value: custId }
-        ];
-
-        inputs.forEach(i => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = i.name;
-            input.value = i.value;
-            form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-        
-        closeModal();
-    }
-    
 // Optional: Close modal on outside click
 window.onclick = function (event) {
     if (event.target === modal) {
@@ -103,4 +72,9 @@ const addressTextarea = document.getElementById('address');
 addressTextarea.addEventListener('input', function () {
     this.style.height = 'auto'; // Reset height
     this.style.height = (this.scrollHeight) + 'px'; // Set new height
+});
+
+const shippingSelect = document.getElementById("shippingMethodSelect");
+shippingSelect.addEventListener("change", function () {
+    updateSummary();
 });

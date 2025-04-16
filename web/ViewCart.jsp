@@ -151,37 +151,40 @@
             <div class="modal-content">
                 <span class="modal-close" onclick="closeModal()">&times;</span>
                 <div class="modal-body">
-                    <input type="hidden" id="modal-uid" />
-                    <input type="hidden" id="customer-id" value="<%= request.getParameter("custid") %>" />
-                    <!-- Top Panel -->
-                    <div class="modal-top-panel">
-                        <div class="modal-img">
-                            <img id="modal-img" class="img-fluid" src="" alt="Product Image">
-                        </div>
-                        <div class="modal-info">
-                            <p id="modal-title">Product Name</p>
-                            <p>Price: <b id="modal-price">RM 0.00</b></p>
-                        </div>
-                    </div>
+                    <form method="POST" action="updateCartItem">
+                        <input type="hidden" id="modal-uid" name="uid" />
+                        <input type="hidden" id="customer-id" name="custid" value="<%= request.getParameter("custid") %>" />
 
-                    <!-- Bottom Panel -->
-                    <div class="modal-bottom-panel">
-                        <div class="form-group">
-                            <label for="modal-size">Size:</label>
-                            <select id="modal-size">
-                                <option>S</option>
-                                <option>M</option>
-                                <option>L</option>
-                                <option>XL</option>
-                            </select>
+                        <!-- Top Panel -->
+                        <div class="modal-top-panel">
+                            <div class="modal-img">
+                                <img id="modal-img" class="img-fluid" src="" alt="Product Image">
+                            </div>
+                            <div class="modal-info">
+                                <p id="modal-title">Product Name</p>
+                                <p>Price: <b id="modal-price">RM 0.00</b></p>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="modal-quantity">Quantity:</label>
-                            <input type="number" id="modal-quantity" min="1" value="1">
-                        </div>
-                    </div>
 
-                    <button onclick="saveChanges()">Save</button>
+                        <!-- Bottom Panel -->
+                        <div class="modal-bottom-panel">
+                            <div class="form-group">
+                                <label for="modal-size">Size:</label>
+                                <select id="modal-size" name="size">
+                                    <option>S</option>
+                                    <option>M</option>
+                                    <option>L</option>
+                                    <option>XL</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="modal-quantity">Quantity:</label>
+                                <input type="number" id="modal-quantity" name="qty" min="1" value="1">
+                            </div>
+                        </div>
+
+                        <button type="submit">Save</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -208,39 +211,39 @@
         <script src="js/custom.js"></script>
 
         <script>
-                        fetch('header.html')
-                                .then(response => response.text())
-                                .then(data => document.getElementById('header-placeholder').innerHTML = data);
+            fetch('header.html')
+                    .then(response => response.text())
+                    .then(data => document.getElementById('header-placeholder').innerHTML = data);
 
-                        fetch('footer.html')
-                                .then(response => response.text())
-                                .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+            fetch('footer.html')
+                    .then(response => response.text())
+                    .then(data => document.getElementById('footer-placeholder').innerHTML = data);
 
-                        const totalItemPrice = <%= total %>;
+            const totalItemPrice = <%= total %>;
 
-                        window.onload = function () {
-                            const shippingSelect = document.getElementById("shippingMethodSelect");
-                            shippingSelect.addEventListener("change", function () {
-                                updateSummary();
-                            });
-                        };
+            window.onload = function () {
+                const shippingSelect = document.getElementById("shippingMethodSelect");
+                shippingSelect.addEventListener("change", function () {
+                    updateSummary();
+                });
+            };
 
-                        function updateSummary() {
-                            let shippingFee = 25.0;
-                            let selectedShipping = document.getElementById("shippingMethodSelect").value;
-                            if (selectedShipping === "express") {
-                                shippingFee = 35.0;
-                            }
-                            if (totalItemPrice > 1000) {
-                                shippingFee = 0.0;
-                            }
+            function updateSummary() {
+                let shippingFee = 25.0;
+                let selectedShipping = document.getElementById("shippingMethodSelect").value;
+                if (selectedShipping === "express") {
+                    shippingFee = 35.0;
+                }
+                if (totalItemPrice > 1000) {
+                    shippingFee = 0.0;
+                }
 
-                            document.getElementById("shippingFee").innerText = (shippingFee === 0 ? "FREE" : "RM " + shippingFee.toFixed(2));
-                            let finalTotal = totalItemPrice + shippingFee;
-                            document.getElementById("finalTotal").innerHTML = "<b>RM " + finalTotal.toFixed(2) + "</b>";
-                        }
+                document.getElementById("shippingFee").innerText = (shippingFee === 0 ? "FREE" : "RM " + shippingFee.toFixed(2));
+                let finalTotal = totalItemPrice + shippingFee;
+                document.getElementById("finalTotal").innerHTML = "<b>RM " + finalTotal.toFixed(2) + "</b>";
+            }
 
-                        
+
         </script>
 
     </body>
