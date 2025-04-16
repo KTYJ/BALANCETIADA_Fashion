@@ -248,7 +248,7 @@
 
                             // Generate unique ID
                             try {
-                                id = Toolkit.generateUID();
+                                id = Toolkit.generateDigitUID();
                             } catch (Exception e) {
                                 errors.add("Error generating discount ID: " + e.getMessage());
                             }

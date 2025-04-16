@@ -219,9 +219,14 @@
                             ArrayList<String> errors = new ArrayList<>();
 
                             try {
-                                custId = Toolkit.generateUniqueStaffId();
+                                boolean valid = false;
+                                do {
+                                    custId = Toolkit.generateUID();
+                                    Customer existingCust = new CustomerDA().getCustomer(custId);
+                                    valid = (existingCust == null); // Set valid to true if no existing customer is found
+                                } while (!valid);
                             } catch (SQLException e) {
-                                errors.add("Error generating customer ID: " + e.getMessage());
+                                errors.add("Error checking customer ID: " + e.getMessage());
                             }
 
                             // Validate first name

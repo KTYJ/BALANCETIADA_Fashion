@@ -102,6 +102,18 @@
                 margin-bottom: 20px;
                 text-align: center;
             }
+            
+            .back{
+                width: 30%;
+                float: left;
+                margin: 10px 0;
+                transition: color 0.3s ease;
+            }
+
+            .back:hover{
+                color:rgb(25, 25, 25);
+                transition: color 0.3s ease;
+            }
         </style>
     </head>
     <body>
@@ -227,10 +239,12 @@
                         }
                     } else {
                     %>
+                    <button onclick="window.location.href = 'addCust.jsp'" class="btn back" style="background-color: #6c757d;"><< Back to Edit</button>
+
                     <table class="table">
                         <tr>
                             <th>Customer ID:</th>
-                            <td><%= newCustomer.getCustid()%> <span style="font-size: 0.8em; color: #666;">(This cannot be changed!)</span></td>
+                            <td><%= newCustomer.getCustid().toUpperCase()%> <span style="font-size: 0.8em; color: #666;">(This cannot be changed!)</span></td>
                         </tr>
                         <tr>
                             <th>First Name:</th>
@@ -256,7 +270,6 @@
                         <button type="submit" class="btn">Confirm and Add Customer</button>
                     </form>
                     <br>
-                    <button onclick="window.location.href = 'addCust.jsp'" class="btn" style="background-color: #6c757d;">Back to Edit</button>
                     <%
                         }
                     %>

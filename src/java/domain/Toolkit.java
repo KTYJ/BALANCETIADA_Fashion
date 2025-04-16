@@ -13,13 +13,11 @@ import da.StaffDA;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.UUID;
 
 
 public class Toolkit {
-    private static HashSet<String> existingIds = new HashSet<>();
     private static Random random = new Random();
 
     // Hash password using SHA-256
@@ -93,19 +91,15 @@ public class Toolkit {
     }
 
 
+    //e.g ksd82813
     public static String generateUID() {
         // Generate a random UUID and return it as a string (without dashes)
         UUID uuid = UUID.randomUUID();
         return uuid.toString().replace("-", "").substring(0, 8);  // Taking first 8 characters as the ID
     }
 
-    public static synchronized String generateDigitUID() {
-        String uniqueId;
-        do {
-            uniqueId = String.format("%05d", random.nextInt(100000)); // Generates a 5-digit number
-        } while (existingIds.contains(uniqueId)); // Check for uniqueness
-        existingIds.add(uniqueId); // Add to existing IDs
-        return uniqueId;
+    public static String generateDigitUID() {
+        return String.format("%06d", random.nextInt(1000000)); // Generates a 6-digit number
     }
 
     public static String generateUniqueStaffId() throws SQLException {
