@@ -1,38 +1,38 @@
 <%-- 
-    Document   : addProduct
+    Document   : viewOrder
     Created on : Apr 13, 2025, 8:12:00 PM
     Author     : KTYJ
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="model.Product" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="domain.Toolkit" %>
+<%@ page import="model.Orders" %>
+<%@ page import="da.OrdersDA" %>
+<%@ page import="java.sql.SQLException" %>
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
-
 <%
-    // Check if the staff object is set in the session
-    Staff staffObj = (Staff) session.getAttribute("staff");
-    if (staffObj == null || staffObj.getName() == null) {
+    // Check if the staff object is set in the request
+    if (staff == null || staff.getName() == null) {
         response.sendRedirect("home.jsp");
         return;
     }
 
-    // Get messages
-    String successMessage = (String) request.getAttribute("successMessage");
-    String errorMessage = (String) request.getAttribute("errorMessage");
-    
-    
-
-    // If no message, means no data was submitted, redirect to staffList.jsp
-    if (successMessage == null && errorMessage == null) {
-        response.sendRedirect("staffList.jsp");
+    // Get the order ID from request parameter
+    String orderId = request.getParameter("orderId");
+    if (orderId == null || orderId.trim().isEmpty()) {
+        response.sendRedirect("staffOrders.jsp");
         return;
     }
 
-    String dupError = "INTERNAL ERROR: The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by 'SQL0000000004-e50d80a4-0196-011e-57be-ffffae0df08f' defined on 'STAFF'.";
+    // Initialize OrdersDA and get the order
+    OrdersDA ordersDA = new OrdersDA();
+    Orders order = ordersDA.getOrderByOrderId(orderId);
+
+    if (order == null) {
+        response.sendRedirect("staffOrders.jsp");
+        return;
+    }
 %>
 
 <!DOCTYPE html>
@@ -40,52 +40,56 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BT Staff</title>
+        <title>BT Staff - View Order</title>
         <link rel="stylesheet" href="css/aproduct.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <style>
-            .error{
-                border: 1px solid red;
-                padding: 10px;
-                border-radius: 5px;
-                background-color: rgb(255, 196, 196);
-
+            body {
+                overflow: hidden;
             }
 
-            .error ul, .success ul{
-                list-style-position: inside;
-            }
-            .success{
-                border: 1px solid green;
-                padding: 10px;
-                border-radius: 5px;
-                background-color: rgb(196, 255, 196);
-
-            }
-
-            .back{
-                border-radius: 5px;
-                border: 1px solid black;
-                padding: 5px;
-                display: block; 
-                background-color:rgb(255, 255, 255);
-                text-decoration: none;
-                color: black;
-                text-align: center;
-                width: 100px;
-                margin: 0 auto;
-                
-                transition: 0.3s ease-in-out;
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
+                width: 50%;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
             }
 
-            .back:hover{
-                color: rgb(255, 255, 255);
-                background-color: rgb(0, 0, 0);
+            .btn-secondary:hover {
+                background-color: rgb(111, 193, 255);
             }
 
+            .main-content {
+                padding-top: 20px;
+                display: flex;
+                flex-direction: column;
+                height: calc(100vh - 80px); /* Subtract header height */
+            }
+
+            .order-frame {
+                height: 74vh;
+                width: 100%;
+                border: none;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .button-container {
+                margin-bottom: 20px;
+                flex-shrink: 0;
+            }
+
+            .status-packaging { color: rgb(0, 140, 255); }
+            .status-shipping { color: orange; }
+            .status-delivery { color: purple; }
+            .status-completed { color: green; }
         </style>
         <script>
-            // Logout function
             function logOut() {
                 if (confirm("Are you sure want to logout?")) {
                     window.location.href = "logout.jsp";
@@ -173,41 +177,21 @@
 
         <div class="content">
             <div class="wrapper">
-                <strong>Add New Staff</strong>
+                <strong>Viewing Order: <span style="color:rgb(255, 0, 0);"><%= order.getOrderId()%></span></strong>
             </div>
-            <div class="main-content" align="center">
-
-                <div class="product-form">
-                    <% if (successMessage != null && !successMessage.isEmpty()) { %>
-
-                        <div align="center" class="success" style="text-align: center;">
-                            <h3><%= successMessage %></h3>
-                            <img src="media/hahayes.png" alt="Sucessfull" style="width: 150px; height: 200px;">
-                            
-                        </div>
-                        <a class="back" href="prodList.jsp">Back</a>
-                    <% } else if (errorMessage != null && !errorMessage.isEmpty()) { %>
-                    <div align="center" class="error" style="text-align: center;">
-                        <h3>Error:</h3>
-                        <% if (errorMessage.contains(dupError)) { %>
-                            <h3>Staff already added!</h3>
-                        <% } else { %>
-                            <h3><%= errorMessage %></h3><a href="staffList.jsp">Back</a>
-                        <% 
-                        
-                            } %>
-                    </div>
-                    <a class="back" href="staffList.jsp">Back</a>
-                    <% } %>
+            <div class="main-content">
+                <div class="button-container" align="center">
+                    <button onclick="window.location.href = 'staffOrders.jsp'" class="btn btn-secondary">Back to Orders List</button>
                 </div>
+                <iframe src="viewOrder2.jsp?orderId=<%= orderId %>" class="order-frame" title="Order Details"></iframe>
             </div>
         </div>
 
         <script>
-             // Clock and date function
-            document.addEventListener('DOMContentLoaded', function() {
+            // Clock and date function
+            window.onload = function() {
                 startTime();
-            });
+            };
 
             function startTime() {
                 const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -236,11 +220,6 @@
                 }
                 return i;
             }
-
-        
-
-            
-            
         </script>
     </body>
 </html>

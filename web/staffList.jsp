@@ -120,6 +120,10 @@
                 padding: 5px 10px;
             }
 
+            .details-link{
+                text-align: center;
+            }
+
         </style>
         <script>
             // Logout function
@@ -248,8 +252,8 @@
                             <th>Staff ID</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Type</th>
-                            <th>Action</th>
+                            <!-- <th>Type</th> Not needed -->
+                            <th colspan="2" style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -263,12 +267,14 @@
                             <td class="always-highlight"><%= s.getStaffid()%></td>
                             <td class="always-highlight"><%= s.getName()%></td>
                             <td><%= s.getEmail()%></td>
-                            <td><%= s.getType().toUpperCase()%></td>
-                            <td class="details-link">
-                                <div class="button-container" align="center">
-                                    <a class="edit-btn" href="editStaff.jsp?staffId=<%= s.getStaffid()%>">Edit</a>
-                                    <a class="delete-btn" href="deleteStaff.jsp?staffId=<%= s.getStaffid()%>">Delete</a>
-                                </div>
+                            <!--<td><%= s.getType().toUpperCase()%></td> not needed  -->
+                            <td class="details-link" onclick="window.location.href = 'editStaff.jsp?staffId=<%= s.getStaffid()%>'">
+                                <ion-icon title="Edit" name="create-outline" style="font-size: 1.5rem; cursor: pointer;"></ion-icon>
+                            </td>
+                            <td class="details-link" onclick="window.location.href = 'deleteStaff.jsp?staffId=<%= s.getStaffid()%>'">
+                                <ion-icon title="Delete" name="trash-outline" style="font-size: 1.5rem; color: red; cursor: pointer;"></ion-icon>
+                            </td>
+                        </tr>
                                 <% } %>
                             </td>
                         </tr>

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import model.Orders;
 
 public class OrdersDA {
+
     private static Connection connection;
     private final static String host = "jdbc:derby://localhost:1527/btdb";
     private final static String user = "nbuser";
@@ -44,15 +45,15 @@ public class OrdersDA {
                 // Get products for this order
                 order.setProductsFromString(rs.getString("ITEMS"));
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally {
-            if (rs != null)
+        } finally {
+            if (rs != null) {
                 rs.close();
-            if (stmt != null)
+            }
+            if (stmt != null) {
                 stmt.close();
+            }
         }
 
         return order;
@@ -89,10 +90,12 @@ public class OrdersDA {
                 order.setProductsFromString(rs.getString("ITEMS"));
             }
         } finally {
-            if (rs != null)
+            if (rs != null) {
                 rs.close();
-            if (stmt != null)
+            }
+            if (stmt != null) {
                 stmt.close();
+            }
         }
 
         return order;
@@ -125,14 +128,63 @@ public class OrdersDA {
 
                 // Get products for this order
                 order.setProductsFromString(rs.getString("ITEMS"));
-                
+
                 ordersList.add(order);
             }
         } finally {
-            if (rs != null)
+            if (rs != null) {
                 rs.close();
-            if (stmt != null)
+            }
+            if (stmt != null) {
                 stmt.close();
+            }
+        }
+
+        return ordersList;
+    }
+
+    public ArrayList<Orders> srcOrder(String search) throws SQLException {
+        search = search.toLowerCase();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        ArrayList<Orders> ordersList = new ArrayList<>();
+
+        try {
+            // Get order details
+            String sql = "SELECT * FROM " + tableName + " WHERE lower(orderid) LIKE ? OR lower(custid) LIKE ? OR lower(items) LIKE ? OR lower(status) LIKE ?";
+            stmt = connection.prepareStatement(sql);
+            stmt.setString(1, "%" + search + "%");
+            stmt.setString(2, "%" + search + "%");
+            stmt.setString(3, "%" + search + "%");
+            stmt.setString(4, "%" + search + "%");
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Orders order = new Orders();
+                order.setOrderId(rs.getString("ORDERID"));
+                order.setCustId(rs.getString("CUSTID"));
+                order.setOrderDate(rs.getTimestamp("ORDERDATE"));
+                order.setStatus(rs.getString("STATUS"));
+                order.setAddress(rs.getString("ADDRESS"));
+                order.setPosCode(rs.getString("POSCODE"));
+                order.setCity(rs.getString("CITY"));
+                order.setState(rs.getString("STATE"));
+                order.setTotal(rs.getDouble("TOTAL"));
+                order.setShipping(rs.getString("SHIPPING"));
+
+                // Get products for this order
+                order.setProductsFromString(rs.getString("ITEMS"));
+
+                ordersList.add(order);
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
         }
 
         return ordersList;
@@ -169,20 +221,20 @@ public class OrdersDA {
                 orders.add(order);
             }
         } finally {
-            if (rs != null)
+            if (rs != null) {
                 rs.close();
-            if (stmt != null)
+            }
+            if (stmt != null) {
                 stmt.close();
+            }
         }
 
         return orders;
     }
 
     // Update order status
-    public boolean updateOrderStatus(String orderId, String status) throws SQLException, ClassNotFoundException {
+    public void updateOrderStatus(String orderId, String status) throws SQLException, ClassNotFoundException {
         PreparedStatement stmt = null;
-        boolean success = false;
-
         try {
             String sql = "UPDATE " + tableName + " SET STATUS = ? WHERE ORDERID = ?";
             stmt = connection.prepareStatement(sql);
@@ -190,13 +242,12 @@ public class OrdersDA {
             stmt.setString(2, orderId);
 
             int rowsAffected = stmt.executeUpdate();
-            success = (rowsAffected > 0);
+            //success = (rowsAffected > 0);
         } finally {
-            if (stmt != null)
+            if (stmt != null) {
                 stmt.close();
+            }
         }
-
-        return success;
     }
 
     // Create new order
@@ -207,9 +258,9 @@ public class OrdersDA {
 
         try {
             // Insert order
-            String sql = "INSERT INTO " + tableName +
-                    " (ORDERID, CUSTID, ORDERDATE, STATUS, ADDRESS, POSCODE, CITY, STATE, TOTAL, SHIPPING, ITEMS) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO " + tableName
+                    + " (ORDERID, CUSTID, ORDERDATE, STATUS, ADDRESS, POSCODE, CITY, STATE, TOTAL, SHIPPING, ITEMS) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             stmt = connection.prepareStatement(sql);
             stmt.setString(1, order.getOrderId());
             stmt.setString(2, order.getCustId());
@@ -224,15 +275,17 @@ public class OrdersDA {
             stmt.setString(11, order.getItemsString());
 
             stmt.executeUpdate();
-            
+
             success = true;
         } catch (SQLException e) {
             throw e;
         } finally {
-            if (itemStmt != null)
+            if (itemStmt != null) {
                 itemStmt.close();
-            if (stmt != null)
+            }
+            if (stmt != null) {
                 stmt.close();
+            }
         }
 
         return success;
@@ -261,16 +314,18 @@ public class OrdersDA {
                 order.setState(rs.getString("STATE"));
                 order.setTotal(rs.getDouble("TOTAL"));
                 order.setShipping(rs.getString("SHIPPING"));
-                
+
                 order.setProductsFromString(rs.getString("ITEMS"));
 
                 orders.add(order);
             }
         } finally {
-            if (rs != null) 
+            if (rs != null) {
                 rs.close();
-            if (stmt != null)
+            }
+            if (stmt != null) {
                 stmt.close();
+            }
         }
 
         return orders;

@@ -29,8 +29,7 @@
     try {
         String search = request.getParameter("search");
         if (search != null && !search.isEmpty()) {
-            // TODO: Implement search functionality if needed
-            ordersList = ordersDA.getAllOrder(); // For now, show all orders
+            ordersList = ordersDA.srcOrder(search);
         } else {
             ordersList = ordersDA.getAllOrder();
         }
@@ -62,6 +61,12 @@
                 margin-top: 30px;
             }
 
+            a[name~='back'] {
+                color: rgb(103, 103, 103);
+                font-size: 15px;
+                font-weight: normal;
+            }
+
             [class^="status-"] a{
                 min-width: 8vw;
                 margin: 0;
@@ -84,7 +89,7 @@
             .status-delivery {
                 color: purple;
             }
-  
+
         </style>
         <script>
             // Logout function
@@ -187,7 +192,8 @@
 
                 <%
                     if (ordersList == null || ordersList.isEmpty()) {
-                        out.println("<p class='no-results'>No orders found! :(</p>");
+                        out.println("<a name='back' href='staffOrders.jsp'><i class='fa fa-arrow-left'></i> Back to Orders</a>");
+                        out.println("<p class='no-results'>No orders found ! :(</p>");
                     } else {
                         String search = request.getParameter("search");
                         String message = (search != null && !search.isEmpty())
@@ -200,7 +206,7 @@
                         <tr>
                             <th>Order ID</th>
                             <th>Customer ID</th>
-                            <th>Order Date</th>
+                            <th>Date</th>
                             <th>Total</th>
                             <th style="text-align: right;">Shipping</th>
                             <th style="text-align: center;">Status</th>
@@ -210,20 +216,38 @@
                     <tbody>
                         <% for (Orders order : ordersList) {%>
                         <tr>
-                            <td class="always-highlight"><%= order.getOrderId()%></td>
+                            <td class="always-highlight"><strong><%= order.getOrderId()%></strong></td>
                             <td class="always-highlight"><%= order.getCustId()%></td>
                             <td>  
                                 <%= new java.text.SimpleDateFormat("yy-MM-dd HH:mm").format(order.getOrderDate())%>
                             </td>
                             <td>MYR <%= String.format("%.2f", order.getTotal())%></td>
-                            <td style="text-align: right;" class="always-highlight"><%= order.getShipping().substring(0, 1).toUpperCase() + order.getShipping().substring(1)%></td>
-                            <td style="text-align: center;" class="status-<%= order.getStatus().toLowerCase()%>"><a><%= order.getStatus()%></a></td>
-                            <td class="details-link" title="View Order Details">
+                            <td style="text-align: right;" class="always-highlight">
+                                <%
+                                String shippingMethod = order.getShipping();
+                                if ("express".equalsIgnoreCase(shippingMethod)) {
+                                %>
+                                <strong><%= "<ion-icon name='speedometer-outline'></ion-icon> " + shippingMethod.substring(0, 1).toUpperCase() + shippingMethod.substring(1)%></strong>
+                                <%
+                                } else {
+                                %>
+                                <%= shippingMethod.substring(0, 1).toUpperCase() + shippingMethod.substring(1)%>
+                                <%
+                                    }
+                                %></td>
+                            <td style="text-align: center;" class="status-<%= order.getStatus().toLowerCase()%>"><a><%= order.getStatus().substring(0, 1).toUpperCase() + order.getStatus().substring(1)%></a></td>
+                            <td class="details-link" title="View Order Details" style="color:rgb(204, 153, 0);">
                     <ion-icon name="cube-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'viewOrder.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
                     </td>
-                    <td class="details-link" title="Edit Status">
-                    <ion-icon name="create-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'editOrderStatus.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
+                        <%
+                            if (staff.getType().equalsIgnoreCase("manager")) {
+                        %>
+                    <td class="details-link" title="Edit Status" style="color:rgb(45, 195, 250);">
+                        <ion-icon name="create-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'editOrderStatus.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
                     </td>
+                        <%
+                            }
+                        %>
                     </tr>
                     <% } %>
                     </tbody>

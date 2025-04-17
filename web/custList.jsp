@@ -50,34 +50,7 @@
             td.button a {
                 color: transparent;
             }
-            .edit-btn {
-                margin-top: 0;
-                display: inline-block;
-                width: 30%;
-                background-color: rgb(0, 0, 0);
-                color: white;
-                margin-right: 10px;
-                padding: 10px 20px;
-                border-radius: 5px;
-            }
-            .edit-btn:hover {
-                background-color: rgb(254, 254, 254);
-                color: rgb(0, 0, 0);
-            }
-            .delete-btn {
-                text-align: center;
-                margin-top: 0;
-                display: inline-block;
-                width: 50%;
-                background-color: #dc3545;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
-            }
-            .delete-btn:hover {
-                background-color: rgb(126, 0, 0);
-                color: rgb(0, 0, 0);
-            }
+
             .no-results {
                 color: red;
                 font-size: 30px;
@@ -230,7 +203,7 @@
                         if (staff.getType().equalsIgnoreCase("manager")) {
                             message += "<br><a href='addCust.jsp'>+ Add Customer +</a>";
                         }
-                        
+
                         //build the whole message
                         out.println("<p style='text-align: center;'>" + message + "</p>");
                 %>
@@ -240,14 +213,7 @@
                             <th>Customer ID</th>
                             <th>Name</th>
                             <th>Email</th>
-                                <%
-                                    if (staff.getType().equalsIgnoreCase("manager")) {
-                                %>
-                            <th colspan="3">Actions</th>
-                                <%
-                                    }
-                                %>
-
+                            <th style="text-align: center;"<% if (staff.getType().equalsIgnoreCase("manager")) { %> colspan="3" <% } %>>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -258,13 +224,14 @@
                                 <span class="subtext"><%= customer.getLname()%> </span>
                             </td>
                             <td><%= customer.getEmail()%></td>
+                            <td class="details-link" title="Check Orders" onclick="window.location.href = 'staffOrders.jsp?search=<%= customer.getCustid()%>'"><ion-icon name="cube-outline" style="font-size: 1.5rem;cursor: pointer;"></ion-icon></td>
 
-                            <%
-                                if (staff.getType().equalsIgnoreCase("manager")) {
-                            %>
-                            <!-- Manager Actions -->
-                            <td class="details-link" title="Check Orders" style="color: rgb(1, 158, 237);" onclick="window.location.href = 'orders.jsp?custId=<%= customer.getCustid()%>'"><ion-icon name="cube-outline" style="font-size: 1.5rem;cursor: pointer;"></ion-icon></td>
-                    <td class="details-link" title="Edit Profile" onclick="window.location.href = 'editCustomer.jsp?custId=<%= customer.getCustid()%>'"><ion-icon name="create-outline" style="font-size: 1.5rem;cursor: pointer;"></ion-icon></td>
+
+                    <%
+                        if (staff.getType().equalsIgnoreCase("manager")) {
+                    %>
+                    <!-- Manager Actions -->
+                    <td style="color: rgb(1, 158, 237);" class="details-link" title="Edit Profile" onclick="window.location.href = 'editCustomer.jsp?custId=<%= customer.getCustid()%>'"><ion-icon name="create-outline" style="font-size: 1.5rem;cursor: pointer;"></ion-icon></td>
                     <td class="details-link" title="Delete" style="color:red" onclick="window.location.href = 'deleteCustomer.jsp?custId=<%= customer.getCustid()%>'"><ion-icon name="trash-outline" style="font-size: 1.5rem;cursor:pointer;"></ion-icon></td>
                         <%
                             }
