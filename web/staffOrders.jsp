@@ -6,10 +6,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="model.Customer" %>
-<%@ page import="da.CustomerDA" %>
-<%@ page import="java.util.List" %>
+<%@ page import="model.Orders" %>
+<%@ page import="da.OrdersDA" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="java.sql.SQLException" %>
+
+<%-- JSTL --%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%
@@ -20,20 +23,21 @@
         return; // Stop further processing
     }
 
-    // Initialize CustomerDA and get all customers or search results
-    CustomerDA customerDA = new CustomerDA();
-    List<Customer> customerList = null;
+    // Initialize OrdersDA and get all orders
+    OrdersDA ordersDA = new OrdersDA();
+    ArrayList<Orders> ordersList = new ArrayList<>();
     try {
         String search = request.getParameter("search");
         if (search != null && !search.isEmpty()) {
-            customerList = customerDA.srcCustomer(search.toLowerCase());
-            System.out.println("Customer List: " + customerList);
+            // TODO: Implement search functionality if needed
+            ordersList = ordersDA.getAllOrder(); // For now, show all orders
         } else {
-            customerList = customerDA.getAllCust();
+            ordersList = ordersDA.getAllOrder();
         }
     } catch (SQLException e) {
         e.printStackTrace();
         // Handle error appropriately
+        out.println("<div class='error-message'>Error loading orders: " + e.getMessage() + "</div>");
     }
 %>
 
@@ -43,40 +47,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BT Staff</title>
+        <title>BT Staff - Orders</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/custlist.css">
         <style>
             td.button a {
                 color: transparent;
-            }
-            .edit-btn {
-                margin-top: 0;
-                display: inline-block;
-                width: 30%;
-                background-color: rgb(0, 0, 0);
-                color: white;
-                margin-right: 10px;
-                padding: 10px 20px;
-                border-radius: 5px;
-            }
-            .edit-btn:hover {
-                background-color: rgb(254, 254, 254);
-                color: rgb(0, 0, 0);
-            }
-            .delete-btn {
-                text-align: center;
-                margin-top: 0;
-                display: inline-block;
-                width: 50%;
-                background-color: #dc3545;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
-            }
-            .delete-btn:hover {
-                background-color: rgb(126, 0, 0);
-                color: rgb(0, 0, 0);
             }
             .no-results {
                 color: red;
@@ -86,36 +62,31 @@
                 margin-top: 30px;
             }
 
-            a[href='addCust.jsp']{
-                color: rgb(0, 128, 255);
-                font-size: 20px;
+            [class^="status-"] a{
+                min-width: 8vw;
+                margin: 0;
+                display: inline-block;
+                background-color: white;
+                padding: 5px 10px;
+                border-radius: 15px;
                 font-weight: bold;
             }
 
-
-            a[name='back']{
-                color: rgb(103, 103, 103);
-                font-size: 15px;
-                font-weight: normal;
+            .status-completed {
+                color: green;
             }
-
-            a[href='addCust.jsp']:hover{
-                color: rgb(0, 53, 106);
+            .status-shipping {
+                color: orange;
             }
+            .status-packaging {
+                color: rgb(0, 140, 255);
+            }
+            .status-delivery {
+                color: purple;
+            }
+  
         </style>
-        <script src="js/jquery-1.9.1.js"></script>
         <script>
-            $(document).ready(function () {
-                $('#togglePassword').click(function () {
-                    const password = $('#pass');
-                    const type = password.attr('type') === 'password' ? 'text' : 'password';
-                    password.attr('type', type);
-
-                    $(this).toggleClass('bi-eye');
-                });
-            });
-
-
             // Logout function
             function logOut() {
                 if (confirm("Are you sure want to logout?")) {
@@ -204,10 +175,10 @@
         </div>
         <div class="content">
             <div class="wrapper">
-                <strong>Customer List</strong>
+                <strong>Customer Orders</strong>
             </div>
             <div class="main-content">
-                <form action="custList.jsp" method="get">
+                <form action="staffOrders.jsp" method="get">
                     <div class="search-bar">
                         <input type="text" placeholder="Search.." name="search">
                         <button type="submit"><i class="fa fa-search"></i></button>
@@ -215,61 +186,44 @@
                 </form>
 
                 <%
-                    if (customerList == null || customerList.isEmpty()) {
-                        out.println("<p class='no-results'>No customers found! :(</p>");
-                        out.println("<div><a name='back' href='custList.jsp'><< Customer List</a></div>");
-                        if (staff.getType().equalsIgnoreCase("manager")) {
-                            out.println("<br><div style='text-align: center;'><a href='addCust.jsp'>+ Add Customer +</a></div>");
-                        }
+                    if (ordersList == null || ordersList.isEmpty()) {
+                        out.println("<p class='no-results'>No orders found! :(</p>");
                     } else {
                         String search = request.getParameter("search");
                         String message = (search != null && !search.isEmpty())
-                                ? "Showing " + customerList.size() + " results for \"" + search + "\"." //if search is set
-                                : "Showing " + customerList.size() + " customer(s)."; //else
-
-                        if (staff.getType().equalsIgnoreCase("manager")) {
-                            message += "<br><a href='addCust.jsp'>+ Add Customer +</a>";
-                        }
-                        
-                        //build the whole message
+                                ? "Showing " + ordersList.size() + " results for \"" + search + "\"."
+                                : "Showing " + ordersList.size() + " order(s).";
                         out.println("<p style='text-align: center;'>" + message + "</p>");
                 %>
                 <table>
                     <thead>
                         <tr>
+                            <th>Order ID</th>
                             <th>Customer ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                                <%
-                                    if (staff.getType().equalsIgnoreCase("manager")) {
-                                %>
-                            <th colspan="3">Actions</th>
-                                <%
-                                    }
-                                %>
-
+                            <th>Order Date</th>
+                            <th>Total</th>
+                            <th style="text-align: right;">Shipping</th>
+                            <th style="text-align: center;">Status</th>
+                            <th colspan="2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (Customer customer : customerList) {%>
+                        <% for (Orders order : ordersList) {%>
                         <tr>
-                            <td class="always-highlight"><%= customer.getCustid().toUpperCase()%></td>
-                            <td class="always-highlight"><%= customer.getFname()%>
-                                <span class="subtext"><%= customer.getLname()%> </span>
+                            <td class="always-highlight"><%= order.getOrderId()%></td>
+                            <td class="always-highlight"><%= order.getCustId()%></td>
+                            <td>  
+                                <%= new java.text.SimpleDateFormat("yy-MM-dd HH:mm").format(order.getOrderDate())%>
                             </td>
-                            <td><%= customer.getEmail()%></td>
-
-                            <%
-                                if (staff.getType().equalsIgnoreCase("manager")) {
-                            %>
-                            <!-- Manager Actions -->
-                            <td class="details-link" title="Check Orders" style="color: rgb(1, 158, 237);" onclick="window.location.href = 'orders.jsp?custId=<%= customer.getCustid()%>'"><ion-icon name="cube-outline" style="font-size: 1.5rem;cursor: pointer;"></ion-icon></td>
-                    <td class="details-link" title="Edit Profile" onclick="window.location.href = 'editCustomer.jsp?custId=<%= customer.getCustid()%>'"><ion-icon name="create-outline" style="font-size: 1.5rem;cursor: pointer;"></ion-icon></td>
-                    <td class="details-link" title="Delete" style="color:red" onclick="window.location.href = 'deleteCustomer.jsp?custId=<%= customer.getCustid()%>'"><ion-icon name="trash-outline" style="font-size: 1.5rem;cursor:pointer;"></ion-icon></td>
-                        <%
-                            }
-                        %>
-                    </tr>
+                            <td>MYR <%= String.format("%.2f", order.getTotal())%></td>
+                            <td style="text-align: right;" class="always-highlight"><%= order.getShipping().substring(0, 1).toUpperCase() + order.getShipping().substring(1)%></td>
+                            <td style="text-align: center;" class="status-<%= order.getStatus().toLowerCase()%>"><a><%= order.getStatus()%></a></td>
+                            <td class="details-link" title="View Order Details">
+                    <ion-icon name="cube-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'viewOrder.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
+                    </td>
+                    <td class="details-link" title="Edit Status">
+                    <ion-icon name="create-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'editOrderStatus.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
+                    </td>
                     </tr>
                     <% } %>
                     </tbody>

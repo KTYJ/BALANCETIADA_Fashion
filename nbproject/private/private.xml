@@ -3,10 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/prodList.jsp</file>
-            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/addStaff.jsp</file>
-            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/src/java/da/StaffDA2.java</file>
-            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/src/java/domain/Toolkit.java</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/editCustomer.jsp</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/home.jsp</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/index.html</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/custList.jsp</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/conStaff.jsp</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/addCust.jsp</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/conCust.jsp</file>
+            <file>file:/C:/Users/KTYJ/Documents/TARUMT/Year%202/Sem%203/GUI/BalanceTiada/web/deleteCustomer.jsp</file>
         </group>
     </open-files>
 </project-private>

@@ -1,15 +1,9 @@
-<%-- 
-    Document   : discounts
-    Created on : Apr 13, 2025, 8:12:00 PM
-    Author     : KTYJ
---%>
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
 <%@ page import="model.Discount" %>
 <%@ page import="da.DiscountDA" %>
-<%@ page import="java.util.List" %>
+<%@ page import="java.sql.SQLException" %>
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%
@@ -19,87 +13,76 @@
         return;
     }
 
-    // Initialize DiscountDA and get all discounts
-    DiscountDA discountDA = new DiscountDA();
-    List<Discount> discountList;
-    try {
-        String search = request.getParameter("search");
-        if (search != null && !search.isEmpty()) {
-            discountList = discountDA.searchDiscounts(search);
-        } else {
-            discountList = discountDA.getAllDiscount();
+    // Get the discount ID to delete from the request parameter
+    String deleteDiscountId = request.getParameter("discountId");
+    String confirmDelete = request.getParameter("confirm");
+    
+    if (deleteDiscountId != null && confirmDelete != null && confirmDelete.equals("true")) {
+        try {
+            DiscountDA discountDA = new DiscountDA();
+            
+            // Check if discount exists before deletion    
+            Discount discountToDelete = discountDA.findById(deleteDiscountId);
+            if (discountToDelete == null) {
+                request.setAttribute("error", "Discount not found.");
+                request.getRequestDispatcher("discounts.jsp").forward(request, response);
+                return;
+            }
+            
+            // Perform the deletion
+            discountDA.deleteDiscount(deleteDiscountId);
+            response.sendRedirect("discounts.jsp");
+            return;
+            
+        } catch (SQLException e) {
+            request.setAttribute("error", "Error deleting discount: " + e.getMessage());
+            request.getRequestDispatcher("discounts.jsp").forward(request, response);
+            return;
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        discountList = List.of(); // Empty list if error occurs
-    }
+    } else if (deleteDiscountId != null) {
+        // If no confirmation, show confirmation page
 %>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BT Staff - Discount Management</title>
+        <title>Delete Discount</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-        <link rel="stylesheet" href="css/custlist.css">
+        <link rel="stylesheet" href="css/aproduct.css">
         <style>
-            .no-results {
-                color: red;
-                font-size: 30px;
-                font-weight: bold;
+            .container {
+                max-width: 600px;
+                margin: 20px auto;
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
                 text-align: center;
-                margin-top: 30px;
             }
-            .edit-btn {
-                margin-top: 0;
-                display: inline-block;
-                width: 30%;
-                background-color: rgb(0, 0, 0);
-                color: white;
-                margin-right: 10px;
+            .btn-group {
+                margin-top: 20px;
+            }
+            .btn {
                 padding: 10px 20px;
-                border-radius: 5px;
+                margin: 0 10px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
             }
-            .edit-btn:hover {
-                background-color: rgb(254, 254, 254);
-                color: rgb(0, 0, 0);
-            }
-            .delete-btn {
-                text-align: center;
-                margin-top: 0;
-                display: inline-block;
-                width: 50%;
+            .btn-danger {
                 background-color: #dc3545;
                 color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
             }
-            .delete-btn:hover {
-                background-color: rgb(126, 0, 0);
-                color: rgb(0, 0, 0);
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
             }
-            td a {
-                text-align: center;
-                width: 100%;
-                margin-top: 10px;
-                font-size: 15px;
-                text-decoration: none;
-            }
-            td a:hover {
-                color: rgb(65, 65, 65);
-            }
-            a[href='addDiscount.jsp'] {
-                color: rgb(0, 128, 255);
-                font-size: 20px;
-                display: block;
+            .warning-text {
+                color: #dc3545;
                 font-weight: bold;
-            }
-            a[href='addDiscount.jsp']:hover {
-                color: rgb(0, 53, 106);
-            }
-            td, th {
-                padding: 5px 10px;
+                margin: 20px 0;
             }
             .type-badge {
                 display: inline-block;
@@ -108,6 +91,7 @@
                 font-weight: bold;
                 text-align: center;
                 min-width: 80px;
+                margin: 10px 0;
             }
             .type-percentage {
                 background-color: #e3fcef;
@@ -118,6 +102,14 @@
                 color: #fa8c16;
             }
         </style>
+        <script>
+            // Logout function
+            function logOut() {
+                if (confirm("Are you sure want to logout?")) {
+                    window.location.href = "logout.jsp";
+                }
+            }
+        </script>
     </head>
     <body>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -199,81 +191,51 @@
 
         <div class="content">
             <div class="wrapper">
-                <strong>Discount Management</strong>
+                <strong>Delete Discount</strong>
             </div>
             <div class="main-content">
-                <form action="discounts.jsp" method="get">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Search discounts..." name="search">
-                        <button type="submit"><i class="fa fa-search"></i></button>
+                <div class="container">
+                    <%
+                        try {
+                            DiscountDA discountDA = new DiscountDA();
+                            Discount discountToDelete = discountDA.findById(deleteDiscountId);
+                            if (discountToDelete != null) {
+                    %>
+                    <h2>Confirm Deletion</h2>
+                    <p class="warning-text">Are you sure you want to delete the following discount?</p>
+                    <p><strong>ID:</strong> <%= discountToDelete.getId() %></p>
+                    <p><strong>Code:</strong> <%= discountToDelete.getCode() %></p>
+                    <p>
+                        <strong>Value:</strong>
+                            <%= discountToDelete.getValue() %><%= discountToDelete.getType().equals("P") ? " %" : " MYR" %>
+                    </p>                    
+                    <div class="btn-group">
+                        <form action="deleteDiscount.jsp" method="POST" style="display: inline;">
+                            <input type="hidden" name="discountId" value="<%= deleteDiscountId %>">
+                            <input type="hidden" name="confirm" value="true">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        <button onclick="window.location.href='discounts.jsp'" class="btn btn-secondary">Cancel</button>
                     </div>
-                </form>
-
-                <%
-                    if (discountList.isEmpty()) {
-                %>
-                <p class="no-results">No discounts found! :(</p>
-                <br><div style="text-align: center;">
-                
-                <% if (staff.isManager()) { %>
-                    <a href="addDiscount.jsp">+ Add Discount +</a>
-                <% } %>
-                
+                    <%
+                            } else {
+                    %>
+                    <p class="warning-text">Discount not found.</p>
+                    <button onclick="window.location.href='discounts.jsp'" class="btn btn-secondary">Back to Discounts</button>
+                    <%
+                            }
+                        } catch (SQLException e) {
+                    %>
+                    <p class="warning-text">Error: <%= e.getMessage() %></p>
+                    <button onclick="window.location.href='discounts.jsp'" class="btn btn-secondary">Back to Discounts</button>
+                    <%
+                        }
+                    %>
                 </div>
-                <%
-                } else {
-                    
-
-                    String search = request.getParameter("search");
-                    if (search != null && !search.isEmpty()) {
-                        out.println("<p style='text-align: center;'>Showing " + discountList.size() + " results for \"" + search + "\".");
-                    } else {
-                        out.println("<p style='text-align: center;'>Showing " + discountList.size() + " discounts."); 
-                    }
-                    if (staff.isManager()) {
-                        out.println("<br><a href='addDiscount.jsp'>+ Add Discount +</a>");
-                    }
-                    out.println("</p>");
-                    
-                %>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Code</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                            <th colspan="2" style="text-align:center;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for (Discount discount : discountList) { %>
-                        <tr>
-                            <td><%= discount.getId() %></td>
-                            <td class="always-highlight"><%= discount.getCode() %></td>
-                            <td>
-                                <span class="type-badge <%= discount.getType().equals("P") ? "type-percentage" : "type-amount" %>">
-                                    <%= discount.getValue() %><%= discount.getType().equals("P") ? "%" : " MYR" %>
-                                </span>
-                            </td>
-                            <td><%= discount.getDescription() %></td>
-                            <td class="details-link" title="Delete" style="color:red;text-align:center;" onclick="window.location.href = 'deleteDiscount.jsp?discountId=<%= discount.getId()%>'"><ion-icon name="trash-outline" style="font-size: 1.5rem;cursor:pointer;"></ion-icon></td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-                <% } %>
             </div>
         </div>
 
         <script>
-            // Logout function
-            function logOut() {
-                if (confirm("Are you sure want to logout?")) {
-                    window.location.href = "logout.jsp";
-                }
-            }
-
             // Clock and date function
             window.onload = startTime();
             function startTime() {
@@ -305,4 +267,8 @@
             }
         </script>
     </body>
-</html> 
+</html>
+<% } else {
+    // No discount ID provided
+    response.sendRedirect("discounts.jsp");
+} %> 

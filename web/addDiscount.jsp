@@ -19,6 +19,11 @@
     if (staff == null || staff.getName() == null) {
         response.sendRedirect("home.jsp");
         return;
+    } else if (!staff.isManager()) {
+        request.setAttribute("error", "403 Access Denied");
+        request.getRequestDispatcher("err403.jsp").forward(request, response);
+        //response.sendRedirect("prodList.jsp");
+
     }
 %>
 
@@ -213,13 +218,22 @@
                             // Validate code
                             if (code == null || code.trim().isEmpty()) {
                                 errors.add("Discount code is required.");
-                            } else {
+                            } 
+                            else if (code.length() > 10 || code.length() < 3) {
+                                errors.add("Discount code should be between 3 and 10 characters.");
+                            }
+                            else if (!code.matches("^[a-zA-Z0-9]+$")) {
+                                errors.add("Discount code can only contain letters and numbers.");
+                            }
+                            else {
                                 try {
                                     DiscountDA discountDA = new DiscountDA();
                                     Discount existingDiscount = discountDA.findByCode(code);
                                     if (existingDiscount != null) {
                                         errors.add("Discount code already exists.");
                                     }
+                                    //code is valid
+                                    code = code.toUpperCase();
                                 } catch (SQLException e) {
                                     errors.add("Error checking discount code: " + e.getMessage());
                                 }
@@ -283,7 +297,7 @@
                     }
                     %>
 
-                    <form id="addDiscountForm" method="POST" onsubmit="return validateForm()">
+                    <form id="addDiscountForm" method="POST" onsubmit="return confirm('Are you sure want to add this discount?')">
                         <div class="form-group">
                             <label for="code">Discount Code:</label>
                             <input type="text" id="code" name="code" required>
@@ -316,7 +330,7 @@
                             <textarea id="description" name="description" rows="3"></textarea>
                         </div>
 
-                        <button type="submit" class="btn">Add Discount</button>
+                        <button type="submit" class="btn" onclick="return validateForm()">Add Discount</button>
                     </form>
                 </div>
             </div>

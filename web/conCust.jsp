@@ -218,7 +218,7 @@
                                 cda.addCustomer(nCustomer);
                     %>
                     <div class="success">
-                        <h3>Customer <%= finalId%> added successfully!</h3>
+                        <h3>Customer <%= finalId.toUpperCase()%> added successfully!</h3>
                         <img src="media/hahayes.png" alt="Successful" style="width: 150px; height: 200px; margin: 10px 0;">
                         <br>
                         <button onclick="window.location.href = 'custList.jsp'" class="btn">Return to Customer List</button>

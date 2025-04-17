@@ -177,26 +177,67 @@ public class Orders {
         products.add(product);
     }
 
-    //To add list products into a database safe string
-    public static String prodListToStr(ArrayList<Product> products) {
-        ArrayList<String> encodedProducts = new ArrayList<>();
-
-        for (Product p : products) {
-            encodedProducts.add(p.orderProdToString()); // reuse previous method
+    // Convert product list to string format
+    public static String itemListToString(ArrayList<Product> products) {
+        if (products == null || products.isEmpty()) {
+            return "";
         }
-
-        return String.join("#", encodedProducts); // Separate each product with #
+        
+        ArrayList<String> itemStrings = new ArrayList<>();
+        for (Product p : products) {
+            
+            // Assuming the first size and quantity are used (quantity and category selected)
+            String size = p.getSize() != null && p.getSize().length > 0 ? p.getSize()[0] : "";
+            int quantity = p.getStock() != null && p.getStock().length > 0 ? p.getStock()[0] : 0;
+            
+            String itemStr = String.format("%s|%s|%s|%.2f|%d", 
+                p.getName(), 
+                p.getSku(), 
+                size,
+                p.getPrice(),
+                quantity);
+            itemStrings.add(itemStr);
+        }
+        return String.join("#", itemStrings);
     }
 
-    public static ArrayList<Product> strToProdList(String orderStr) {
+    // Convert string format to product list
+    public static ArrayList<Product> stringToProductList(String combined) {
         ArrayList<Product> products = new ArrayList<>();
-
-        String[] productStrs = orderStr.split("#");
-        for (String prodStr : productStrs) {
-            products.add(Product.strToOrderProd(prodStr)); // reuse previous method
+        if (combined == null || combined.trim().isEmpty()) {
+            return products;
         }
 
+        String[] itemArray = combined.split("#");
+        for (String item : itemArray) {
+            String[] parts = item.split("\\|");
+            if (parts.length == 5) {
+                String name = parts[0];
+                String productId = parts[1];
+                String[] size = new String[]{parts[2]}; // Create array with single size
+                double price = Double.parseDouble(parts[3]);
+                int[] qty = new int[]{Integer.parseInt(parts[4])}; // Create array with single quantity
+                
+                Product p = new Product();
+                p.setName(name);
+                p.setSku(productId);
+                p.setSize(size);
+                p.setPrice(price);
+                p.setStock(qty);
+                products.add(p);
+            }
+        }
         return products;
+    }
+
+    // Helper method to get combined string from order
+    public String getItemsString() {
+        return itemListToString(this.products);
+    }
+
+    // Helper method to set products from combined string
+    public void setProductsFromString(String combined) {
+        this.products = stringToProductList(combined);
     }
 
 
