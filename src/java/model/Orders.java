@@ -23,22 +23,23 @@ public class Orders {
     private String orderId;
 
     private String custId;
-    private Timestamp orderDate; //2024-10-24 12:50:30
+    private Timestamp orderDate; // 2024-10-24 12:50:30
     private String status;
     private String address;
     private String posCode;
     private String city;
     private String state;
     private double total;
-    private String shipping;
+    private String shipping; // 1,2,3,4
     private ArrayList<Product> products;
+    private Discount discount;
 
     // Constructors
     public Orders() {
 
     }
 
-    //full getter setter
+    // full getter setter
     public Orders(String orderId, String custId, Timestamp orderDate, String status,
             String address, String posCode, String city, String state,
             double total, String shipping, ArrayList<Product> products) {
@@ -136,6 +137,43 @@ public class Orders {
         this.shipping = shipping;
     }
 
+    public String getStatusString() {
+        if (status.strip().equals("") || status == null) {
+            return "unknown";
+        }
+        switch (status) {
+            case "1":
+                return "packaging";
+            case "2":
+                return "shipping";
+            case "3":
+                return "delivery";
+            case "4":
+                return "completed";
+            default:
+                return "unknown";
+        }
+    }
+
+    public static String strToStatusNo(String statusStr) {
+        if (statusStr == null || statusStr.strip().equals("")) {
+            return "0";  // Return "0" for Unknown (or you could return null)
+        }
+
+        switch (statusStr.toLowerCase()) {
+            case "packaging":
+                return "1";
+            case "shipping":
+                return "2";
+            case "delivery":
+                return "3";
+            case "completed":
+                return "4";
+            default:
+                return "0";  // Return "0" for Unknown (or you could return null)
+        }
+    }
+
     public ArrayList<Product> getProducts() {
         return products;
     }
@@ -144,14 +182,14 @@ public class Orders {
         this.products = products;
     }
 
-    //dateStr can look like "2024-10-24 12:50:30", "2025-01-01 00:00:00"
+    // dateStr can look like "2024-10-24 12:50:30", "2025-01-01 00:00:00"
     public static Timestamp strToTimeStamp(String dateStr) {
         Timestamp timestamp = new java.sql.Timestamp(0);
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date parsedDate = dateFormat.parse(dateStr);
             timestamp = new Timestamp(parsedDate.getTime());
-        } catch (Exception e) { //this generic but you can control another types of exception
+        } catch (Exception e) { // this generic but you can control another types of exception
             System.out.println("Error: " + e.getMessage());
         }
 
@@ -182,20 +220,21 @@ public class Orders {
         if (products == null || products.isEmpty()) {
             return "";
         }
-        
+
         ArrayList<String> itemStrings = new ArrayList<>();
         for (Product p : products) {
-            
-            // Assuming the first size and quantity are used (quantity and category selected)
+
+            // Assuming the first size and quantity are used (quantity and category
+            // selected)
             String size = p.getSize() != null && p.getSize().length > 0 ? p.getSize()[0] : "";
             int quantity = p.getStock() != null && p.getStock().length > 0 ? p.getStock()[0] : 0;
-            
-            String itemStr = String.format("%s|%s|%s|%.2f|%d", 
-                p.getName(), 
-                p.getSku(), 
-                size,
-                p.getPrice(),
-                quantity);
+
+            String itemStr = String.format("%s|%s|%s|%.2f|%d",
+                    p.getName(),
+                    p.getSku(),
+                    size,
+                    p.getPrice(),
+                    quantity);
             itemStrings.add(itemStr);
         }
         return String.join("#", itemStrings);
@@ -217,7 +256,7 @@ public class Orders {
                 String[] size = new String[]{parts[2]}; // Create array with single size
                 double price = Double.parseDouble(parts[3]);
                 int[] qty = new int[]{Integer.parseInt(parts[4])}; // Create array with single quantity
-                
+
                 Product p = new Product();
                 p.setName(name);
                 p.setSku(productId);
@@ -239,6 +278,5 @@ public class Orders {
     public void setProductsFromString(String combined) {
         this.products = stringToProductList(combined);
     }
-
 
 }

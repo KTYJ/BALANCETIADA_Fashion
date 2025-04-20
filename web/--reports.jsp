@@ -6,13 +6,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true"%>
 <%@ page import="model.Staff" %>
-<%@ page import="model.Orders" %>
-<%@ page import="da.OrdersDA" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.sql.SQLException" %>
-
-<%-- JSTL --%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%
@@ -21,23 +14,13 @@
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
         return; // Stop further processing
+    } else if (!staff.isManager()) { //staff bye bye
+        request.setAttribute("error", "403 Access Denied");
+        request.getRequestDispatcher("err403.jsp").forward(request, response);
+        //response.sendRedirect("prodList.jsp");
+
     }
 
-    // Initialize OrdersDA and get all orders
-    OrdersDA ordersDA = new OrdersDA();
-    ArrayList<Orders> ordersList = new ArrayList<>();
-    try {
-        String search = request.getParameter("search");
-        if (search != null && !search.isEmpty()) {
-            ordersList = ordersDA.srcOrder(search);
-        } else {
-            ordersList = ordersDA.getAllOrder();
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        // Handle error appropriately
-        out.println("<div class='error-message'>Error loading orders: " + e.getMessage() + "</div>");
-    }
 %>
 
 
@@ -46,53 +29,20 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BT Staff - Orders</title>
+        <title>BT Staff</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" href="css/custlist.css">
         <style>
             td.button a {
                 color: transparent;
             }
-            .no-results {
-                color: red;
-                font-size: 30px;
-                font-weight: bold;
-                text-align: center;
-                margin-top: 30px;
-            }
 
-            a[name~='back'] {
-                color: rgb(103, 103, 103);
-                font-size: 15px;
-                font-weight: normal;
+            .search-bar input[type=month] {
+                padding: 6px;
+                margin-top: 8px;
+                font-size: 17px;
+                border: 1px solid black;
             }
-
-            [class^="status-"] a{
-                min-width: 8vw;
-                margin: 0;
-                display: inline-block;
-                background-color: white;
-                padding: 5px 10px;
-                border-radius: 15px;
-                font-weight: bold;
-            }
-
-            .status-completed {
-                color: green;
-            }
-            .status-shipping {
-                color: orange;
-            }
-            .status-packaging {
-                color: rgb(0, 140, 255);
-            }
-            .status-delivery {
-                color: purple;
-            }
-            .status-unknown {
-                color: rgb(103, 103, 103);
-            }
-
         </style>
         <script>
             // Logout function
@@ -183,79 +133,52 @@
         </div>
         <div class="content">
             <div class="wrapper">
-                <strong>Customer Orders</strong>
+                <strong>Sales Report</strong>
             </div>
             <div class="main-content">
-                <form action="staffOrders.jsp" method="get">
+
+                <form action="custList.jsp" method="get">
                     <div class="search-bar">
                         <input type="text" placeholder="Search.." name="search">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </div>
                 </form>
-
-                <%
-                    if (ordersList == null || ordersList.isEmpty()) {
-                        out.println("<a name='back' href='staffOrders.jsp'><i class='fa fa-arrow-left'></i> Back to Orders</a>");
-                        out.println("<p class='no-results'>No orders found ! :(</p>");
-                    } else {
-                        String search = request.getParameter("search");
-                        String message = (search != null && !search.isEmpty())
-                                ? "Showing " + ordersList.size() + " results for \"" + search + "\"."
-                                : "Showing " + ordersList.size() + " order(s).";
-                        out.println("<p style='text-align: center;'>" + message + "</p>");
-                %>
+                <form method="get">
+                    <div class="search-bar">
+                        <input type="month" id="search  " name="search" 
+                               min="<%=java.time.YearMonth.now().minusYears(2).toString()%>" 
+                               value="<%= java.time.YearMonth.now().toString()%>" />
+                        <!--<input type="text" placeholder="Search.." name="search">-->
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </form>
                 <table>
                     <thead>
                         <tr>
-                            <th>Order ID</th>
-                            <th>Customer ID</th>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th style="text-align: right;">Shipping</th>
-                            <th style="text-align: center;">Status</th>
-                            <th colspan="2">Actions</th>
+                            <th>CUST ID</th>
+                            <th>FullName</th>
+                            <th>LastName</th>
+                            <th>EMAIL</th>
+                            <th>PASSWORD</th>
+                            <th colspan="3">ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (Orders order : ordersList) {%>
                         <tr>
-                            <td class="always-highlight"><strong><%= order.getOrderId()%></strong></td>
-                            <td class="always-highlight"><%= order.getCustId()%></td>
-                            <td>  
-                                <%= new java.text.SimpleDateFormat("yy-MM-dd HH:mm").format(order.getOrderDate())%>
+                            <td class="always-highlight">1392</td>
+                            <td class="always-highlight">James Yates</td>
+                            <td>
+                                Web Designer
+                                <span class="subtext">Far far away, behind the word mountains</span>
                             </td>
-                            <td>MYR <%= String.format("%.2f", order.getTotal())%></td>
-                            <td style="text-align: right;" class="always-highlight">
-                                <%
-                                    String shippingMethod = order.getShipping();
-                                    if ("express".equalsIgnoreCase(shippingMethod)) {
-                                %>
-                                <strong><%= "<ion-icon name='speedometer-outline'></ion-icon> " + shippingMethod.substring(0, 1).toUpperCase() + shippingMethod.substring(1)%></strong>
-                                <%
-                                } else {
-                                %>
-                                <%= shippingMethod.substring(0, 1).toUpperCase() + shippingMethod.substring(1)%>
-                                <%
-                                    }
-                                %></td>
-                            <td style="text-align: center;" class="status-<%= order.getStatusString()%>"><a><%= order.getStatusString().substring(0, 1).toUpperCase() + order.getStatusString().substring(1)%></a></td>
-                            <td class="details-link" title="View Order Details" style="color:rgb(204, 153, 0);">
-                    <ion-icon name="cube-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'viewOrder.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
-                    </td>
-                    <%
-                        if (staff.getType().equalsIgnoreCase("manager")) {
-                    %>
-                    <td class="details-link" title="Edit Status" style="color:rgb(45, 195, 250);">
-                    <ion-icon name="create-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'editOrderStatus.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
-                    </td>
-                    <%
-                        }
-                    %>
+                            <td>+63 983 0962 971</td>
+                            <td>NY University</td>
+                            <td class="details-link" title="Check Orders"><ion-icon name="cube-outline" style="font-size: 1.5rem;"></ion-icon></td>
+                    <td class="details-link" title="Edit Profile"><ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon></td>
+                    <td class="details-link" title="Orders" style="color:red"><ion-icon name="trash-outline" style="font-size: 1.5rem;"></ion-icon></td>
                     </tr>
-                    <% } %>
                     </tbody>
                 </table>
-                <% }%>
             </div>
         </div>
     </div>

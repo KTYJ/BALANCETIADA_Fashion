@@ -164,15 +164,15 @@
                         <span>Reports</span>
                     </a>
                 </li>
-                     <li>
+                <li>
                     <a href="staffList.jsp">
                         <ion-icon name="business-outline" style="font-size: 1.5rem;"></ion-icon>
                         <span>Staff</span>
                     </a>
-                    </li>
-                    <%
-                        }
-                    %>
+                </li>
+                <%
+                    }
+                %>
                 <li>
                     <a href="editStaffOwn.jsp">    
                         <ion-icon name="create-outline" style="font-size: 1.5rem;"></ion-icon>
@@ -211,26 +211,26 @@
                     <p><strong>Name:</strong> <%= staffToDelete.getName() %></p>
                     <p><strong>Email:</strong> <%= staffToDelete.getEmail() %></p>
                     <p><strong>Staff ID:</strong> <%= staffToDelete.getStaffid() %></p>
-                    
+
                     <div class="btn-group">
                         <form action="deleteStaff.jsp" method="POST" style="display: inline;">
                             <input type="hidden" name="staffId" value="<%= deleteStaffId %>">
                             <input type="hidden" name="confirm" value="true">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
-                        <button onclick="window.location.href='staffList.jsp'" class="btn btn-secondary">Cancel</button>
+                        <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Cancel</button>
                     </div>
                     <%
                             } else {
                     %>
                     <p class="warning-text">Staff member not found.</p>
-                    <button onclick="window.location.href='staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
+                    <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
                     <%
                             }
                         } catch (SQLException e) {
                     %>
                     <p class="warning-text">Error: <%= e.getMessage() %></p>
-                    <button onclick="window.location.href='staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
+                    <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
                     <%
                         }
                     %>

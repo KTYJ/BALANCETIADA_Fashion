@@ -246,7 +246,7 @@
                 <input type="submit" value="LOGIN">
             </div>
             <div class="pass_txt" align="center" style="font-size: 11px;">
-NOT AN ADMIN? <a href="Homepage.jsp"><b>CLICK HERE TO RETURN TO USER LOGIN</b></a>.            </div>
+NOT AN ADMIN? <a href="home.jsp"><b>CLICK HERE TO RETURN TO USER LOGIN</b></a>.            </div>
         </form>
     </div>
 </body>

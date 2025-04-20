@@ -291,15 +291,56 @@ public class OrdersDA {
         return success;
     }
 
-    public ArrayList<Orders> getOrdersByMonth(int month) throws SQLException, ClassNotFoundException {
+    public ArrayList<Orders> getOrdersByMthYr(int month, int year) throws SQLException, ClassNotFoundException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         ArrayList<Orders> orders = new ArrayList<>();
 
         try {
-            String sql = "SELECT * FROM " + tableName + " WHERE MONTH(ORDERDATE) = ?";
+            String sql = "SELECT * FROM " + tableName + " WHERE MONTH(ORDERDATE) = ? AND YEAR(ORDERDATE) = ? ORDER BY ORDERDATE DESC";
             stmt = connection.prepareStatement(sql);
             stmt.setInt(1, month);
+            stmt.setInt(2, year);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Orders order = new Orders();
+                order.setOrderId(rs.getString("ORDERID"));
+                order.setCustId(rs.getString("CUSTID"));
+                order.setOrderDate(rs.getTimestamp("ORDERDATE"));
+                order.setStatus(rs.getString("STATUS"));
+                order.setAddress(rs.getString("ADDRESS"));
+                order.setPosCode(rs.getString("POSCODE"));
+                order.setCity(rs.getString("CITY"));
+                order.setState(rs.getString("STATE"));
+                order.setTotal(rs.getDouble("TOTAL"));
+                order.setShipping(rs.getString("SHIPPING"));
+
+                order.setProductsFromString(rs.getString("ITEMS"));
+
+                orders.add(order);
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        return orders;
+    }
+    public ArrayList<Orders> getOrdersByDate(String orderDate) throws SQLException, ClassNotFoundException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        ArrayList<Orders> orders = new ArrayList<>();
+
+        try {
+            String sql = String.format("SELECT * FROM NBUSER.ORDERS WHERE ORDERDATE >= TIMESTAMP('%s 00:00:00') AND ORDERDATE <= TIMESTAMP('%s 23:59:59')", 
+                            orderDate, orderDate);
+            System.out.println(sql);
+            stmt = connection.prepareStatement(sql);
             rs = stmt.executeQuery();
 
             while (rs.next()) {

@@ -145,6 +145,7 @@ body{
     width: 100px;
     display: block;
     margin: 0 auto;
+    transition: background-color 0.3s ease;
 }
 
 .product-form button[type="submit"]:hover {

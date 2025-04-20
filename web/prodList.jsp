@@ -81,17 +81,7 @@
                 background-color: rgb(126, 0, 0);
                 color: rgb(0, 0, 0);
             }
-            .restock-btn{
-                display: inline-block;
-                background-color:rgb(0, 102, 255);
-                color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
-            }
-            .restock-btn:hover{
-                background-color: rgb(0, 4, 255);
-                color: rgb(255, 255, 255);
-            }
+
 
             th{
                 font-family: 'Open Sans', sans-serif;
@@ -310,7 +300,6 @@
                                 <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>">Delete</a>
                                 <%}
                                 %>
-                                <a class="restock-btn" href="restock.jsp?sku=<%= product.getSku()%>">Restock</a>
                             </td>
                         </tr>
                         <% }%>

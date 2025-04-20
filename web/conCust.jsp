@@ -102,7 +102,7 @@
                 margin-bottom: 20px;
                 text-align: center;
             }
-            
+
             .back{
                 width: 30%;
                 float: left;

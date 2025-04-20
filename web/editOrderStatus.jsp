@@ -12,18 +12,20 @@
 
 <jsp:useBean id="staff" class="model.Staff" scope="session" />
 <%!
-    boolean isValidStatusTransition(String currentStatus, String newStatus) {
+    boolean isValidStatusTransition(String newStatus) {
+        System.out.println("newStatus: " + newStatus);
         // Define valid statuses
-        String[] validStatuses = {"packaging", "shipping", "delivery", "completed"};
+        String[] validStatuses = {"0","1", "2", "3", "4"};
         
-        // Convert to lowercase for case-insensitive comparison
-        newStatus = newStatus.toLowerCase();
+        // Strip and convert to lowercase for case-insensitive comparison
+        newStatus = newStatus.strip().toLowerCase();
         
         // Check if the new status is in the valid statuses list
         for (String status : validStatuses) {
             if (status.equals(newStatus)) {
                 return true;
             }
+            System.out.println("status: " + status);
         }
         return false;
     }
@@ -62,15 +64,16 @@
 
     // Handle form submission
     if (request.getMethod().equals("POST")) {
-        String newStatus = request.getParameter("status");
+        String newStatus = (String) request.getParameter("status");
         
         if (newStatus != null && !newStatus.isEmpty()) {
             try {
                 // Validate the status
-                if (!isValidStatusTransition(order.getStatus(), newStatus)) {
+                System.out.println("newStatus: " + newStatus);
+                if (!isValidStatusTransition(newStatus)) {
                     request.setAttribute("error", "Invalid status. Status must be one of: Packaging, Shipping, Delivery, Completed");
                 } else {
-                    ordersDA.updateOrderStatus(orderId, newStatus.toLowerCase());
+                    ordersDA.updateOrderStatus(orderId, newStatus);
                     // Refresh order data after update
                     order = ordersDA.getOrderByOrderId(orderId);
                     request.setAttribute("updateSuccess", true);
@@ -90,8 +93,7 @@
         <title>BT Staff - Edit Order Status</title>
         <link rel="stylesheet" href="css/aproduct.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-        <style>
-
+        <style>         
         
             .btn {
                 background-color: #4CAF50;
@@ -138,7 +140,7 @@
             }
 
             .btn-secondary {
-                background-color: #6c757d;
+                background-color:rgb(107, 118, 128);
                 color: white;
                 width: 50%;
                 padding: 10px 15px;
@@ -150,13 +152,14 @@
             }
 
             .btn-secondary:hover {
-                background-color: rgb(111, 193, 255);
+                background-color: rgb(156, 168, 189);
             }
 
             .status-form {
                 max-width: 600px;
                 margin: 0 auto;
                 padding: 20px;
+                padding-bottom: 0;
             }
 
             .radio-group {
@@ -167,6 +170,7 @@
             }
 
             .radio-option {
+                font-size: 1rem;
                 display: flex;
                 align-items: center;
                 padding: 15px;
@@ -174,13 +178,18 @@
                 border-radius: 8px;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                background-color: rgb(167, 167, 167);
-                filter: blur(0.5px);
+                background-color: rgb(40, 40, 40);
                 height: 100%; /* Ensures equal height for all options */
             }
+            .radio-option span{
+                display: block;
+                filter: blur(1px);
+                margin-left: 5px;
+            }
+
 
             .radio-option:hover {
-                background-color: rgb(255, 255, 255);
+                background-color: rgb(180, 180, 180);
                 opacity: 1;
                 filter: blur(0px);
                 transform: scale(1.02); /* Slight zoom effect on hover */
@@ -189,6 +198,10 @@
             .radio-option input[type="radio"] {
                 margin-right: 15px;
                 transform: scale(1.2);
+            }
+
+            .radio-option input[type="radio"]:checked {
+                filter: hue-rotate(180deg) grayscale(100%); 
             }
 
             .radio-option.packaging {
@@ -205,16 +218,23 @@
             }
 
             .radio-option.selected {
-                background-color: #e3f2fd;
-                border-color: #2196f3;
+                background-color:rgb(255, 255, 255);
+                border: 1px solid rgb(66, 66, 66);
+
+                font-weight: bold;
+            }
+
+            .radio-option.selected span{
+                display: block;
                 filter: blur(0px);
             }
 
             .order-info {
                 background-color: #f8f9fa;
-                padding: 20px;
+                padding: 10px;
                 border-radius: 8px;
                 margin-bottom: 20px;
+                border: 3px solid rgb(195, 195, 195);
             }
 
             .order-info p {
@@ -250,6 +270,23 @@
                 background-color: #f1f1f1; /* Highlight row on hover */
             }
 
+            .status-completed {
+                color: green;
+            }
+            .status-shipping {
+                color: orange;
+            }
+            .status-packaging {
+                color: rgb(0, 140, 255);
+            }
+            .status-delivery {
+                color: purple;
+            }
+
+            button[type="submit"]:hover {
+                transition: background-color 0.3s ease;
+                background-color:rgb(42, 150, 46);
+            }
             
         </style>
         <script>
@@ -267,7 +304,7 @@
         <div class="sidebar">
             <ul class="menu">
                 <div class="logo">
-                    BALANCETIADA<br />
+                    BALANCETIAsDA<br />
                     <span id="admintitle"><%= staff.getType().toUpperCase()%></span>
                 </div>
                 <div align="center">
@@ -338,7 +375,7 @@
             </ul>
         </div>
 
-        <div class="content">
+        <div class="content" style="overflow:hidden;">
             <div class="wrapper">
                 <strong>Editing Order Status: <span style="color:rgb(255, 0, 0);"><%= order.getOrderId()%></span></strong>
             </div>
@@ -350,6 +387,12 @@
                     <br/>
 
                     <div class="order-info">
+                        <% if (request.getAttribute("updateSuccess") != null) {%>
+                        <div class="success">
+                            <h3>Order status updated successfully!</h3>
+                            <img src="media/hahayes.png" alt="Sucessful" width="100px" height="150px">
+                        </div>
+                        <% }%>
                         <table class="table">
                             <tbody>
                                 <tr>
@@ -374,7 +417,7 @@
                                 </tr>
                                 <tr>
                                     <td style="text-align: right;"><strong>Current Status:</strong></td>
-                                    <td><span class="status-<%= order.getStatus().toLowerCase() %>"><%= order.getStatus().substring(0, 1).toUpperCase() + order.getStatus().substring(1) %></span></td>
+                                    <td><span style="font-weight: bold;" class="status-<%= order.getStatusString().toLowerCase() %>"><%= order.getStatusString().substring(0, 1).toUpperCase() + order.getStatusString().substring(1) %></span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -386,32 +429,28 @@
                     </div>
                     <% }%>
 
-                    <% if (request.getAttribute("updateSuccess") != null) {%>
-                    <div class="success">
-                        <h3>Order status updated successfully!</h3>
-                    </div>
-                    <% } else {%>
+                    <% if (request.getAttribute("updateSuccess") == null) {%>
                     <form method="POST" onsubmit="return confirm('Are you sure you want to update the order status?')">
                         <div class="radio-group">
-                            <label class="radio-option packaging <%= order.getStatus().equalsIgnoreCase("packaging") ? "selected" : ""%>">
-                                <input type="radio" name="status" value="packaging" 
-                                       <%= order.getStatus().equalsIgnoreCase("packaging") ? "checked" : ""%>>
-                                Packaging
+                            <label class="radio-option packaging <%= order.getStatusString().equalsIgnoreCase("packaging") ? "selected" : ""%>">
+                                <input type="radio" name="status" value="1" 
+                                       <%= order.getStatusString().equalsIgnoreCase("packaging") ? "checked" : ""%>>
+                                <b style="font-size: 1.5rem;"> &#128230;</b><span>Packaging</span>
                             </label>
-                            <label class="radio-option shipping <%= order.getStatus().equalsIgnoreCase("shipping") ? "selected" : ""%>">
-                                <input type="radio" name="status" value="shipping" 
-                                       <%= order.getStatus().equalsIgnoreCase("shipping") ? "checked" : ""%>>
-                                Shipping
+                            <label class="radio-option shipping <%= order.getStatusString().equalsIgnoreCase("shipping") ? "selected" : ""%>">
+                                <input type="radio" name="status" value="2" 
+                                       <%= order.getStatusString().equalsIgnoreCase("shipping") ? "checked" : ""%>>
+                                <b style="font-size: 1.5rem;"> &#128674;</b><span>Shipping</span>
                             </label>
-                            <label class="radio-option delivery <%= order.getStatus().equalsIgnoreCase("delivery") ? "selected" : ""%>">
-                                <input type="radio" name="status" value="delivery" 
-                                       <%= order.getStatus().equalsIgnoreCase("delivery") ? "checked" : ""%>>
-                                Out for Delivery
+                            <label class="radio-option delivery <%= order.getStatusString().equalsIgnoreCase("delivery") ? "selected" : ""%>">
+                                <input type="radio" name="status" value="3" 
+                                       <%= order.getStatusString().equalsIgnoreCase("delivery") ? "checked" : ""%>>
+                                <b style="font-size: 1.5rem;"> &#128666;</b><span>(Out for) Delivery</span>
                             </label>
-                            <label class="radio-option completed <%= order.getStatus().equalsIgnoreCase("completed") ? "selected" : ""%>">
-                                <input type="radio" name="status" value="completed" 
-                                       <%= order.getStatus().equalsIgnoreCase("completed") ? "checked" : ""%>>
-                                Completed
+                            <label class="radio-option completed <%= order.getStatusString().equalsIgnoreCase("completed") ? "selected" : ""%>">
+                                <input type="radio" name="status" value="4" 
+                                       <%= order.getStatusString().equalsIgnoreCase("completed") ? "checked" : ""%>>
+                                <b style="font-size: 1.5rem;"> &#128175;</b><span>Completed</span>
                             </label>
                         </div>
                         <div align="center">
