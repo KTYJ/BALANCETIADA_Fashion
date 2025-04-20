@@ -1,3 +1,5 @@
+//      NOTE: THIS IS JUST SPARE DOCUMENT
+//      
 //    public String orderProdToString() {
 //        String name = this.getName();
 //        String sku = this.getSku();
