@@ -4,7 +4,6 @@ body {
     line-height: 1.80857;
     font-weight: normal;
     overflow-x: hidden;
-    background-color: #000000;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -31,7 +30,7 @@ body {
 .about_taital_main {
     width: 100%;
     float: left;
-    padding-top: 20px;
+    padding-top: 100px;
     padding-left: 100px;
 }
 
@@ -83,6 +82,8 @@ body {
 
 
 /* about section end */
+
+/* header section start */
 
 .header-area {
     background-color: #fff;
@@ -148,6 +149,9 @@ body {
     padding: 0px;
 }
 
+/* header section end */
+
+/* dropdown menu */
 
 .dropdown-menu {
     display: none;
@@ -205,12 +209,14 @@ body {
     white-space: nowrap;
  }
 
+/* dropdown menu end */
+
 /* footer section start */
 
 .footer_section {
     width: 100%;
     float: left;
-    height: auto;
+    height: 388px;
     background-size: 100%;
     padding-bottom: 30px;
     background-image: url(../media/footer-img.png);
@@ -226,6 +232,7 @@ body {
 .footer_1 {
     width: 100%;
     text-align: center;
+    font-family: "Special Gothic Condensed One", sans-serif;
     font-weight: 400;
     font-style: normal;
 }
@@ -233,7 +240,8 @@ body {
 .footer_1 p{
     font-size: 60px;
     color: rgb(255, 255, 255);
-    font-family: "Special Gothic Condensed One", sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 .address_bt {
@@ -250,6 +258,11 @@ body {
     font-size: 16px;
     color: #ffffff;
     padding: 10px 0px 0px 0px;
+    list-style: none;
+}
+
+ul,li{
+    list-style: none;
 }
 
 .address_bt li a {
@@ -268,6 +281,7 @@ body {
     font-size: 24px;
     color: #ffffff;
     text-transform: uppercase;
+    font-weight: normal;
 }
 
 .dummy_text {
@@ -278,12 +292,14 @@ body {
     margin: 0px;
     text-align: center;
     padding-top: 20px;
+    font-weight: 300;
+    line-height: 24px;
 }
 
 .ipsum_text {
     width: 65%;
     float: left;
-    font-size: 14px;
+    font-size: 16px;
     color: #ffffff;
     margin: 0px;
     padding-top: 10px;
@@ -298,9 +314,9 @@ body {
     width: 50%;
     margin: 0 auto;
     text-align: center;
-    padding-top: 40px;
     border-bottom: 1px solid #f5ddb6;
-    padding-bottom: 30px;
+    padding-bottom: 15px;
+    margin-top: -40px;
 }
 
 .social_icon ul {
@@ -334,8 +350,17 @@ body {
     padding: 0px;
 }
 
+.layout_padding{
+    padding-top: 40px;
+}
+
+.col-middle{
+    margin-top: -27px;
+}
 
 /* footer section end */
+
+/* copyright section start */
 
 .copyright_section {
     width: 100%;
@@ -363,3 +388,5 @@ body {
 .margin_top90 {
     margin-top: 90px;
 }
+
+/* copyright section end */

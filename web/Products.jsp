@@ -4,6 +4,17 @@
 <%@ page import="model.Product" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<%
+    // Check if productMap is in session, if not redirect to servlet
+    if (session.getAttribute("productMap") == null) {
+        response.sendRedirect("ProductServlet");
+        return;
+    }
+    
+    // Get productMap from session
+    Map<String, List<model.Product>> productMap = (Map<String, List<model.Product>>) session.getAttribute("productMap");
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,6 +44,56 @@
 
         <link rel="stylesheet" href="css/lightbox.css">
 
+        <!-- Custom Dropdown CSS -->
+        <style>
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .dropdown-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                background-color: #f9f9f9;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1000;
+                border-radius: 4px;
+                padding: 8px 0;
+            }
+            
+            .dropdown-menu.show {
+                display: block;
+            }
+            
+            .dropdown-menu li {
+                padding: 8px 16px;
+                list-style: none;
+            }
+            
+            .dropdown-menu li:hover {
+                background-color: #f1f1f1;
+            }
+            
+            .dropdown-menu a {
+                color: #333;
+                text-decoration: none;
+                display: block;
+            }
+            
+            .dropdown-toggle::after {
+                display: inline-block;
+                margin-left: 5px;
+                vertical-align: middle;
+                content: "";
+                border-top: 5px solid;
+                border-right: 5px solid transparent;
+                border-bottom: 0;
+                border-left: 5px solid transparent;
+            }
+        </style>
+
     </head>
 
     <body>
@@ -54,21 +115,35 @@
                     <div class="col-12">
                         <nav class="main-nav">
                             <!-- ** Logo Start ** -->
-                            <a href="home.html" class="logo">
-                                <img src="/media/logo.png">
+                            <a href="home.jsp" class="logo">
+                                <img src="${pageContext.request.contextPath}/media/logo.png">
                             </a>
                             <!-- ** Logo End ** -->
                             <!-- ** Menu Start ** -->
                             <ul class="nav">
-                                <li class="scroll-to-section"><a href="home.html">Home</a></li>
-                                <li><a href="products.html" class="active">Products</a></li>
-                                <li><a href="about.html">About Us</a></li>
-                                </li>
+                                <li class="scroll-to-section"><a href="home.jsp">Home</a></li>
+                                <li><a href="Products.jsp" class="active">Products</a></li>
+                                <li><a href="about.jsp">About Us</a></li>
                                 <div class="cart_btn">
-                                    <li><a href="#explore"><ion-icon name="bag-handle-outline" style="font-size: 20px; vertical-align: text-top;"></ion-icon> CART (0)</a></li>
+                                    <li><a href="ViewCart.jsp"><ion-icon name="bag-handle-outline" style="font-size: 20px; vertical-align: text-top;"></ion-icon> CART (0)</a></li>
                                 </div>
                                 <div class="login_btn">
-                                    <li><a href="#explore">Login</a></li>
+                                    <% if (session.getAttribute("firstName") != null && session.getAttribute("lastName") != null) { %>
+                                        <li class="dropdown">
+                                            <a class="dropdown-toggle">
+                                                <i class="fa fa-user"></i> Welcome, <%= session.getAttribute("lastName") %> <%= session.getAttribute("firstName") %>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="myprofile.jsp">My Profile</a></li>
+                                                <li><a href="checkOrder.jsp">My Order</a></li>
+                                                <li><a href="ViewCart.jsp">My Cart</a></li>
+                                                <li><a href="voucher.jsp">My Voucher</a></li>
+                                                <li><a href="javascript:void(0);" onclick="confirmLogout()">Logout</a></li>
+                                            </ul>
+                                        </li>
+                                    <% } else { %>
+                                        <li><a href="LoginAndRegister.jsp">Login</a></li>
+                                    <% } %>
                                 </div>
                             </ul>
                             <!-- ** Menu End ** -->
@@ -78,6 +153,15 @@
             </div>
         </header>
         <!-- ** Header Area End ** -->
+
+        <!-- Add logout confirmation script -->
+        <script>
+            function confirmLogout() {
+                if (confirm("Are you sure you want to logout?")) {
+                    window.location.href = "LogoutServlet";
+                }
+            }
+        </script>
 
         <!-- ***** Main Banner Area Start ***** -->
         <div class="main-banner" id="top">
@@ -168,10 +252,6 @@
         </div>
         <!-- ***** Main Banner Area End ***** -->
 
-        <%
-            Map<String, List<model.Product>> productMap = (Map<String, List<model.Product>>) request.getAttribute("productMap");
-        %>
-
         <!-- ***** Trending Area Starts ***** -->
         <section class="section" id="trending">
             <div class="container">
@@ -191,7 +271,7 @@
                                     <div class="thumb">
                                         <div class="hover-content">
                                             <ul>
-                                                <li><a href="single-product?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
+                                                <li><a href="SingleProduct?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
                                                 <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                                             </ul>
                                         </div>
@@ -232,7 +312,7 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
+                                                    <li><a href="SingleProduct?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
                                                     <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                                                 </ul>
                                             </div>
@@ -274,7 +354,7 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
+                                                    <li><a href="SingleProduct?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
                                                     <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                                                 </ul>
                                             </div>
@@ -316,7 +396,7 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
+                                                    <li><a href="SingleProduct?sku=${product.sku}"><i class="fa fa-eye"></i></a></li>
                                                     <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                                                 </ul>
                                             </div>
@@ -387,68 +467,67 @@
         </section>
         <!-- ***** Explore Area Ends ***** -->
 
-        <!-- footer section start -->
-        <div class="footer_section layout_padding">
-            <div class="container">
-                <div class="contact_section_2">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <h3 class="address_text">Contact Us</h3>
-                            <div class="address_bt">
-                                <ul>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left10">Call : +6012-3379156</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left10">Email : sjh@gmail.com</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="footer_1"><p>BALANCETIADA</p></div>
-                            <p class="dummy_text">Balancetiada blends modern design with timeless values. Every piece is crafted to reflect balance, quality, and contemporary elegance.</p>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="main">
-                                <h3 class="address_text">Visit Us</h3>
-                                <p class="ipsum_text">Tanjung Malim</p>
-                                <p class="ipsum_text">Rawang</p>
-                                <p class="ipsum_text">Sungai Buloh</p>
-                                <p class="ipsum_text">Cheras</p>
-                                <p class="ipsum_text">Puncak Alam</p>
-                            </div>
-                        </div>
+         <!-- footer section start -->
+      <div class="footer_section layout_padding">
+        <div class="container">
+           <div class="contact_section_2">
+              <div class="row">
+                 <div class="col-sm-4">
+                    <h3 class="address_text">Contact Us</h3>
+                    <div class="address_bt">
+                       <ul>
+                          <li>
+                             <a href="#">
+                             <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left10">Call : +6012-3379156</span>
+                             </a>
+                          </li>
+                          <li>
+                             <a href="#">
+                             <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left10">Email : sjh@gmail.com</span>
+                             </a>
+                          </li>
+                       </ul>
                     </div>
-                </div>
-                <div class="social_icon">
-                    <ul>
-                        <li>
-                            <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                        </li>
-                        <li>
-                            <a href="https://www.twitter.com/"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-                        </li>
-                        <li>
-                            <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+                 </div>
+                 <div class="col-sm-4 col-middle">
+                    <div class="footer_1"><p>BALANCETIADA</p></div>
+                    <p class="dummy_text">Balancetiada blends modern design with timeless values. Every piece is crafted to reflect balance, quality, and contemporary elegance.</p>
+                 </div>
+                 <div class="col-sm-4">
+                    <div class="main">
+                       <h3 class="address_text">Visit Us</h3>
+                       <p class="ipsum_text">Tanjung Malim</p>
+                       <p class="ipsum_text">Rawang</p>
+                       <p class="ipsum_text">Sungai Buloh</p>
+                       <p class="ipsum_text">Cheras</p>
+                       <p class="ipsum_text">Puncak Alam</p>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           <div class="social_icon">
+              <ul>
+                 <li>
+                    <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                 </li>
+                 <li>
+                    <a href="https://www.twitter.com/"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                 </li>
+                 <li>
+                    <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                 </li>
+              </ul>
+           </div>
         </div>
-        <!-- footer section end -->
-
-        <!-- copyright section start -->
-        <div class="copyright_section">
-            <div class="container">
-                <p class="copyright_text">&copy; 2025 All Rights Reserved.</p>
-            </div>
+     </div>
+     <!-- footer section end -->
+     <!-- copyright section start -->
+     <div class="copyright_section">
+        <div class="container">
+           <p class="copyright_text">&copy; 2025 All Rights Reserved.</p>
         </div>
-        <!-- copyright section end -->
+     </div>
+     <!-- copyright section end -->
 
         <!-- jQuery -->
         <script src="js/jquery-2.1.0.min.js"></script>
@@ -472,22 +551,26 @@
         <!-- Global Init -->
         <script src="js/custom.js"></script>
 
+        <!-- Dropdown Menu JavaScript -->
         <script>
-
-            $(function () {
-                var selectedClass = "";
-                $("p").click(function () {
-                    selectedClass = $(this).attr("data-rel");
-                    $("#portfolio").fadeTo(50, 0.1);
-                    $("#portfolio div").not("." + selectedClass).fadeOut();
-                    setTimeout(function () {
-                        $("." + selectedClass).fadeIn();
-                        $("#portfolio").fadeTo(50, 1);
-                    }, 500);
-
-                });
+            document.addEventListener('DOMContentLoaded', function() {
+                const dropdownToggle = document.querySelector('.dropdown-toggle');
+                const dropdownMenu = document.querySelector('.dropdown-menu');
+                
+                if (dropdownToggle && dropdownMenu) {
+                    dropdownToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        dropdownMenu.classList.toggle('show');
+                    });
+                
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                            dropdownMenu.classList.remove('show');
+                        }
+                    });
+                }
             });
-
         </script>
 
     </body>

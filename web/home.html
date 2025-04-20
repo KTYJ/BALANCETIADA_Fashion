@@ -1,6 +1,3 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
-
 <!DOCTYPE html>
 <html lang="en">
    <head>
@@ -12,7 +9,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="viewport" content="initial-scale=1, maximum-scale=1">
       <!-- site metas -->
-      <title>Beautiflie</title>
+      <title>BalanceTiada</title>
       <meta name="keywords" content="">
       <meta name="description" content="">
       <meta name="author" content="">
@@ -52,17 +49,17 @@
                      <!-- ** Logo End ** -->
                      <!-- ** Menu Start ** -->
                      <ul class="nav">
-                        <li class="scroll-to-section"><a href="home.html">Home</a></li>
-                                <li><a href="products.html" class="active">Products</a></li>
-                                <li><a href="about.html">About Us</a></li>
+                        <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
+                                 <li><a href="products.html">Products</a></li>
+                                 <li><a href="about.jsp">About Us</a></li>
                         </li>
-                        <div class="cart_btn">
-                         <li><a href="#explore"><ion-icon name="bag-handle-outline" style="font-size: 20px; vertical-align: text-top;"></ion-icon> CART (0)</a></li>
-                        </div>
                         <div class="login_btn">
-                            <li><a href="#explore">Login</a></li>
+                              <li><a href="#explore">Login</a></li>
                         </div>
-                    </ul>
+                        <div class="cart_btn">
+                              <li><a href="#explore"><ion-icon name="bag-handle-outline" style="font-size: 20px; vertical-align: text-top;"></ion-icon> CART (0)</a></li>
+                        </div>
+                     </ul>
                      <!-- ** Menu End ** -->
                   </nav>
             </div>
@@ -88,87 +85,90 @@
          </div>
       </div>
       <!-- banner section end -->
- <!-- product section start -->
- <%
- // Database connection details
- String url = "jdbc:derby://localhost:1527/btdb";
- String user = "nbuser";
- String pass = "nbuser";
-
- Connection conn = null;
- Statement stmt = null;
- ResultSet rs = null;
-
- try {
-     conn = DriverManager.getConnection(url, user, pass);
-     stmt = conn.createStatement();
-     String sql = "SELECT * FROM PRODUCT";
-     rs = stmt.executeQuery(sql);
-
-     int count = 0;
-%>
-
-<div class="product_section layout_padding">
- <div class="container">
-     <div class="row">
-         <div class="col-sm-12">
-             <h1 class="product_taital">Trending Now</h1>
-             <p class="product_text">“Our best of the season collection.”</p>
-         </div>
-     </div>
-     <div class="product_section_2 layout_padding">
-         <div class="row">
-             <%
-                 while (rs.next() && count < 4) {
-                     String sku = rs.getString("sku");
-                     String name = rs.getString("name");
-                     count++;
-             %>
-             <div class="col-lg-3 col-sm-6">
-                 <div class="product_box">
-                     <h4 class="bursh_text"><%= sku %></h4>
-                     <p class="lorem_text"><%= name %></p>
-                     <img src="images/img-1.png" class="image_1">
-                     <div class="btn_main">
-                         <div class="buy_bt">
-                             <ul>
-                                 <li><a href="Products.html">EXPLORE</a></li>
-                             </ul>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             <%
-                 }
-             %>
-         </div>
-
-<%
- } catch (Exception e) {
-     out.println("Error: " + e.getMessage());
- } finally {
-     try { if (rs != null) rs.close(); } catch (Exception e) {}
-     try { if (stmt != null) stmt.close(); } catch (Exception e) {}
-     try { if (conn != null) conn.close(); } catch (Exception e) {}
- }
-%>
-
-            <div class="seemore_bt"><a href="#">See More</a></div>
-            <div class="promo_row">
+      <!-- product section start -->
+      <div class="product_section layout_padding">
+         <div class="container">
+            <div class="row">
+               <div class="col-sm-12">
+                  <h1 class="product_taital">Trending Now</h1>
+                  <p class="product_text">“Our best of the season collection.”</p>
+               </div>
+            </div>
+            <div class="product_section_2 layout_padding">
                <div class="row">
-                  <div class="promo_box1">
-                     <a href="member.html"> <img src="/media/promo-img.png" class="image_1"></a>
+                  <div class="col-lg-3 col-sm-6">
+                     <div class="product_box">
+                        <h4 class="bursh_text">Beauty Bursh</h4>
+                        <p class="lorem_text">incididunt ut labore et dolore magna aliqua. Ut enim </p>
+                        <img src="images/img-1.png" class="image_1">
+                        <div class="btn_main">
+                           <div class="buy_bt">
+                              <ul>
+                                 <li><a href="#">EXPLORE</a></li>
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
                   </div>
-                  <div class="promo_box2">
-                     <a href="member.html"> <img src="/media/join-member.png" class="image_1"></a>
+                  <div class="col-lg-3 col-sm-6">
+                     <div class="product_box">
+                        <h4 class="bursh_text">Beauty Bursh</h4>
+                        <p class="lorem_text">incididunt ut labore et dolore magna aliqua. Ut enim </p>
+                        <img src="images/img-2.png" class="image_1">
+                        <div class="btn_main">
+                           <div class="buy_bt">
+                              <ul>
+                                 <li><a href="#">EXPLORE</a></li>
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-lg-3 col-sm-6">
+                     <div class="product_box">
+                        <h4 class="bursh_text">Beauty Bursh</h4>
+                        <p class="lorem_text">incididunt ut labore et dolore magna aliqua. Ut enim </p>
+                        <img src="images/img-3.png" class="image_1">
+                        <div class="btn_main">
+                           <div class="buy_bt">
+                              <ul>
+                                 <li><a href="#">EXPLORE</a></li>
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-lg-3 col-sm-6">
+                     <div class="product_box">
+                        <h4 class="bursh_text">Beauty Bursh</h4>
+                        <p class="lorem_text">incididunt ut labore et dolore magna aliqua. Ut enim </p>
+                        <img src="images/img-4.png" class="image_1">
+                        <div class="btn_main">
+                           <div class="buy_bt">
+                              <ul>
+                                 <li><a href="#">EXPLORE</a></li>
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
                   </div>
                </div>
-             </div>
-           </div>
+               
+               <div class="seemore_bt"><a href="#">See More</a></div>
+               <div class="promo_row">
+                  <div class="row">
+                     <div class="promo_box1">
+                        <a href="member.html"> <img src="../media/promo-img.png" class="image_1"></a>
+                     </div>
+                     <div class="promo_box2">
+                        <a href="member.html"> <img src="../media/join-member.png" class="image_1"></a>
+                     </div>
+                  </div>
+               </div>
+            </div>
          </div>
       </div>
-   </div>
-   <!-- product section end -->
+      <!-- product section end -->
       <!-- footer section start -->
       <div class="footer_section layout_padding">
          <div class="container">
