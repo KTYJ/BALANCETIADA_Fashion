@@ -204,7 +204,7 @@
             <div class="main-content">
                 <form action="discounts.jsp" method="get">
                     <div class="search-bar">
-                        <input type="text" placeholder="Search discounts..." name="search">
+                        <input type="text" placeholder="Search... (ID, Code, Description)" name="search">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </div>
                 </form>
@@ -214,6 +214,7 @@
                 %>
                 <p class="no-results">No discounts found! :(</p>
                 <br><div style="text-align: center;">
+                    <div><a href='discounts.jsp' style="color: rgb(107, 107, 107); font-size: 20px;"><< Back to All Discounts</a></div>
                 
                 <% if (staff.isManager()) { %>
                     <a href="addDiscount.jsp">+ Add Discount +</a>
@@ -243,7 +244,11 @@
                             <th>Code</th>
                             <th>Value</th>
                             <th>Description</th>
-                            <th colspan="2" style="text-align:center;">Actions</th>
+                            <% if (staff.isManager()) { 
+                                //only manager can manage discounts
+                                %>
+                                <th colspan="2" style="text-align:center;">Actions</th>
+                            <% } %>
                         </tr>
                     </thead>
                     <tbody>
@@ -257,7 +262,11 @@
                                 </span>
                             </td>
                             <td><%= discount.getDescription() %></td>
+                            <% if (staff.isManager()) { 
+                                //only manager can manage discounts
+                                %>
                             <td class="details-link" title="Delete" style="color:red;text-align:center;" onclick="window.location.href = 'deleteDiscount.jsp?discountId=<%= discount.getId()%>'"><ion-icon name="trash-outline" style="font-size: 1.5rem;cursor:pointer;"></ion-icon></td>
+                            <% } %>
                         </tr>
                         <% } %>
                     </tbody>

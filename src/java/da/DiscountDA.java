@@ -146,17 +146,15 @@ public class DiscountDA {
 
     public List<Discount> searchDiscounts(String searchTerm) throws SQLException {
         List<Discount> results = new ArrayList<>();
-        String sql = "SELECT * FROM DISCOUNT WHERE " +
-                    "LOWER(CODE) LIKE ? OR " +
-                    "LOWER(DESCRIPTION) LIKE ?";
+        String sql = "SELECT * FROM DISCOUNT WHERE LOWER(ID) LIKE ? OR LOWER(CODE) LIKE ? OR LOWER(DESCRIPTION) LIKE ?";
         
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            String searchPattern = "%" + searchTerm.toLowerCase() + "%";
+            String searchPattern = "%" + searchTerm.toLowerCase().trim() + "%";
             stmt.setString(1, searchPattern);
             stmt.setString(2, searchPattern);
-            
+            stmt.setString(3, searchPattern);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     results.add(new Discount(

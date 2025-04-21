@@ -188,7 +188,7 @@
             <div class="main-content">
                 <form action="staffOrders.jsp" method="get">
                     <div class="search-bar">
-                        <input type="text" placeholder="Search.." name="search">
+                        <input type="text" title="Search by Order ID, Customer ID" placeholder="Order ID, Customer ID..." name="search">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </div>
                 </form>
@@ -242,15 +242,9 @@
                             <td class="details-link" title="View Order Details" style="color:rgb(204, 153, 0);">
                     <ion-icon name="cube-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'viewOrder.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
                     </td>
-                    <%
-                        if (staff.getType().equalsIgnoreCase("manager")) {
-                    %>
                     <td class="details-link" title="Edit Status" style="color:rgb(45, 195, 250);">
                     <ion-icon name="create-outline" style="font-size: 1.5rem; cursor: pointer;" onclick="window.location.href = 'editOrderStatus.jsp?orderId=<%= order.getOrderId()%>'"></ion-icon>
                     </td>
-                    <%
-                        }
-                    %>
                     </tr>
                     <% } %>
                     </tbody>

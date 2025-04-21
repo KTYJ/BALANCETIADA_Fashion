@@ -299,7 +299,9 @@
                                     // Check if email already exists
                                     CustomerDA cda = new CustomerDA();
                                     Customer existingCust = cda.getCustomerByEmail(email);
-                                    if (existingCust != null) {
+                                    
+                                    //existing customer is not the same as the customer to edit
+                                    if (existingCust != null && !existingCust.getCustid().equals(custId)) {
                                         errors.add("Email already exists for another customer.");
                                     }
                                 } catch (SQLException e) {

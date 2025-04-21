@@ -39,12 +39,6 @@
         response.sendRedirect("home.jsp");
         return;
     }
-    else if (!staff.isManager()) {
-        request.setAttribute("error", "403 Access Denied");
-        request.getRequestDispatcher("err403.jsp").forward(request, response);
-        //response.sendRedirect("prodList.jsp");
-
-    }
 
     // Get the order ID from request parameter
     String orderId = request.getParameter("orderId");
@@ -416,7 +410,7 @@
                                     <td><%= order.getShipping().substring(0, 1).toUpperCase() + order.getShipping().substring(1) %></td>
                                 </tr>
                                 <tr>
-                                    <td style="text-align: right;"><strong>Current Status:</strong></td>
+                                    <td style="text-align: right;"><strong><%=  (request.getAttribute("updateSuccess") != null)? "New" : "Current" %> Status:</strong></td>
                                     <td><span style="font-weight: bold;" class="status-<%= order.getStatusString().toLowerCase() %>"><%= order.getStatusString().substring(0, 1).toUpperCase() + order.getStatusString().substring(1) %></span></td>
                                 </tr>
                             </tbody>

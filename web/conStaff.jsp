@@ -95,7 +95,7 @@
             }
 
             .table{
-                width: 80vh;
+                width: 75.7vh;
                 font-size: 1.2em;
                 border-collapse: collapse;
                 margin: 20px 0;

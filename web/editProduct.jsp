@@ -329,7 +329,7 @@ Author     : KTYJ
                             <input type="text" id="name" name="name" value="<%= product.getName()%>" required><br><br>
 
                             <label for="description">Description:</label>
-                            <textarea id="description" name="description" required rows="5" maxlength="100"><%= product.getDescription()%></textarea><br><br>
+                            <textarea id="description" name="description" required rows="5" maxlength="255"><%= product.getDescription()%></textarea><br><br>
 
                             <label for="catid">Category:</label>
                             <select id="catid" name="catid" required>

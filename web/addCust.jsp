@@ -221,7 +221,7 @@
                             try {
                                 boolean valid = false;
                                 do {
-                                    custId = Toolkit.generateUID();
+                                    custId = Toolkit.generateDigitUID();
                                     Customer existingCust = new CustomerDA().getCustomer(custId);
                                     valid = (existingCust == null); // Set valid to true if no existing customer is found
                                 } while (!valid);

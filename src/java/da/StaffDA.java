@@ -139,9 +139,9 @@ public class StaffDA {
     public ArrayList<Staff> srcStaff(String search) throws SQLException {
         String sql = "SELECT * FROM NBUSER.STAFF WHERE lower(name) LIKE ? OR lower(email) LIKE ? OR lower(staffid) LIKE ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, "%" + search + "%");
-            stmt.setString(2, "%" + search + "%");
-            stmt.setString(3, "%" + search + "%");
+            stmt.setString(1, "%" + search.toLowerCase().trim() + "%");
+            stmt.setString(2, "%" + search.toLowerCase().trim() + "%");
+            stmt.setString(3, "%" + search.toLowerCase().trim() + "%");
             
             ResultSet rs = stmt.executeQuery();
             ArrayList<Staff> staffList = new ArrayList<>();

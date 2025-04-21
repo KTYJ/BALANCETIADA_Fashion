@@ -260,7 +260,7 @@
                         <input type="text" id="name" name="name" required><br><br>
 
                         <label for="description">Description:</label>
-                        <textarea id="description" name="description" required rows="5" maxlength="100"></textarea><br><br>
+                        <textarea id="description" name="description" required rows="5" maxlength="255"></textarea><br><br>
 
                         <label for="catid">Category:</label>
                         <select id="catid" name="catid" required>

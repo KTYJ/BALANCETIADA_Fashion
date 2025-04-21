@@ -12,10 +12,6 @@
         // Redirect to home.html if no user is logged in
         response.sendRedirect("home.jsp");
         return; // Stop further processing
-    } else if (!staff.isManager()) { //staff bye bye
-        request.setAttribute("error", "403 Access Denied");
-        request.getRequestDispatcher("err403.jsp").forward(request, response);
-        //response.sendRedirect("prodList.jsp");
     }
 %>
 <!DOCTYPE html>

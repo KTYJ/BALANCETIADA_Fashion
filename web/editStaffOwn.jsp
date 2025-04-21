@@ -107,11 +107,12 @@
             function logOut() {
                 if (confirm("Are you sure want to logout?")) {
                     window.location.href = "logout.jsp";
-                }
+                }   
             }
         </script>
     </head>
     <body>
+        <script src="js/jquery-1.9.1.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
@@ -195,9 +196,6 @@
             </div>
             <div class="main-content">
                 <div class="container">
-                    <div class="button-container" align="center">
-                        <button onclick="window.location.href = 'staffList.jsp'" class="btn btn-secondary">Back to Staff List</button>
-                    </div>
 
                     <%
                         if (request.getMethod().equals("POST")) {
@@ -294,9 +292,17 @@
 
                             request.setAttribute("updateSuccess", true);
                     %>
+                    <div class="button-container" align="center">
+                        <button onclick="window.location.href = 'editStaffOwn.jsp'" class="btn btn-secondary">Back</button>
+                    </div>
                     <div class="success">
                         <h3>Account Information updated successfully!</h3>
                     </div>
+                    <script>
+                       $(document).ready(function() {
+                            $('#aName').text('<%= name%>');
+                        });
+                    </script>
                     <%
                     } catch (SQLException e) {
                     %>

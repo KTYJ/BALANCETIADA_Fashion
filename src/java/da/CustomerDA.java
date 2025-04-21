@@ -92,10 +92,10 @@ public class CustomerDA {
     public ArrayList<Customer> srcCustomer(String search) throws SQLException {
         String sql = "SELECT * FROM customer WHERE lower(fname) LIKE ? OR lower(lname) LIKE ? OR lower(email) LIKE ? OR lower(custid) LIKE ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, "%" + search + "%");
-            stmt.setString(2, "%" + search + "%");
-            stmt.setString(3, "%" + search + "%");
-            stmt.setString(4, "%" + search + "%");
+            stmt.setString(1, "%" + search.toLowerCase().trim() + "%");
+            stmt.setString(2, "%" + search.toLowerCase().trim() + "%");
+            stmt.setString(3, "%" + search.toLowerCase().trim() + "%");
+            stmt.setString(4, "%" + search.toLowerCase().trim() + "%");
 
             ResultSet rs = stmt.executeQuery();
             ArrayList<Customer> custList = new ArrayList<>();

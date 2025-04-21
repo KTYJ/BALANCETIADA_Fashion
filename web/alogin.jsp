@@ -130,6 +130,11 @@
             padding: 0px 25px 30px 25px;
         }
 
+        .pass_txt {
+            font-family: 'Special Gothic Condensed One', sans-serif;
+            letter-spacing: 1px;
+            font-size: 15px;
+        }
         .txtfield {
             position: relative;
             border-bottom: 1.8px solid rgb(74, 72, 72);
@@ -242,10 +247,10 @@
                 <span></span>
                 <label for="pass">PASSWORD</label>
             </div>
-            <div class="login" style="width:100%;text-align: center;margin: 30px 0px 20px 0px;">
+            <div class="login" style="width:100%;text-align: center;margin: 30px 0px 20px 0px; font-weight: bold;">
                 <input type="submit" value="LOGIN">
             </div>
-            <div class="pass_txt" align="center" style="font-size: 11px;">
+            <div class="pass_txt" align="center">
 NOT AN ADMIN? <a href="home.jsp"><b>CLICK HERE TO RETURN TO USER LOGIN</b></a>.            </div>
         </form>
     </div>

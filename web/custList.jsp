@@ -182,7 +182,7 @@
             <div class="main-content">
                 <form action="custList.jsp" method="get">
                     <div class="search-bar">
-                        <input type="text" placeholder="Search.." name="search">
+                        <input type="text" placeholder="Search.. (ID, Name, Email)" name="search">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </div>
                 </form>

@@ -46,9 +46,9 @@ public class ProductDA {
     public ArrayList<Product> srcProduct(String search) throws SQLException {
         String sql = "SELECT * FROM NBUSER.PRODUCT WHERE lower(name) LIKE ? OR lower(description) LIKE ? OR lower(sku) LIKE ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, "%" + search + "%");
-            stmt.setString(2, "%" + search + "%");
-            stmt.setString(3, "%" + search + "%");
+            stmt.setString(1, "%" + search.toLowerCase().trim() + "%");
+            stmt.setString(2, "%" + search.toLowerCase().trim() + "%");
+            stmt.setString(3, "%" + search.toLowerCase().trim() + "%");
 
             ResultSet rs = stmt.executeQuery();
             ArrayList<Product> productList = new ArrayList<>();

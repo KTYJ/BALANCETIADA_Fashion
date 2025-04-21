@@ -27,7 +27,6 @@
     } else if (!staff.isManager()) { //staff bye bye
         request.setAttribute("error", "403 Access Denied");
         request.getRequestDispatcher("err403.jsp").forward(request, response);
-        //response.sendRedirect("prodList.jsp");
 
     }
 

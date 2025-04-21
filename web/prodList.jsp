@@ -222,7 +222,7 @@
                 --%>
                 <form action="prodList.jsp" method="get">
                     <div class="search-bar">
-                        <input type="text" placeholder="Search.." name="search">
+                        <input type="text" placeholder="Search.. (SKU, Name, etc)" name="search">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </div>
                     <%
@@ -238,6 +238,7 @@
                 </form>
                 <%
                     if (products.size() == 0) {
+                        out.println("<div><a name='back' href='prodList.jsp' style='color: rgb(107, 107, 107); font-size: 15px;'><< Product List</a></div>");
                         out.println("<p class='no-results' style='text-align: center;'>No results found! :(</p>");
                     } else {
                 %>
@@ -298,7 +299,7 @@
 
                                 %>
                                 <a class="delete-btn" href="deleteProduct.jsp?sku=<%= product.getSku()%>">Delete</a>
-                                <%}
+                                <% } 
                                 %>
                             </td>
                         </tr>

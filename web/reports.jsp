@@ -358,7 +358,6 @@
                         <input type="hidden" name="csrfToken" value="<%= csrfToken%>" />
                         <input type="hidden" name="reportType" value="month" />
                         <input type="month" id="search" name="search" title="Select a month to generate report" required 
-                               min="<%=java.time.YearMonth.now().minusYears(2).toString()%>" 
                                <% if (monthParam != null) {%>value="<%= monthParam%>"<% }%>
                                />
                         <button type="submit">&#128195; Generate Monthly Report</button>
@@ -373,7 +372,6 @@
                         <input type="hidden" name="reportType" value="date" />
                         <input type="date" id="searchDay" name="searchDay" 
                                title="Select a date to generate report" required
-                               min="<%= java.time.LocalDate.now().minusYears(2).toString()%>"
                                <% if (dateParam != null) {%>value="<%= dateParam%>"<% }%>
                                />
                         <button type="submit">&#128195; Generate Daily Report</button>
